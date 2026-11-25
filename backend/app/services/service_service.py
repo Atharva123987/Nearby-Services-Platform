@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import math
 import uuid
 from collections.abc import Awaitable, Callable
 from typing import Protocol
 
+from pydantic import BaseModel
 from redis.asyncio import Redis
 
 from app.core.cache import get_or_set, get_version, invalidate
@@ -115,15 +115,13 @@ class ServiceService:
     async def cached_get(self, service_id: uuid.UUID) -> tuple[ServiceRead, bool]:
         """Public detail read. Returns ``(service, cache_hit)``. Not-found is not cached."""
 
-        async def load() -> dict:
-            return (await self.get(service_id)).model_dump(mode="json")
-
-        data, hit = await self._cached(
+        return await self._cached(
             _detail_key(service_id),
-            load,
+            lambda: self.get(service_id),
+            model=ServiceRead,
+            version_key=VERSION_KEY,
             ttl=self._settings.cache_ttl_service_detail_seconds if self._settings else 0,
         )
-        return ServiceRead.model_validate(data), hit
 
     async def cached_list(
         self,
@@ -134,57 +132,57 @@ class ServiceService:
     ) -> tuple[ServicePage, bool]:
         """Public list read (admin list uses ``list`` and is never cached)."""
         bbox_key = bbox.model_dump_json() if bbox else None
-        key = f"{await self._prefix()}:list:{page}:{page_size}:{category}:{bbox_key}"
-
-        async def load() -> dict:
-            result = await self.list(page, page_size, category=category, bbox=bbox)
-            return result.model_dump(mode="json")
-
-        data, hit = await self._cached(
-            key, load, ttl=self._settings.cache_ttl_default_seconds if self._settings else 0
+        ttl = self._settings.cache_ttl_default_seconds if self._settings else 0
+        prefix = await self._prefix() if ttl else None
+        key = f"{prefix}:list:{page}:{page_size}:{category}:{bbox_key}" if prefix else None
+        return await self._cached(
+            key,
+            lambda: self.list(page, page_size, category=category, bbox=bbox),
+            model=ServicePage,
+            ttl=ttl,
         )
-        return ServicePage.model_validate(data), hit
 
     async def nearby(self, query: NearbyQuery) -> tuple[NearbyPage, bool]:
-        """Return ``(page, cache_hit)``.
-
-        lat/lng are rounded to 3 decimals (~110 m) and the radius up to the next 0.5 km,
-        so nearby users share cache entries.
-        """
-        query = query.model_copy(
-            update={
-                "lat": round(query.lat, 3),
-                "lng": round(query.lng, 3),
-                "radius_km": math.ceil(query.radius_km * 2) / 2,
-            }
-        )
-        key = (
-            f"{await self._prefix()}:nearby:{query.lat}:{query.lng}:{query.radius_km}"
-            f":{query.category}:{query.limit}:{query.offset}"
+        """Return ``(page, cache_hit)`` for the exact centre and radius."""
+        ttl = self._settings.cache_ttl_search_seconds if self._settings else 0
+        prefix = await self._prefix() if ttl else None
+        key = None
+        if prefix:
+            key = (
+                f"{prefix}:nearby:exact:{query.lat}:{query.lng}:{float(query.radius_km)}"
+                f":{query.category}:{query.limit}:{query.offset}"
+            )
+        return await self._cached(
+            key, lambda: self._nearby_from_db(query), model=NearbyPage, ttl=ttl
         )
 
-        async def load() -> dict:
-            return (await self._nearby_from_db(query)).model_dump(mode="json")
-
-        data, hit = await self._cached(
-            key, load, ttl=self._settings.cache_ttl_search_seconds if self._settings else 0
-        )
-        return NearbyPage.model_validate(data), hit
-
-    async def _cached(
-        self, key: str, load: Callable[[], Awaitable[dict]], *, ttl: int
-    ) -> tuple[dict, bool]:
+    async def _cached[ReadModel: BaseModel](
+        self,
+        key: str | None,
+        load: Callable[[], Awaitable[ReadModel]],
+        *,
+        model: type[ReadModel],
+        ttl: int,
+        version_key: str | None = None,
+    ) -> tuple[ReadModel, bool]:
         """Cache-aside over ``load``; results with no ``items`` get the short empty TTL."""
-        if self._cache is None or self._settings is None:
+        if key is None or self._cache is None or self._settings is None or ttl == 0:
             return await load(), False
-        return await get_or_set(
+
+        async def load_json() -> dict[str, object]:
+            return (await load()).model_dump(mode="json")
+
+        data, hit = await get_or_set(
             self._cache,
             key,
-            load,
+            load_json,
             ttl=ttl,
             empty_ttl=self._settings.cache_ttl_empty_seconds,
             is_empty=lambda v: "items" in v and not v["items"],
+            validate=model.model_validate,
+            version_key=version_key,
         )
+        return model.model_validate(data), hit
 
     async def _nearby_from_db(self, query: NearbyQuery) -> NearbyPage:
         rows, total = await self._repo.nearby(
@@ -224,9 +222,9 @@ class ServiceService:
         await self._repo.commit()
         await self._invalidate(service_id)
 
-    async def _prefix(self) -> str:
-        version = await get_version(self._cache, VERSION_KEY) if self._cache else 0
-        return f"services:v{version}"
+    async def _prefix(self) -> str | None:
+        version = await get_version(self._cache, VERSION_KEY) if self._cache else None
+        return f"services:v{version}" if version is not None else None
 
     async def _invalidate(self, *service_ids: uuid.UUID) -> None:
         """Call once per write (bulk uploads too), only after the commit succeeds."""

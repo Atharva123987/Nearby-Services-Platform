@@ -19,15 +19,15 @@ SETTINGS = Settings(_env_file=None, jwt_secret="z" * 48, cors_origins="http://lo
 BODY = {"name": "Corner ATM", "category": "atm", "latitude": 28.6, "longitude": 77.2}
 
 
-def make_client(repo: FakeRepo) -> TestClient:
+def make_client(repo: FakeRepo, redis: FakeRedis | None = None) -> TestClient:
     app = create_app(SETTINGS)
     admin = Admin(
         id=uuid.uuid4(), email="a@example.com", is_active=True, created_at=datetime.now(UTC)
     )
     app.dependency_overrides[get_current_admin] = lambda: admin
     app.dependency_overrides[get_service_repository] = lambda: repo
-    redis = FakeRedis()
-    app.dependency_overrides[get_redis] = lambda: redis
+    cache = redis if redis is not None else FakeRedis()
+    app.dependency_overrides[get_redis] = lambda: cache
     return TestClient(app)
 
 
@@ -213,18 +213,33 @@ def test_public_list_and_detail_are_cached() -> None:
     assert "X-Cache" not in client.get("/api/v1/admin/services").headers
 
 
-def test_nearby_rounds_coordinates_to_share_cache_entries() -> None:
+def test_nearby_preserves_exact_center_and_radius() -> None:
     client = make_client(FakeRepo())
     client.post("/api/v1/admin/services", json=BODY)
-    first = client.get(
-        "/api/v1/services/nearby", params={"lat": 28.60001, "lng": 77.2, "radius_km": 4.2}
-    )
+    client.post("/api/v1/admin/services", json={**BODY, "name": "Edge ATM", "latitude": 28.6385})
+    url = "/api/v1/services/nearby"
+    params = {"lat": 28.60001, "lng": 77.2, "radius_km": 4.2}
+    first = client.get(url, params=params)
     assert first.headers["X-Cache"] == "MISS"
-    assert first.json()["query"]["radius_km"] == 4.5
-    second = client.get(
-        "/api/v1/services/nearby", params={"lat": 28.60004, "lng": 77.2, "radius_km": 4.4}
-    )
-    assert second.headers["X-Cache"] == "HIT"
+    assert first.json()["query"] == {**params, "category": None, "limit": 20, "offset": 0}
+    assert [item["name"] for item in first.json()["items"]] == ["Corner ATM"]
+    assert client.get(url, params=params).headers["X-Cache"] == "HIT"
+
+    second = client.get(url, params={**params, "lat": 28.60004, "radius_km": 4.4})
+    assert second.headers["X-Cache"] == "MISS"
+    assert [item["name"] for item in second.json()["items"]] == ["Corner ATM", "Edge ATM"]
+
+
+def test_invalid_cached_detail_falls_back_to_database() -> None:
+    redis = FakeRedis()
+    client = make_client(FakeRepo(), redis)
+    service_id = client.post("/api/v1/admin/services", json=BODY).json()["id"]
+    url = f"/api/v1/services/{service_id}"
+    redis.store[f"service:{service_id}"] = "{}"
+    detail = client.get(url)
+    assert detail.headers["X-Cache"] == "MISS"
+    assert detail.json()["name"] == BODY["name"]
+    assert client.get(url).headers["X-Cache"] == "HIT"
 
 
 def test_update_invalidates_cached_reads() -> None:
