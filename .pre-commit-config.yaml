@@ -1,0 +1,45 @@
+# Install: `make install` (or `uvx pre-commit install`).
+# Backend/frontend hooks run the project's own pinned tools (uv.lock / package-lock.json).
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (backend)
+        entry: uv run --directory backend ruff check --fix --force-exclude
+        language: system
+        types: [python]
+        files: ^backend/
+      - id: black
+        name: black (backend)
+        entry: uv run --directory backend black
+        language: system
+        types: [python]
+        files: ^backend/
+      - id: mypy
+        name: mypy (backend)
+        entry: uv run --directory backend mypy
+        language: system
+        files: ^backend/.*\.py$
+        pass_filenames: false
+      - id: eslint
+        name: eslint (frontend)
+        entry: npm --prefix frontend run lint
+        language: system
+        files: ^frontend/.*\.(ts|tsx|js|mjs)$
+        pass_filenames: false
+      - id: prettier
+        name: prettier (frontend)
+        entry: npm --prefix frontend run format:check
+        language: system
+        files: ^frontend/
+        pass_filenames: false
