@@ -23,6 +23,7 @@ import {
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { fetchServicesInView, serviceKeys } from "@/features/services/api";
 import { CATEGORY_STYLES, formatRating } from "@/features/services/categories";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { distanceKm } from "@/lib/geo";
 import { useMapStore } from "@/stores/map-store";
 import type { LatLng, Service, ServiceCategory } from "@/types/api";
@@ -113,9 +114,11 @@ export default function ServiceMap() {
   const viewport = useMapStore((s) => s.viewport);
   const userLocation = useMapStore((s) => s.userLocation);
   const category = useMapStore((s) => s.selectedCategory);
-  const [bbox, setBBox] = useState<string | null>(null);
+  const [liveBBox, setBBox] = useState<string | null>(null);
+  // Rapid pans/zooms collapse into one request once the map settles.
+  const bbox = useDebouncedValue(liveBBox, 300);
 
-  const { data } = useQuery({
+  const { data, isError, isFetching, refetch } = useQuery({
     queryKey: serviceKeys.list({ bbox: bbox ?? "", category }),
     queryFn: () => fetchServicesInView({ bbox: bbox ?? "", category }),
     enabled: bbox !== null,
@@ -123,37 +126,72 @@ export default function ServiceMap() {
   });
 
   return (
-    <MapContainer
-      center={[viewport.lat, viewport.lng]}
-      zoom={viewport.zoom}
-      className="h-full w-full"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <ViewportTracker onBBox={setBBox} />
-      <RecenterOnUser />
-      {userLocation && (
-        <CircleMarker
-          center={userLocation}
-          radius={8}
-          pathOptions={{ color: "#fff", fillColor: "#2563eb", fillOpacity: 1 }}
-        />
-      )}
-      <MarkerClusterGroup chunkedLoading>
-        {data?.items.map((service) => (
-          <Marker
-            key={service.id}
-            position={[service.latitude, service.longitude]}
-            icon={categoryIcons[service.category]}
+    <div className="relative h-full w-full">
+      {/* Inset so overlays never cover the top-left zoom controls. */}
+      <div className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex justify-center">
+        {isError ? (
+          <div
+            role="alert"
+            className="pointer-events-auto flex items-center gap-3 rounded-md bg-red-600 px-3 py-2 text-sm text-white shadow"
           >
-            <Popup>
-              <ServicePopup service={service} userLocation={userLocation} />
-            </Popup>
-          </Marker>
-        ))}
-      </MarkerClusterGroup>
-    </MapContainer>
+            Couldn&apos;t load services.
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="rounded bg-white/20 px-2 py-0.5 font-medium hover:bg-white/30 disabled:opacity-50"
+            >
+              {isFetching ? "Retrying…" : "Retry"}
+            </button>
+          </div>
+        ) : (
+          data?.total === 0 &&
+          !isFetching && (
+            <div
+              role="status"
+              className="rounded-md bg-white/90 px-3 py-2 text-sm text-gray-700 shadow"
+            >
+              No services in this area. Try zooming out or moving the map.
+            </div>
+          )
+        )}
+      </div>
+      <MapContainer
+        center={[viewport.lat, viewport.lng]}
+        zoom={viewport.zoom}
+        className="h-full w-full"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <ViewportTracker onBBox={setBBox} />
+        <RecenterOnUser />
+        {userLocation && (
+          <CircleMarker
+            center={userLocation}
+            radius={8}
+            pathOptions={{
+              color: "#fff",
+              fillColor: "#2563eb",
+              fillOpacity: 1,
+            }}
+          />
+        )}
+        <MarkerClusterGroup chunkedLoading>
+          {data?.items.map((service) => (
+            <Marker
+              key={service.id}
+              position={[service.latitude, service.longitude]}
+              icon={categoryIcons[service.category]}
+            >
+              <Popup>
+                <ServicePopup service={service} userLocation={userLocation} />
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
+      </MapContainer>
+    </div>
   );
 }
