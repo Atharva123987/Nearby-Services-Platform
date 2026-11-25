@@ -58,8 +58,10 @@ ServiceRepositoryDep = Annotated[ServiceRepository, Depends(get_service_reposito
 AdminRepositoryDep = Annotated[AdminRepository, Depends(get_admin_repository)]
 
 
-def get_service_service(repository: ServiceRepositoryDep) -> ServiceService:
-    return ServiceService(repository)
+def get_service_service(
+    repository: ServiceRepositoryDep, redis: RedisDep, settings: SettingsDep
+) -> ServiceService:
+    return ServiceService(repository, cache=redis, settings=settings)
 
 
 ServiceServiceDep = Annotated[ServiceService, Depends(get_service_service)]

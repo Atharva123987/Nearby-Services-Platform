@@ -197,7 +197,7 @@ def test_nearby_converts_km_and_orders_by_distance() -> None:
     service = ServiceService(FakeRepo())
     for name, lat in (("far", 0.05), ("near", 0.01), ("outside", 1.0)):
         asyncio.run(service.create(make(name, lat=lat, lng=0.0)))
-    page = asyncio.run(service.nearby(NearbyQuery(lat=0, lng=0, radius_km=10)))
+    page, _ = asyncio.run(service.nearby(NearbyQuery(lat=0, lng=0, radius_km=10)))
     assert [s.name for s in page.items] == ["near", "far"]
     assert page.total == 2
     assert page.items[0].distance_km == 1.11  # 0.01 deg of latitude, rounded to 2 dp

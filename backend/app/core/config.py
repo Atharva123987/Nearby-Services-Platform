@@ -99,6 +99,7 @@ class Settings(BaseSettings):
     cache_ttl_default_seconds: int = Field(default=300, ge=0)
     cache_ttl_search_seconds: int = Field(default=60, ge=0)
     cache_ttl_service_detail_seconds: int = Field(default=600, ge=0)
+    cache_ttl_empty_seconds: int = Field(default=15, ge=0)
 
     # --- HTTP --------------------------------------------------------------
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
