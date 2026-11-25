@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+import pytest
+from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 from redis.exceptions import ConnectionError as RedisConnectionError
 
-from app.api.deps import get_db_session
+from app.api.deps import default_rate_limit, get_current_admin, get_db_session
 from app.core.config import Settings
 from app.core.rate_limit import client_ip
 from app.main import create_app
@@ -57,18 +58,25 @@ class FakeRedis:
         return FakePipeline(self)
 
 
+@pytest.fixture(autouse=True)
+def low_limits(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Limits come from env, as in production; tests just set them low.
+    for name, value in {
+        "RATE_LIMIT_ENABLED": "true",
+        "RATE_LIMIT_DEFAULT_PER_MINUTE": "2",
+        "RATE_LIMIT_NEARBY_PER_MINUTE": "1",
+        "RATE_LIMIT_ADMIN_WRITE_PER_MINUTE": "1",
+        "RATE_LIMIT_AUTH_PER_MINUTE": "1",
+    }.items():
+        monkeypatch.setenv(name, value)
+
+
 def build(redis: FakeRedis) -> FastAPI:
-    settings = Settings(
-        _env_file=None,
-        jwt_secret="y" * 48,
-        rate_limit_enabled=True,
-        rate_limit_default_per_minute=2,
-        rate_limit_auth_per_minute=1,
-    )
-    app = create_app(settings)
+    app = create_app(Settings(_env_file=None, jwt_secret="y" * 48))
     app.state.redis = redis
     # No DB in unit tests; the requests below fail validation before touching it.
     app.dependency_overrides[get_db_session] = lambda: None
+    app.dependency_overrides[get_current_admin] = lambda: None
     return app
 
 
@@ -80,6 +88,46 @@ def test_default_limit_returns_429_with_retry_after() -> None:
     response = client.get("/api/v1/services/not-a-uuid")
     assert response.json()["error"]["code"] == "too_many_requests"
     assert 0 < int(response.headers["Retry-After"]) <= 60
+    assert response.headers["X-RateLimit-Limit"] == "2"
+    assert response.headers["X-RateLimit-Remaining"] == "0"
+    assert int(response.headers["X-RateLimit-Reset"]) % 60 == 0
+
+
+def test_window_reset_allows_requests_again(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = [1_800_000_000.0]
+    monkeypatch.setattr("time.time", lambda: now[0])
+    client = TestClient(build(FakeRedis()))
+    assert client.get("/api/v1/services/nearby").status_code == 422
+    assert client.get("/api/v1/services/nearby").status_code == 429
+    now[0] += 60
+    assert client.get("/api/v1/services/nearby").status_code == 422
+
+
+def test_nearby_tier_is_stricter_than_default() -> None:
+    client = TestClient(build(FakeRedis()))
+    first = client.get("/api/v1/services/nearby")
+    assert first.status_code == 422
+    # Default tier is 2/min, so this 429 comes from the nearby tier (1/min).
+    assert client.get("/api/v1/services/nearby").status_code == 429
+
+
+def test_admin_write_tier() -> None:
+    client = TestClient(build(FakeRedis()))
+    assert client.post("/api/v1/admin/services", json={}).status_code == 422
+    assert client.post("/api/v1/admin/services", json={}).status_code == 429
+
+
+def test_success_response_has_rate_limit_headers() -> None:
+    app = build(FakeRedis())
+
+    @app.get("/ping", dependencies=[Depends(default_rate_limit)])
+    async def ping() -> dict[str, str]:
+        return {}
+
+    response = TestClient(app).get("/ping")
+    assert response.status_code == 200
+    assert response.headers["X-RateLimit-Limit"] == "2"
+    assert response.headers["X-RateLimit-Remaining"] == "1"
 
 
 def test_health_is_exempt() -> None:

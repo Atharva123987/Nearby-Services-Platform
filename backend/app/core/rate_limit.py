@@ -43,12 +43,13 @@ def client_ip(peer: str | None, forwarded_for: str | None, trusted_proxies: list
     return ip
 
 
-async def hit(redis: Redis, key: str, limit: int) -> tuple[bool, int]:
-    """Count one request. Returns ``(allowed, retry_after_seconds)``. Raises ``RedisError``."""
+async def hit(redis: Redis, key: str) -> tuple[int, int]:
+    """Count one request. Returns ``(count_in_window, window_reset_epoch)``. Raises ``RedisError``."""
     now = int(time.time())
-    window_key = f"ratelimit:{key}:{now // WINDOW_SECONDS}"
+    window = now // WINDOW_SECONDS
+    window_key = f"ratelimit:{key}:{window}"
     async with redis.pipeline(transaction=True) as pipe:
         pipe.incr(window_key)
         pipe.expire(window_key, WINDOW_SECONDS)
         count, _ = await pipe.execute()
-    return int(count) <= limit, WINDOW_SECONDS - now % WINDOW_SECONDS
+    return int(count), (window + 1) * WINDOW_SECONDS

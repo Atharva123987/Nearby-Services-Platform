@@ -93,7 +93,10 @@ class Settings(BaseSettings):
 
     # --- Rate limiting (requests per minute, per client) --------------------
     rate_limit_enabled: bool = True
-    rate_limit_default_per_minute: int = Field(default=120, ge=1)
+    # Every /api/v1 route (public list/detail reads); the tiers below apply on top of it.
+    rate_limit_default_per_minute: int = Field(default=100, ge=1)
+    rate_limit_nearby_per_minute: int = Field(default=30, ge=1)
+    rate_limit_admin_write_per_minute: int = Field(default=60, ge=1)
     rate_limit_auth_per_minute: int = Field(default=10, ge=1)
     # Proxy IPs/CIDRs whose X-Forwarded-For we trust. Empty => header ignored (spoofable).
     trusted_proxies: Annotated[list[str], NoDecode] = []

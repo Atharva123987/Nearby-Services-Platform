@@ -1,10 +1,11 @@
 """Shared FastAPI dependencies."""
 
 import logging
+import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException, Request, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.asyncio import Redis
 from redis.exceptions import RedisError
@@ -97,10 +98,14 @@ CurrentAdminDep = Annotated[Admin, Depends(get_current_admin)]
 
 def rate_limiter(
     scope: str, limit_setting: str, *, fail_open: bool
-) -> Callable[[Request, SettingsDep], Awaitable[None]]:
-    """Per-IP limit of ``settings.<limit_setting>`` requests per minute (see core/rate_limit)."""
+) -> Callable[[Request, Response, SettingsDep], Awaitable[None]]:
+    """Per-IP limit of ``settings.<limit_setting>`` requests per minute (see core/rate_limit).
 
-    async def dependency(request: Request, settings: SettingsDep) -> None:
+    Sets ``X-RateLimit-Limit/Remaining/Reset`` (reset = Unix time the window ends). When
+    several tiers apply to a route, the route's own (stricter) tier sets them last.
+    """
+
+    async def dependency(request: Request, response: Response, settings: SettingsDep) -> None:
         if not settings.rate_limit_enabled:
             return
         redis = request.app.state.redis
@@ -109,19 +114,25 @@ def rate_limiter(
             request.headers.get("x-forwarded-for"),
             settings.trusted_proxies,
         )
+        limit: int = getattr(settings, limit_setting)
         try:
-            allowed, retry_after = await rate_limit.hit(
-                redis, f"{scope}:{ip}", getattr(settings, limit_setting)
-            )
+            count, reset_at = await rate_limit.hit(redis, f"{scope}:{ip}")
         except RedisError as exc:
             logger.warning("rate limit check failed", extra={"scope": scope, "error": str(exc)})
             if fail_open:
                 return
             raise HTTPException(503, "Service temporarily unavailable") from exc
-        if not allowed:
+        headers = {
+            "X-RateLimit-Limit": str(limit),
+            "X-RateLimit-Remaining": str(max(limit - count, 0)),
+            "X-RateLimit-Reset": str(reset_at),
+        }
+        if count > limit:
+            retry_after = max(reset_at - int(time.time()), 1)
             raise HTTPException(
-                429, "Rate limit exceeded", headers={"Retry-After": str(retry_after)}
+                429, "Rate limit exceeded", headers={**headers, "Retry-After": str(retry_after)}
             )
+        response.headers.update(headers)
 
     return dependency
 
@@ -129,3 +140,7 @@ def rate_limiter(
 # Public routes stay up if Redis is down; login does not (no brute force during an outage).
 default_rate_limit = rate_limiter("default", "rate_limit_default_per_minute", fail_open=True)
 auth_rate_limit = rate_limiter("auth", "rate_limit_auth_per_minute", fail_open=False)
+nearby_rate_limit = rate_limiter("nearby", "rate_limit_nearby_per_minute", fail_open=True)
+admin_write_rate_limit = rate_limiter(
+    "admin_write", "rate_limit_admin_write_per_minute", fail_open=True
+)
