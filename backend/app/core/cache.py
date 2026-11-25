@@ -50,3 +50,22 @@ async def get_or_set(
     except RedisError as exc:
         logger.warning("cache set failed", extra={"key": key, "error": str(exc)})
     return value, False
+
+
+async def get_version(redis: Redis, key: str) -> int:
+    """Current namespace version (0 if unset or Redis is down)."""
+    try:
+        return int(await redis.get(key) or 0)
+    except RedisError as exc:
+        logger.warning("cache version read failed", extra={"key": key, "error": str(exc)})
+        return 0
+
+
+async def invalidate(redis: Redis, version_key: str, *keys: str) -> None:
+    """Bump the namespace version (O(1), no key scans) and delete ``keys`` directly."""
+    try:
+        await redis.incr(version_key)
+        if keys:
+            await redis.delete(*keys)
+    except RedisError as exc:
+        logger.warning("cache invalidation failed", extra={"key": version_key, "error": str(exc)})

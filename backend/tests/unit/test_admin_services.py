@@ -225,3 +225,19 @@ def test_nearby_rounds_coordinates_to_share_cache_entries() -> None:
         "/api/v1/services/nearby", params={"lat": 28.60004, "lng": 77.2, "radius_km": 4.4}
     )
     assert second.headers["X-Cache"] == "HIT"
+
+
+def test_update_invalidates_cached_reads() -> None:
+    client = make_client(FakeRepo())
+    service_id = client.post("/api/v1/admin/services", json=BODY).json()["id"]
+    params = {"lat": 28.6, "lng": 77.2}
+    for url, p in ((f"/api/v1/services/{service_id}", None), ("/api/v1/services/nearby", params)):
+        client.get(url, params=p)
+        assert client.get(url, params=p).headers["X-Cache"] == "HIT"
+    client.patch(f"/api/v1/admin/services/{service_id}", json={"name": "Renamed ATM"})
+    detail = client.get(f"/api/v1/services/{service_id}")
+    assert detail.headers["X-Cache"] == "MISS"
+    assert detail.json()["name"] == "Renamed ATM"
+    nearby = client.get("/api/v1/services/nearby", params=params)
+    assert nearby.headers["X-Cache"] == "MISS"
+    assert nearby.json()["items"][0]["name"] == "Renamed ATM"

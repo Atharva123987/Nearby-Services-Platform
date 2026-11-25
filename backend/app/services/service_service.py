@@ -9,7 +9,7 @@ from typing import Protocol
 
 from redis.asyncio import Redis
 
-from app.core.cache import get_or_set
+from app.core.cache import get_or_set, get_version, invalidate
 from app.core.config import Settings
 from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
@@ -24,9 +24,9 @@ from app.schemas.service import (
     ServiceUpdate,
 )
 
-# Bump to invalidate every cached public read at once.
-CACHE_VERSION = 1
-CACHE_PREFIX = f"services:v{CACHE_VERSION}"
+# List/nearby keys live under services:v{N}; any write INCRs this key, orphaning old entries
+# (they expire by TTL). Detail keys are deleted directly instead.
+VERSION_KEY = "services:version"
 
 # Same name (case-insensitive) within this many metres counts as a duplicate.
 DUPLICATE_RADIUS_M = 10.0
@@ -85,6 +85,7 @@ class ServiceService:
         await self._ensure_not_duplicate(data.name, data.latitude, data.longitude)
         service = await self._repo.create(data)
         await self._repo.commit()
+        await self._invalidate()
         return service
 
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead:
@@ -118,7 +119,7 @@ class ServiceService:
             return (await self.get(service_id)).model_dump(mode="json")
 
         data, hit = await self._cached(
-            f"{CACHE_PREFIX}:service:{service_id}",
+            _detail_key(service_id),
             load,
             ttl=self._settings.cache_ttl_service_detail_seconds if self._settings else 0,
         )
@@ -133,7 +134,7 @@ class ServiceService:
     ) -> tuple[ServicePage, bool]:
         """Public list read (admin list uses ``list`` and is never cached)."""
         bbox_key = bbox.model_dump_json() if bbox else None
-        key = f"{CACHE_PREFIX}:list:{page}:{page_size}:{category}:{bbox_key}"
+        key = f"{await self._prefix()}:list:{page}:{page_size}:{category}:{bbox_key}"
 
         async def load() -> dict:
             result = await self.list(page, page_size, category=category, bbox=bbox)
@@ -158,7 +159,7 @@ class ServiceService:
             }
         )
         key = (
-            f"{CACHE_PREFIX}:nearby:{query.lat}:{query.lng}:{query.radius_km}"
+            f"{await self._prefix()}:nearby:{query.lat}:{query.lng}:{query.radius_km}"
             f":{query.category}:{query.limit}:{query.offset}"
         )
 
@@ -213,6 +214,7 @@ class ServiceService:
         if updated is None:
             raise NotFoundError(f"Service {service_id} not found")
         await self._repo.commit()
+        await self._invalidate(service_id)
         return updated
 
     async def delete(self, service_id: uuid.UUID) -> None:
@@ -220,6 +222,16 @@ class ServiceService:
         if not await self._repo.delete(service_id):
             raise NotFoundError(f"Service {service_id} not found")
         await self._repo.commit()
+        await self._invalidate(service_id)
+
+    async def _prefix(self) -> str:
+        version = await get_version(self._cache, VERSION_KEY) if self._cache else 0
+        return f"services:v{version}"
+
+    async def _invalidate(self, *service_ids: uuid.UUID) -> None:
+        """Call once per write (bulk uploads too), only after the commit succeeds."""
+        if self._cache is not None:
+            await invalidate(self._cache, VERSION_KEY, *(_detail_key(i) for i in service_ids))
 
     async def _ensure_not_duplicate(
         self, name: str, lat: float, lng: float, exclude_id: uuid.UUID | None = None
@@ -228,3 +240,7 @@ class ServiceService:
             raise ConflictError(
                 f"A service named {name!r} already exists within {DUPLICATE_RADIUS_M:g} m"
             )
+
+
+def _detail_key(service_id: uuid.UUID) -> str:
+    return f"service:{service_id}"
