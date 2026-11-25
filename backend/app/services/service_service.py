@@ -15,7 +15,9 @@ DUPLICATE_RADIUS_M = 10.0
 
 class ServiceRepositoryProtocol(Protocol):
     async def create(self, data: ServiceCreate) -> ServiceRead: ...
-    async def get(self, service_id: uuid.UUID) -> ServiceRead | None: ...
+    async def get(
+        self, service_id: uuid.UUID, *, for_update: bool = False
+    ) -> ServiceRead | None: ...
     async def list(
         self,
         *,
@@ -48,8 +50,8 @@ class ServiceService:
         await self._repo.commit()
         return service
 
-    async def get(self, service_id: uuid.UUID) -> ServiceRead:
-        service = await self._repo.get(service_id)
+    async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead:
+        service = await self._repo.get(service_id, for_update=for_update)
         if service is None:
             raise NotFoundError(f"Service {service_id} not found")
         return service
@@ -73,7 +75,7 @@ class ServiceService:
         return ServicePage(items=items, page=page, page_size=page_size, total=total)
 
     async def update(self, service_id: uuid.UUID, data: ServiceUpdate) -> ServiceRead:
-        current = await self.get(service_id)
+        current = await self.get(service_id, for_update=True)
         if data.name is not None or data.latitude is not None:
             await self._ensure_not_duplicate(
                 data.name or current.name,

@@ -33,7 +33,7 @@ class FakeRepo:
         self.items[item.id] = item
         return item
 
-    async def get(self, service_id: uuid.UUID) -> ServiceRead | None:
+    async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         return self.items.get(service_id)
 
     async def list(

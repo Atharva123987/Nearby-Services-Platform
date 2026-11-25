@@ -51,8 +51,10 @@ class ServiceRepository:
         assert created is not None  # noqa: S101 - just inserted in this transaction
         return created
 
-    async def get(self, service_id: uuid.UUID) -> ServiceRead | None:
+    async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         stmt = select(Service, _lng, _lat).where(Service.id == service_id)
+        if for_update:
+            stmt = stmt.with_for_update()
         row = (await self._session.execute(stmt)).one_or_none()
         return _to_read(row) if row is not None else None
 
@@ -74,15 +76,27 @@ class ServiceRepository:
             filters.append(Service.name.ilike(f"%{escaped}%", escape="\\"))
 
         if bbox is not None:
-            envelope = func.ST_MakeEnvelope(
-                bbox.min_lng, bbox.min_lat, bbox.max_lng, bbox.max_lat, SRID_WGS84
-            )
-            # geometry (planar lng/lat) so the box edges follow lat/lng lines, as on a map.
-            filters.append(func.ST_Intersects(cast(Service.location, Geometry), envelope))
+            if bbox.min_lng == bbox.max_lng or bbox.min_lat == bbox.max_lat:
+                # PostGIS envelopes with zero area are degenerate polygons.
+                filters.extend(
+                    (
+                        _lng.between(bbox.min_lng, bbox.max_lng),
+                        _lat.between(bbox.min_lat, bbox.max_lat),
+                    )
+                )
+            else:
+                envelope = func.ST_MakeEnvelope(
+                    bbox.min_lng, bbox.min_lat, bbox.max_lng, bbox.max_lat, SRID_WGS84
+                )
+                # Planar geometry keeps the box edges on latitude and longitude lines.
+                filters.append(func.ST_Intersects(cast(Service.location, Geometry), envelope))
 
         total = (
             await self._session.execute(select(func.count()).select_from(Service).where(*filters))
         ).scalar_one()
+        if offset >= total:
+            return [], total
+
         stmt = (
             select(Service, _lng, _lat)
             .where(*filters)
@@ -125,9 +139,13 @@ class ServiceRepository:
         radius_m: float,
         exclude_id: uuid.UUID | None = None,
     ) -> bool:
-        """True if a service with the same name (case-insensitive) is within radius_m metres."""
+        """Check for a duplicate while holding the name lock until the transaction ends."""
+        normalized_name = func.lower(name)
+        # Serialize checks and writes for this name, including when no matching row exists yet.
+        lock_key = func.hashtextextended(func.concat("services:", normalized_name), 0)
+        await self._session.execute(select(func.pg_advisory_xact_lock(lock_key)))
         stmt = select(Service.id).where(
-            func.lower(Service.name) == name.lower(),
+            func.lower(Service.name) == normalized_name,
             func.ST_DWithin(Service.location, make_point(lat=lat, lng=lng), radius_m),
         )
         if exclude_id is not None:

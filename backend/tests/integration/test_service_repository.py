@@ -2,22 +2,25 @@
 
 Set TEST_DATABASE_URL (asyncpg URL) to enable, e.g.
 ``TEST_DATABASE_URL=postgresql+asyncpg://fieldguide:fieldguide@localhost:5432/fieldguide``.
-Each test runs inside a transaction that is rolled back.
+Tests use rolled-back transactions unless they verify writes across transactions.
 """
 
 from __future__ import annotations
 
 import asyncio
 import os
+import uuid
 from collections.abc import Awaitable, Callable
 
 import pytest
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy import delete, func, text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.models.service import ServiceCategory
+from app.core.errors import ConflictError
+from app.models.service import Service, ServiceCategory
 from app.repositories.service_repository import ServiceRepository
 from app.schemas.service import BBox, ServiceCreate, ServiceUpdate
+from app.services.service_service import ServiceService
 
 DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(not DATABASE_URL, reason="TEST_DATABASE_URL not set")
@@ -117,6 +120,40 @@ def test_update_delete_and_nearby_duplicate() -> None:
     in_rollback(body)
 
 
+def test_concurrent_creates_reject_duplicate() -> None:
+    async def run() -> None:
+        assert DATABASE_URL is not None
+        engine = create_async_engine(DATABASE_URL)
+        sessions = async_sessionmaker(engine)
+        name = f"Concurrent ATM {uuid.uuid4()}"
+
+        async def create(candidate: str) -> bool:
+            async with sessions() as session:
+                service = ServiceService(ServiceRepository(session))
+                data = ServiceCreate(name=candidate, category="atm", latitude=28.6, longitude=77.2)
+                try:
+                    await service.create(data)
+                except ConflictError:
+                    return False
+                return True
+
+        try:
+            async with asyncio.TaskGroup() as group:
+                first = group.create_task(create(name))
+                second = group.create_task(create(name.upper()))
+            assert sorted([first.result(), second.result()]) == [False, True]
+        finally:
+            try:
+                async with sessions.begin() as session:
+                    await session.execute(
+                        delete(Service).where(func.lower(Service.name) == name.lower())
+                    )
+            finally:
+                await engine.dispose()
+
+    asyncio.run(run())
+
+
 def test_list_filters_searches_and_orders_stably() -> None:
     async def body(session: AsyncSession) -> None:
         await session.execute(text("DELETE FROM services"))  # rolled back afterwards
@@ -137,6 +174,7 @@ def test_list_filters_searches_and_orders_stably() -> None:
         found, total = await repo.list(limit=10, offset=0, search="0%")
         assert total == 1 and found[0].name == "100% Shop"  # % is matched literally
         assert (await repo.list(limit=10, offset=100))[0] == []
+        assert await repo.list(limit=10, offset=2**63) == ([], 4)
 
     in_rollback(body)
 
@@ -150,5 +188,9 @@ def test_list_bbox_returns_only_services_inside() -> None:
         bbox = BBox(min_lng=77, min_lat=28, max_lng=78, max_lat=29)
         items, total = await repo.list(limit=10, offset=0, bbox=bbox)
         assert total == 2 and {s.name for s in items} == {"In", "Edge"}
+
+        point = BBox(min_lng=77.2, min_lat=28.6, max_lng=77.2, max_lat=28.6)
+        items, total = await repo.list(limit=10, offset=0, bbox=point)
+        assert total == 1 and [s.name for s in items] == ["In"]
 
     in_rollback(body)
