@@ -10,7 +10,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import {
   CircleMarker,
   MapContainer,
@@ -48,28 +48,45 @@ const categoryIcons = Object.fromEntries(
   ]),
 ) as Record<ServiceCategory, L.DivIcon>;
 
-function toBBox(bounds: L.LatLngBounds): string {
-  return [
-    bounds.getWest(),
-    bounds.getSouth(),
-    bounds.getEast(),
-    bounds.getNorth(),
-  ]
-    .map((n) => n.toFixed(5))
-    .join(",");
+function toBBoxes(bounds: L.LatLngBounds): string[] {
+  const south = Math.max(-90, bounds.getSouth());
+  const north = Math.min(90, bounds.getNorth());
+  const format = (west: number, east: number) =>
+    [west, south, east, north].map((n) => n.toFixed(5)).join(",");
+
+  const width = bounds.getEast() - bounds.getWest();
+  if (width >= 360) return [format(-180, 180)];
+
+  const west = L.Util.wrapNum(bounds.getWest(), [-180, 180]);
+  const east = west + width;
+  // The API accepts ordered bounds inside the canonical longitude range.
+  return east > 180
+    ? [format(west, 180), format(-180, east - 360)]
+    : [format(west, east)];
+}
+
+function longitudeInView(longitude: number, center: number): number {
+  return longitude + 360 * Math.round((center - longitude) / 360);
 }
 
 /** Keeps the store's viewport and the fetched bbox in sync with the map. */
-function ViewportTracker({ onBBox }: { onBBox: (bbox: string) => void }) {
+function ViewportTracker({
+  onBoundsChange,
+}: {
+  onBoundsChange: (bboxes: string[]) => void;
+}) {
   const setViewport = useMapStore((s) => s.setViewport);
   const map = useMapEvents({
     moveend: () => {
       const { lat, lng } = map.getCenter();
       setViewport({ lat, lng, zoom: map.getZoom() });
-      onBBox(toBBox(map.getBounds()));
+      onBoundsChange(toBBoxes(map.getBounds()));
     },
   });
-  useEffect(() => onBBox(toBBox(map.getBounds())), [map, onBBox]);
+  useEffect(
+    () => onBoundsChange(toBBoxes(map.getBounds())),
+    [map, onBoundsChange],
+  );
   return null;
 }
 
@@ -110,18 +127,44 @@ function ServicePopup({
   );
 }
 
+const ServiceMarker = memo(function ServiceMarker({
+  service,
+  longitude,
+  userLocation,
+}: {
+  service: Service;
+  longitude: number;
+  userLocation: LatLng | null;
+}) {
+  // Keep the position stable so the cluster does not remove an unchanged marker
+  // while its popup is open.
+  const position = useMemo<L.LatLngTuple>(
+    () => [service.latitude, longitude],
+    [service.latitude, longitude],
+  );
+
+  return (
+    <Marker position={position} icon={categoryIcons[service.category]}>
+      <Popup>
+        <ServicePopup service={service} userLocation={userLocation} />
+      </Popup>
+    </Marker>
+  );
+});
+
 export default function ServiceMap() {
   const viewport = useMapStore((s) => s.viewport);
   const userLocation = useMapStore((s) => s.userLocation);
   const category = useMapStore((s) => s.selectedCategory);
-  const [liveBBox, setBBox] = useState<string | null>(null);
+  const [liveBBoxes, setBBoxes] = useState<string[] | null>(null);
   // Rapid pans/zooms collapse into one request once the map settles.
-  const bbox = useDebouncedValue(liveBBox, 300);
+  const bboxes = useDebouncedValue(liveBBoxes, 300);
+  const listParams = { bboxes: bboxes ?? [], category };
 
   const { data, isError, isFetching, refetch } = useQuery({
-    queryKey: serviceKeys.list({ bbox: bbox ?? "", category }),
-    queryFn: () => fetchServicesInView({ bbox: bbox ?? "", category }),
-    enabled: bbox !== null,
+    queryKey: serviceKeys.list(listParams),
+    queryFn: () => fetchServicesInView(listParams),
+    enabled: bboxes !== null,
     placeholderData: keepPreviousData,
   });
 
@@ -165,11 +208,14 @@ export default function ServiceMap() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <ViewportTracker onBBox={setBBox} />
+        <ViewportTracker onBoundsChange={setBBoxes} />
         <RecenterOnUser />
         {userLocation && (
           <CircleMarker
-            center={userLocation}
+            center={[
+              userLocation.lat,
+              longitudeInView(userLocation.lng, viewport.lng),
+            ]}
             radius={8}
             pathOptions={{
               color: "#fff",
@@ -180,15 +226,12 @@ export default function ServiceMap() {
         )}
         <MarkerClusterGroup chunkedLoading>
           {data?.items.map((service) => (
-            <Marker
+            <ServiceMarker
               key={service.id}
-              position={[service.latitude, service.longitude]}
-              icon={categoryIcons[service.category]}
-            >
-              <Popup>
-                <ServicePopup service={service} userLocation={userLocation} />
-              </Popup>
-            </Marker>
+              service={service}
+              longitude={longitudeInView(service.longitude, viewport.lng)}
+              userLocation={userLocation}
+            />
           ))}
         </MarkerClusterGroup>
       </MapContainer>
