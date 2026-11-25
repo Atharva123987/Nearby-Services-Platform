@@ -224,10 +224,14 @@ def test_nearby_uses_metres_orders_by_distance_and_filters() -> None:
 def test_nearby_includes_point_exactly_on_the_radius() -> None:
     async def body(session: AsyncSession) -> None:
         repo = ServiceRepository(session)
-        await repo.create(ServiceCreate(name="Edge", category="atm", latitude=0.01, longitude=0))
+        await repo.create(ServiceCreate(name="Edge", category="atm", latitude=0.0099, longitude=0))
         ((_, distance_m),), _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=1, offset=0)
-        items, _ = await repo.nearby(lat=0, lng=0, radius_m=distance_m, limit=1, offset=0)
-        assert [s.name for s, _ in items] == ["Edge"]
+        items, total = await repo.nearby(lat=0, lng=0, radius_m=distance_m, limit=1, offset=0)
+        assert ([(s.name, metres) for s, metres in items], total) == ([("Edge", distance_m)], 1)
+        assert await repo.nearby(lat=0, lng=0, radius_m=distance_m - 0.001, limit=1, offset=0) == (
+            [],
+            0,
+        )
 
     in_rollback(body)
 

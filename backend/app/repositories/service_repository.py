@@ -23,6 +23,10 @@ from app.utils.geo import SRID_WGS84, make_point
 _lng = func.ST_X(cast(Service.location, Geometry)).label("lng")
 _lat = func.ST_Y(cast(Service.location, Geometry)).label("lat")
 
+# Geography ST_Distance rounds to 10 nanometres, while ST_DWithin compares
+# before rounding. Allow that precision so points on the boundary are included.
+_NEARBY_RADIUS_TOLERANCE_M = 1e-8
+
 
 def _to_read(row: Sequence[Any]) -> ServiceRead:
     service, lng, lat = row[:3]
@@ -76,7 +80,9 @@ class ServiceRepository:
     ) -> tuple[list[tuple[ServiceRead, float]], int]:
         """(service, distance in metres) within radius_m, nearest first, plus the total."""
         origin = make_point(lat=lat, lng=lng)
-        filters: list[ColumnElement[bool]] = [func.ST_DWithin(Service.location, origin, radius_m)]
+        filters: list[ColumnElement[bool]] = [
+            func.ST_DWithin(Service.location, origin, radius_m + _NEARBY_RADIUS_TOLERANCE_M)
+        ]
         if category is not None:
             filters.append(Service.category == category)
 
