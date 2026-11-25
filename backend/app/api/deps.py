@@ -62,6 +62,9 @@ def get_service_service(repository: ServiceRepositoryDep) -> ServiceService:
     return ServiceService(repository)
 
 
+ServiceServiceDep = Annotated[ServiceService, Depends(get_service_service)]
+
+
 def get_auth_service(repository: AdminRepositoryDep, settings: SettingsDep) -> AuthService:
     return AuthService(repository, settings)
 
