@@ -7,6 +7,7 @@ from functools import cache
 from typing import Protocol
 
 from app.core.config import Settings
+from app.core.errors import ForbiddenError
 from app.core.security import (
     InvalidCredentialsError,
     InvalidTokenError,
@@ -46,15 +47,28 @@ class AuthService:
         return self._issue(admin)
 
     async def refresh(self, refresh_token: str) -> TokenResponse:
-        claims = decode_token(refresh_token, TokenType.REFRESH, self._settings)
+        admin = await self._admin_from_token(refresh_token, TokenType.REFRESH)
+        if not admin.is_active:
+            raise InvalidTokenError("Invalid token")
+        return self._issue(admin)
+
+    async def get_current_admin(self, access_token: str) -> Admin:
+        admin = await self._admin_from_token(access_token, TokenType.ACCESS)
+        if not admin.is_active:
+            raise ForbiddenError("Admin account is inactive")
+        return admin
+
+    async def _admin_from_token(self, token: str, token_type: TokenType) -> Admin:
+        """Admin the token's ``sub`` points to; 401 if the token is bad or the admin is gone."""
+        claims = decode_token(token, token_type, self._settings)
         try:
             admin_id = uuid.UUID(claims["sub"])
         except ValueError as exc:
             raise InvalidTokenError("Invalid token") from exc
         admin = await self._repo.get(admin_id)
-        if admin is None or not admin.is_active:
+        if admin is None:
             raise InvalidTokenError("Invalid token")
-        return self._issue(admin)
+        return admin
 
     def _issue(self, admin: Admin) -> TokenResponse:
         subject = str(admin.id)

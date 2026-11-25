@@ -1,14 +1,10 @@
-from typing import Annotated
+from fastapi import APIRouter
 
-from fastapi import APIRouter, Depends
-
-from app.api.deps import get_auth_service
+from app.api.deps import AuthServiceDep, CurrentAdminDep
+from app.schemas.admin import AdminRead
 from app.schemas.auth import LoginRequest, RefreshRequest, TokenResponse
-from app.services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -19,3 +15,8 @@ async def login(body: LoginRequest, service: AuthServiceDep) -> TokenResponse:
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh(body: RefreshRequest, service: AuthServiceDep) -> TokenResponse:
     return await service.refresh(body.refresh_token)
+
+
+@router.get("/me", response_model=AdminRead)
+async def me(admin: CurrentAdminDep) -> AdminRead:
+    return AdminRead.model_validate(admin)

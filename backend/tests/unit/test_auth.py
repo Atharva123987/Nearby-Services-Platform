@@ -2,9 +2,10 @@ import uuid
 from datetime import UTC, datetime
 
 import pytest
+from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
-from app.api.deps import get_admin_repository
+from app.api.deps import get_admin_repository, get_current_admin
 from app.core.config import Settings
 from app.core.security import (
     TokenType,
@@ -18,6 +19,7 @@ from app.models.admin import Admin
 
 PASSWORD = "correct-horse-battery"
 SETTINGS = Settings(_env_file=None, jwt_secret="z" * 48, cors_origins="http://localhost:3000")
+OTHER_SETTINGS = Settings(_env_file=None, jwt_secret="q" * 48, cors_origins="http://localhost:3000")
 
 
 class FakeRepo:
@@ -124,3 +126,61 @@ def test_refresh_rejects_inactive_admin() -> None:
         json={"refresh_token": create_refresh_token(str(admin.id), SETTINGS)},
     )
     assert response.status_code == 401
+
+
+def test_me_returns_current_admin() -> None:
+    admin = make_admin()
+    token = create_access_token(str(admin.id), SETTINGS)
+    response = client_for(FakeRepo(admin)).get(
+        "/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["id"] == str(admin.id)
+    assert body["email"] == admin.email
+    assert "password_hash" not in body
+
+
+def test_me_without_authorization_header_is_401() -> None:
+    response = client_for(FakeRepo()).get("/api/v1/auth/me")
+    assert response.status_code == 401
+    assert response.json()["error"]["code"] == "invalid_token"
+
+
+@pytest.mark.parametrize(
+    "header",
+    [
+        lambda admin_id: f"Bearer {create_refresh_token(admin_id, SETTINGS)}",  # wrong type
+        lambda admin_id: f"Bearer {create_access_token(str(uuid.uuid4()), SETTINGS)}",  # deleted
+        lambda admin_id: f"Bearer {create_access_token(admin_id, OTHER_SETTINGS)}",  # bad sig
+        lambda admin_id: "Bearer not.a.jwt",
+        lambda admin_id: "Basic dXNlcjpwYXNz",
+    ],
+)
+def test_me_rejects_bad_tokens(header: object) -> None:
+    admin = make_admin()
+    response = client_for(FakeRepo(admin)).get(
+        "/api/v1/auth/me", headers={"Authorization": header(str(admin.id))}  # type: ignore[operator]
+    )
+    assert response.status_code == 401
+
+
+def test_me_inactive_admin_is_403() -> None:
+    admin = make_admin(is_active=False)
+    token = create_access_token(str(admin.id), SETTINGS)
+    response = client_for(FakeRepo(admin)).get(
+        "/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 403
+    assert response.json()["error"]["code"] == "forbidden"
+
+
+def test_every_admin_route_requires_current_admin() -> None:
+    for route in create_app(SETTINGS).routes:
+        if isinstance(route, APIRoute) and route.path.startswith("/api/v1/admin"):
+            assert any(d.call is get_current_admin for d in route.dependant.dependencies)
+
+
+def test_openapi_exposes_bearer_auth_for_swagger() -> None:
+    schema = client_for(FakeRepo()).get("/openapi.json").json()
+    assert schema["components"]["securitySchemes"]["HTTPBearer"]["scheme"] == "bearer"
