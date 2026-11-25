@@ -7,7 +7,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from geoalchemy2 import Geometry
-from sqlalchemy import ColumnElement, cast, delete, func, select, update
+from sqlalchemy import ColumnElement, cast, delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.service import Service, ServiceCategory
@@ -22,6 +22,9 @@ from app.utils.geo import SRID_WGS84, make_point
 # geography -> geometry so ST_X/ST_Y can read the point back (X = lng, Y = lat).
 _lng = func.ST_X(cast(Service.location, Geometry)).label("lng")
 _lat = func.ST_Y(cast(Service.location, Geometry)).label("lat")
+
+# asyncpg caps a statement at 32767 parameters; 6 columns x 1000 rows stays well under it.
+_INSERT_BATCH_SIZE = 1000
 
 # Geography ST_Distance rounds to 10 nanometres, while ST_DWithin compares
 # before rounding. Allow that precision so points on the boundary are included.
@@ -60,6 +63,21 @@ class ServiceRepository:
         created = await self.get(service.id)
         assert created is not None  # noqa: S101 - just inserted in this transaction
         return created
+
+    async def bulk_create(self, items: Sequence[ServiceCreate]) -> None:
+        """Multi-row INSERTs in the current transaction; the caller commits."""
+        for start in range(0, len(items), _INSERT_BATCH_SIZE):
+            values = [
+                {
+                    "name": data.name,
+                    "category": data.category,
+                    "location": make_point(lat=data.latitude, lng=data.longitude),
+                    "rating": data.rating,
+                    "meta": data.metadata,
+                }
+                for data in items[start : start + _INSERT_BATCH_SIZE]
+            ]
+            await self._session.execute(insert(Service).values(values))
 
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         stmt = select(Service, _lng, _lat).where(Service.id == service_id)

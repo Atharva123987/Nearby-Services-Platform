@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import uuid
-from collections.abc import Awaitable, Callable
-from typing import Protocol
+from collections.abc import Awaitable, Callable, Sequence
+from typing import Any, Literal, Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from redis.asyncio import Redis
 
 from app.core.cache import get_or_set, get_version, invalidate
@@ -15,6 +16,8 @@ from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
 from app.schemas.service import (
     BBox,
+    BulkRowError,
+    BulkUploadResult,
     NearbyPage,
     NearbyQuery,
     NearbyServiceRead,
@@ -34,6 +37,7 @@ DUPLICATE_RADIUS_M = 10.0
 
 class ServiceRepositoryProtocol(Protocol):
     async def create(self, data: ServiceCreate) -> ServiceRead: ...
+    async def bulk_create(self, items: Sequence[ServiceCreate]) -> None: ...
     async def get(
         self, service_id: uuid.UUID, *, for_update: bool = False
     ) -> ServiceRead | None: ...
@@ -87,6 +91,42 @@ class ServiceService:
         await self._repo.commit()
         await self._invalidate()
         return service
+
+    async def bulk_create(
+        self, rows: list[dict[str, Any]], mode: Literal["partial", "strict"] = "partial"
+    ) -> BulkUploadResult:
+        """Validate every row; partial inserts the valid ones, strict inserts nothing on any error.
+
+        Rows that repeat an earlier row in the file (same name, case-insensitive, and same
+        coordinates) are reported as errors. Existing services are not checked for duplicates.
+        """
+        valid: list[ServiceCreate] = []
+        errors: list[BulkRowError] = []
+        seen: dict[tuple[str, float, float], int] = {}
+        for number, raw in enumerate(rows, start=1):
+            data, row_errors = _validate_row(number, raw)
+            if data is not None:
+                key = (data.name.casefold(), data.latitude, data.longitude)
+                if key in seen:
+                    row_errors.append(
+                        BulkRowError(
+                            row=number, field=None, message=f"duplicate of row {seen[key]}"
+                        )
+                    )
+                else:
+                    seen[key] = number
+                    valid.append(data)
+            errors.extend(row_errors)
+
+        failed = len({e.row for e in errors})
+        if valid and not (mode == "strict" and errors):
+            await self._repo.bulk_create(valid)
+            await self._repo.commit()
+            await self._invalidate()
+            inserted = len(valid)
+        else:
+            inserted = 0
+        return BulkUploadResult(total=len(rows), inserted=inserted, failed=failed, errors=errors)
 
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead:
         service = await self._repo.get(service_id, for_update=for_update)
@@ -238,6 +278,39 @@ class ServiceService:
             raise ConflictError(
                 f"A service named {name!r} already exists within {DUPLICATE_RADIUS_M:g} m"
             )
+
+
+def _validate_row(
+    number: int, raw: dict[str, Any]
+) -> tuple[ServiceCreate | None, list[BulkRowError]]:
+    values = dict(raw)
+    for field in ("rating", "metadata"):
+        if values.get(field) == "":  # empty CSV cell
+            values[field] = None
+    if isinstance(values.get("metadata"), str):  # CSV carries metadata as a JSON string
+        try:
+            values["metadata"] = json.loads(values["metadata"])
+        except json.JSONDecodeError:
+            return None, [BulkRowError(row=number, field="metadata", message="invalid JSON")]
+    try:
+        return ServiceCreate.model_validate(values), []
+    except ValidationError as exc:
+        errors = []
+        for err in exc.errors():
+            loc: str | None = str(err["loc"][0]) if err["loc"] else None
+            message = err["msg"]
+            if loc == "latitude" and _looks_swapped(values):
+                message += " (latitude and longitude may be swapped)"
+            errors.append(BulkRowError(row=number, field=loc, message=message))
+        return None, errors
+
+
+def _looks_swapped(values: dict[str, Any]) -> bool:
+    try:
+        lat, lng = float(values["latitude"]), float(values["longitude"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    return abs(lat) > 90 and abs(lat) <= 180 and abs(lng) <= 90
 
 
 def _detail_key(service_id: uuid.UUID) -> str:

@@ -187,8 +187,14 @@ class NearbyPage(BaseModel):
     query: NearbyQuery
 
 
-class BulkUploadParsed(BaseModel):
-    """Rows parsed from a bulk-upload file, before per-row validation."""
+class BulkRowError(BaseModel):
+    row: int  # 1-based data row (header excluded)
+    field: str | None
+    message: str
 
+
+class BulkUploadResult(BaseModel):
     total: int
-    rows: list[dict[str, Any]]
+    inserted: int
+    failed: int
+    errors: list[BulkRowError]

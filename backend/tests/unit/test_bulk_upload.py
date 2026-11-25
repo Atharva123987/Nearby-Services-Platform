@@ -1,10 +1,14 @@
+import asyncio
 import json
+from typing import Any
 
 import pytest
 
 from app.core.errors import AppError
 from app.services.bulk_upload import MAX_UPLOAD_BYTES, MAX_UPLOAD_ROWS, file_format, parse_upload
+from app.services.service_service import ServiceService
 from tests.unit.test_admin_services import make_client
+from tests.unit.test_cache import FakeRedis
 from tests.unit.test_service_service import FakeRepo
 
 URL = "/api/v1/admin/services/bulk"
@@ -64,13 +68,57 @@ def test_file_format() -> None:
 
 
 def test_bulk_endpoint() -> None:
-    client = make_client(FakeRepo())
-    ok = client.post(URL, files={"file": ("s.csv", f"{HEADER}\nA,atm,1,2\n", "text/csv")})
+    repo = FakeRepo()
+    client = make_client(repo)
+    csv_text = f'{HEADER},metadata\nA,atm,1,2,"{{""open"": true}}"\nB,atm,95,2,\n'
+    ok = client.post(URL, files={"file": ("s.csv", csv_text, "text/csv")})
     assert ok.status_code == 200
-    assert ok.json()["total"] == 1
+    body = ok.json()
+    assert (body["total"], body["inserted"], body["failed"]) == (2, 1, 1)
+    assert body["errors"][0]["row"] == 2
+    assert body["errors"][0]["field"] == "latitude"
+    assert next(iter(repo.items.values())).metadata == {"open": True}
 
     wrong = client.post(URL, files={"file": ("s.txt", "x", "text/plain")})
     assert wrong.status_code == 415
     assert wrong.json()["error"]["code"] == "unsupported_media_type"
 
     assert client.post(URL).status_code == 422  # no file
+
+
+GOOD: dict[str, Any] = {"name": "A", "category": "atm", "latitude": "1", "longitude": "2"}
+
+
+def run_bulk(rows: list[dict[str, Any]], mode: str = "partial") -> tuple[Any, FakeRepo, FakeRedis]:
+    repo, redis = FakeRepo(), FakeRedis()
+    service = ServiceService(repo, cache=redis)  # type: ignore[arg-type]
+    return asyncio.run(service.bulk_create(rows, mode)), repo, redis  # type: ignore[arg-type]
+
+
+def test_partial_inserts_valid_rows_and_reports_errors() -> None:
+    rows = [
+        GOOD,
+        {**GOOD, "name": "a"},  # duplicate of row 1 (case-insensitive)
+        {**GOOD, "name": "B", "latitude": "120", "longitude": "10"},  # swapped
+        {**GOOD, "name": "C", "metadata": "{bad"},
+        {**GOOD, "name": "D", "metadata": '{"x": 1}', "rating": ""},
+    ]
+    result, repo, redis = run_bulk(rows)
+    assert (result.total, result.inserted, result.failed) == (5, 2, 3)
+    assert [(e.row, e.field) for e in result.errors] == [
+        (2, None),
+        (3, "latitude"),
+        (4, "metadata"),
+    ]
+    assert "swapped" in result.errors[1].message
+    assert repo.commits == 1
+    assert redis.store.get("services:version") == "1"  # bumped once
+
+
+def test_strict_inserts_nothing_on_error() -> None:
+    result, repo, _ = run_bulk([GOOD, {**GOOD, "name": ""}], mode="strict")
+    assert (result.inserted, result.failed) == (0, 1)
+    assert repo.items == {} and repo.commits == 0
+
+    result, repo, _ = run_bulk([GOOD], mode="strict")
+    assert result.inserted == 1 and repo.commits == 1
