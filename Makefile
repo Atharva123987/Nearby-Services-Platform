@@ -32,8 +32,8 @@ install: ## Install backend + frontend deps and git hooks
 migrate: ## Apply DB migrations (alembic upgrade head) inside the api container
 	docker compose exec api alembic upgrade head
 
-seed: ## Load dev seed data (200 services in Nashik + Mumbai); safe to re-run
-	docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"' < db/seeds/0001_nashik_mumbai.sql
+seed: ## Replace all services with data/sample_services.csv (500 in Nashik + Mumbai); dev only
+	docker compose exec api python -m app.scripts.seed /data/sample_services.csv
 
 backend-dev: ## Run the API on the host with reload
 	cd backend && uv run uvicorn app.main:app --reload --port 8000 --no-proxy-headers

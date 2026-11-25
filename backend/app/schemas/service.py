@@ -185,3 +185,16 @@ class NearbyPage(BaseModel):
     items: list[NearbyServiceRead]
     total: int
     query: NearbyQuery
+
+
+class BulkRowError(BaseModel):
+    row: int  # 1-based data row (header excluded)
+    field: str | None
+    message: str
+
+
+class BulkUploadResult(BaseModel):
+    total: int
+    inserted: int
+    failed: int
+    errors: list[BulkRowError]

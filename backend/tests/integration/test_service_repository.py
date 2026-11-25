@@ -264,3 +264,28 @@ def test_nearby_across_antimeridian_and_pole() -> None:
         assert [s.name for s, _ in items] == ["Pole"]
 
     in_rollback(body)
+
+
+def test_bulk_create_inserts_in_batches() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        items = [
+            ServiceCreate(
+                name=f"Bulk {i}",
+                category="atm",
+                latitude=18.5,
+                longitude=73.8 + i / 1000,
+                metadata={"i": i} if i % 2 else None,
+            )
+            for i in range(1500)  # more than one batch
+        ]
+        await repo.bulk_create(items)
+        count = (
+            await session.execute(text("SELECT count(*) FROM services WHERE name LIKE 'Bulk %'"))
+        ).scalar_one()
+        assert count == 1500
+        page, _ = await repo.list(limit=1, offset=0, search="Bulk 1499")
+        assert (page[0].latitude, page[0].longitude) == (18.5, 73.8 + 1499 / 1000)
+        assert page[0].metadata == {"i": 1499}
+
+    in_rollback(body)

@@ -1,6 +1,7 @@
 import asyncio
 import math
 import uuid
+from collections.abc import Sequence
 from datetime import UTC, datetime
 
 import pytest
@@ -39,6 +40,10 @@ class FakeRepo:
         )
         self.items[item.id] = item
         return item
+
+    async def bulk_create(self, items: Sequence[ServiceCreate]) -> None:
+        for data in items:
+            await self.create(data)
 
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         return self.items.get(service_id)
