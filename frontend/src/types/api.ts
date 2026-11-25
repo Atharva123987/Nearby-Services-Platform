@@ -15,3 +15,23 @@ export interface LatLng {
   lat: number;
   lng: number;
 }
+
+// Mirrors ServiceRead / ServicePage (backend/app/schemas/service.py).
+export interface Service {
+  id: string;
+  name: string;
+  category: ServiceCategory;
+  latitude: number;
+  longitude: number;
+  rating: string | null; // Decimal, serialised as a string
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ServicePage {
+  items: Service[];
+  page: number;
+  page_size: number;
+  total: number;
+}
