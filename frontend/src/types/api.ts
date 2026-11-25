@@ -7,3 +7,11 @@ export interface ApiErrorBody {
     request_id: string | null;
   };
 }
+
+// Mirrors ServiceCategory (backend/app/models/service.py).
+export type ServiceCategory = "hospital" | "atm" | "shop" | "other";
+
+export interface LatLng {
+  lat: number;
+  lng: number;
+}

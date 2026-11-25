@@ -4,4 +4,7 @@ export const config = {
     /\/+$/,
     "",
   ),
+  // Fallback map centre when the user's location is unknown (Nashik, where the sample data lives).
+  defaultCenter: { lat: 20.0059, lng: 73.7897 },
+  defaultZoom: 13,
 } as const;
