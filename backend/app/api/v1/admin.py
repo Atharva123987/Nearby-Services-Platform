@@ -3,18 +3,20 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, UploadFile, status
 
 from app.api.deps import ServiceServiceDep, admin_write_rate_limit, get_current_admin
 from app.schemas.service import (
     NAME_MAX_LENGTH,
     PAGE_SIZE_MAX,
+    BulkUploadParsed,
     CategoryParam,
     ServiceCreate,
     ServicePage,
     ServiceRead,
     ServiceUpdate,
 )
+from app.services.bulk_upload import MAX_UPLOAD_BYTES, file_format, parse_upload
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_current_admin)])
 write_limit = [Depends(admin_write_rate_limit)]
@@ -41,6 +43,14 @@ async def list_services(
 async def create_service(body: ServiceCreate, service: ServiceServiceDep) -> ServiceRead:
     """409 if a service with the same name already exists within 10 m."""
     return await service.create(body)
+
+
+@router.post("/services/bulk", response_model=BulkUploadParsed, dependencies=write_limit)
+async def bulk_upload_services(file: UploadFile) -> BulkUploadParsed:
+    """Multipart `file` (.csv or .json, max 5 MB / 10k rows). Extra columns are ignored."""
+    fmt = file_format(file.filename, file.content_type)
+    rows = parse_upload(fmt, await file.read(MAX_UPLOAD_BYTES + 1))
+    return BulkUploadParsed(total=len(rows), rows=rows)
 
 
 @router.patch("/services/{service_id}", response_model=ServiceRead, dependencies=write_limit)

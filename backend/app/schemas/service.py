@@ -185,3 +185,10 @@ class NearbyPage(BaseModel):
     items: list[NearbyServiceRead]
     total: int
     query: NearbyQuery
+
+
+class BulkUploadParsed(BaseModel):
+    """Rows parsed from a bulk-upload file, before per-row validation."""
+
+    total: int
+    rows: list[dict[str, Any]]
