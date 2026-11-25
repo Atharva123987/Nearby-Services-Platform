@@ -41,6 +41,14 @@ export async function apiFetch<T>(
   const body: unknown = await response.json().catch(() => null);
   if (!response.ok) {
     const requestId = response.headers.get("X-Request-ID");
+    if (response.status === 429) {
+      const retryAfter = Number(response.headers.get("Retry-After"));
+      const message =
+        retryAfter > 0
+          ? `Too many requests, retry in ${retryAfter}s`
+          : "Too many requests, please try again shortly";
+      throw new ApiError(429, "too_many_requests", message, null, requestId);
+    }
     if (isErrorBody(body)) {
       const { code, message, details, request_id } = body.error;
       throw new ApiError(

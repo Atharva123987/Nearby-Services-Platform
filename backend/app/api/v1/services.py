@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query, Response
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
-from app.api.deps import ServiceServiceDep
+from app.api.deps import ServiceServiceDep, nearby_rate_limit
 from app.schemas.service import (
     PAGE_SIZE_MAX,
     BBox,
@@ -56,7 +56,7 @@ async def list_services(
     return result
 
 
-@router.get("/nearby", response_model=NearbyPage)
+@router.get("/nearby", response_model=NearbyPage, dependencies=[Depends(nearby_rate_limit)])
 async def nearby_services(
     service: ServiceServiceDep, query: Annotated[NearbyQuery, Query()], response: Response
 ) -> NearbyPage:
