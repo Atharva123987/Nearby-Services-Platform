@@ -10,7 +10,7 @@ import os
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 
 from dotenv import dotenv_values
 from pydantic import Field, SecretStr, field_validator, model_validator
@@ -85,7 +85,8 @@ class Settings(BaseSettings):
 
     # --- Auth --------------------------------------------------------------
     jwt_secret: SecretStr = SecretStr(DEV_JWT_SECRET)
-    jwt_algorithm: str = "HS256"
+    # Pinned: tokens are only ever signed/verified with HS256 (rejects `alg: none`).
+    jwt_algorithm: Literal["HS256"] = "HS256"
     jwt_access_token_expire_minutes: int = Field(default=30, ge=1)
     jwt_refresh_token_expire_days: int = Field(default=7, ge=1)
 

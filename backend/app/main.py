@@ -47,6 +47,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url=None if settings.is_prod else "/openapi.json",
     )
 
+    # Dependencies (SettingsDep) must see the same settings this app was built with.
+    app.dependency_overrides[get_settings] = lambda: settings
     register_exception_handlers(app)
 
     # Added last => outermost: every response (CORS rejections included) gets a request ID.

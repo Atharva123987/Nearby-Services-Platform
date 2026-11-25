@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +18,9 @@ class AdminRepository:
         """``email`` must already be normalised (lower-cased, trimmed)."""
         result = await self._session.execute(select(Admin).where(Admin.email == email))
         return result.scalar_one_or_none()
+
+    async def get(self, admin_id: uuid.UUID) -> Admin | None:
+        return await self._session.get(Admin, admin_id)
 
     async def create(self, email: str, password_hash: str) -> Admin:
         admin = Admin(email=email, password_hash=password_hash)
