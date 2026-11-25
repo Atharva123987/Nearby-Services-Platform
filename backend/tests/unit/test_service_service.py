@@ -1,4 +1,5 @@
 import asyncio
+import math
 import uuid
 from datetime import UTC, datetime
 
@@ -6,7 +7,13 @@ import pytest
 
 from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
-from app.schemas.service import BBox, ServiceCreate, ServiceRead, ServiceUpdate
+from app.schemas.service import (
+    BBox,
+    NearbyQuery,
+    ServiceCreate,
+    ServiceRead,
+    ServiceUpdate,
+)
 from app.services.service_service import ServiceService
 
 
@@ -35,6 +42,30 @@ class FakeRepo:
 
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         return self.items.get(service_id)
+
+    async def nearby(
+        self,
+        *,
+        lat: float,
+        lng: float,
+        radius_m: float,
+        limit: int,
+        offset: int,
+        category: ServiceCategory | None = None,
+    ) -> tuple[list[tuple[ServiceRead, float]], int]:
+        def dist(s: ServiceRead) -> float:  # equirectangular approximation, fine for tests
+            x = math.radians(s.longitude - lng) * math.cos(math.radians((s.latitude + lat) / 2))
+            return math.hypot(x, math.radians(s.latitude - lat)) * 6_371_000
+
+        matches = sorted(
+            (
+                (s, dist(s))
+                for s in self.items.values()
+                if (category is None or s.category == category) and dist(s) <= radius_m
+            ),
+            key=lambda m: m[1],
+        )
+        return matches[offset : offset + limit], len(matches)
 
     async def list(
         self,
@@ -160,3 +191,14 @@ def test_list_paginates_and_reports_total() -> None:
     assert (len(page.items), page.page, page.page_size, page.total) == (2, 2, 2, 5)
     beyond = asyncio.run(service.list(page=10, page_size=2))
     assert (beyond.items, beyond.total) == ([], 5)
+
+
+def test_nearby_converts_km_and_orders_by_distance() -> None:
+    service = ServiceService(FakeRepo())
+    for name, lat in (("far", 0.05), ("near", 0.01), ("outside", 1.0)):
+        asyncio.run(service.create(make(name, lat=lat, lng=0.0)))
+    page = asyncio.run(service.nearby(NearbyQuery(lat=0, lng=0, radius_km=10)))
+    assert [s.name for s in page.items] == ["near", "far"]
+    assert page.total == 2
+    assert page.items[0].distance_km == 1.11  # 0.01 deg of latitude, rounded to 2 dp
+    assert page.query.radius_km == 10

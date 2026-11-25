@@ -194,3 +194,73 @@ def test_list_bbox_returns_only_services_inside() -> None:
         assert total == 1 and [s.name for s in items] == ["In"]
 
     in_rollback(body)
+
+
+def test_nearby_uses_metres_orders_by_distance_and_filters() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        # ~1.1 km and ~5.6 km north of the origin, plus a hospital right next to it.
+        for name, lat, category in (
+            ("Near ATM", 0.01, "atm"),
+            ("Far ATM", 0.05, "atm"),
+            ("Hospital", 0.001, "hospital"),
+        ):
+            await repo.create(
+                ServiceCreate(name=name, category=category, latitude=lat, longitude=0)
+            )
+
+        items, total = await repo.nearby(
+            lat=0, lng=0, radius_m=2000, limit=10, offset=0, category=ServiceCategory.ATM
+        )
+        assert ([s.name for s, _ in items], total) == (["Near ATM"], 1)
+        assert 1100 < items[0][1] < 1120
+
+        items, total = await repo.nearby(lat=0, lng=0, radius_m=10_000, limit=2, offset=0)
+        assert ([s.name for s, _ in items], total) == (["Hospital", "Near ATM"], 3)
+
+    in_rollback(body)
+
+
+def test_nearby_includes_point_exactly_on_the_radius() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        await repo.create(ServiceCreate(name="Edge", category="atm", latitude=0.0099, longitude=0))
+        ((_, distance_m),), _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=1, offset=0)
+        items, total = await repo.nearby(lat=0, lng=0, radius_m=distance_m, limit=1, offset=0)
+        assert ([(s.name, metres) for s, metres in items], total) == ([("Edge", distance_m)], 1)
+        assert await repo.nearby(lat=0, lng=0, radius_m=distance_m - 0.001, limit=1, offset=0) == (
+            [],
+            0,
+        )
+
+    in_rollback(body)
+
+
+def test_nearby_breaks_distance_ties_by_id() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        for name in ("A", "B", "C"):
+            await repo.create(ServiceCreate(name=name, category="atm", latitude=0.01, longitude=0))
+        items, _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=10, offset=0)
+        ids = [s.id for s, _ in items]
+        assert ids == sorted(ids)
+
+    in_rollback(body)
+
+
+def test_nearby_across_antimeridian_and_pole() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        await repo.create(ServiceCreate(name="West", category="atm", latitude=0, longitude=-179.9))
+        await repo.create(ServiceCreate(name="Pole", category="atm", latitude=89.9, longitude=180))
+
+        # 179.9 -> -179.9 is ~22 km over the antimeridian, not ~40,000 km the long way round.
+        items, _ = await repo.nearby(lat=0, lng=179.9, radius_m=25_000, limit=10, offset=0)
+        assert [s.name for s, _ in items] == ["West"]
+        assert 22_000 < items[0][1] < 22_500
+
+        # (89.9, 0) -> (89.9, 180) is ~22 km straight over the pole.
+        items, _ = await repo.nearby(lat=89.9, lng=0, radius_m=25_000, limit=10, offset=0)
+        assert [s.name for s, _ in items] == ["Pole"]
+
+    in_rollback(body)

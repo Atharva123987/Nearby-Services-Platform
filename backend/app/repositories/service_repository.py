@@ -3,23 +3,33 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Sequence
 from typing import Any
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Row, cast, delete, func, select, update
+from sqlalchemy import ColumnElement, cast, delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.service import Service, ServiceCategory
-from app.schemas.service import BBox, ServiceCreate, ServiceRead, ServiceUpdate
+from app.schemas.service import (
+    BBox,
+    ServiceCreate,
+    ServiceRead,
+    ServiceUpdate,
+)
 from app.utils.geo import SRID_WGS84, make_point
 
 # geography -> geometry so ST_X/ST_Y can read the point back (X = lng, Y = lat).
 _lng = func.ST_X(cast(Service.location, Geometry)).label("lng")
 _lat = func.ST_Y(cast(Service.location, Geometry)).label("lat")
 
+# Geography ST_Distance rounds to 10 nanometres, while ST_DWithin compares
+# before rounding. Allow that precision so points on the boundary are included.
+_NEARBY_RADIUS_TOLERANCE_M = 1e-8
 
-def _to_read(row: Row[Service, float, float]) -> ServiceRead:
-    service, lng, lat = row
+
+def _to_read(row: Sequence[Any]) -> ServiceRead:
+    service, lng, lat = row[:3]
     return ServiceRead(
         id=service.id,
         name=service.name,
@@ -57,6 +67,41 @@ class ServiceRepository:
             stmt = stmt.with_for_update()
         row = (await self._session.execute(stmt)).one_or_none()
         return _to_read(row) if row is not None else None
+
+    async def nearby(
+        self,
+        *,
+        lat: float,
+        lng: float,
+        radius_m: float,
+        limit: int,
+        offset: int,
+        category: ServiceCategory | None = None,
+    ) -> tuple[list[tuple[ServiceRead, float]], int]:
+        """(service, distance in metres) within radius_m, nearest first, plus the total."""
+        origin = make_point(lat=lat, lng=lng)
+        filters: list[ColumnElement[bool]] = [
+            func.ST_DWithin(Service.location, origin, radius_m + _NEARBY_RADIUS_TOLERANCE_M)
+        ]
+        if category is not None:
+            filters.append(Service.category == category)
+
+        total = (
+            await self._session.execute(select(func.count()).select_from(Service).where(*filters))
+        ).scalar_one()
+        if offset >= total:
+            return [], total
+
+        distance = func.ST_Distance(Service.location, origin).label("distance_m")
+        stmt = (
+            select(Service, _lng, _lat, distance)
+            .where(*filters)
+            .order_by(distance, Service.id)
+            .limit(limit)
+            .offset(offset)
+        )
+        rows = (await self._session.execute(stmt)).all()
+        return [(_to_read(row), row.distance_m) for row in rows], total
 
     async def list(
         self,

@@ -140,3 +140,46 @@ def test_public_list_rejects_bad_bbox() -> None:
         response = client.get("/api/v1/services", params={"bbox": bbox})
         assert response.status_code == 422, bbox
         assert response.json()["error"]["details"][0]["loc"][:2] == ["query", "bbox"]
+
+
+def test_public_nearby_filters_and_orders() -> None:
+    client = make_client(FakeRepo())
+    client.post("/api/v1/admin/services", json={**BODY, "latitude": 28.61})
+    client.post("/api/v1/admin/services", json={**BODY, "name": "Closer ATM"})
+    client.post("/api/v1/admin/services", json={**BODY, "name": "Far ATM", "latitude": 30})
+    client.post("/api/v1/admin/services", json={**BODY, "name": "Hosp", "category": "hospital"})
+    params = {"lat": 28.6, "lng": 77.2, "radius_km": 5, "category": "atm"}
+    response = client.get("/api/v1/services/nearby", params=params)
+    assert response.status_code == 200
+    body = response.json()
+    assert [s["name"] for s in body["items"]] == ["Closer ATM", "Corner ATM"]
+    assert body["total"] == 2
+    assert body["query"] == {**params, "limit": 20, "offset": 0}
+    assert all(round(s["distance_km"], 2) == s["distance_km"] for s in body["items"])
+    paged = client.get("/api/v1/services/nearby", params={**params, "limit": 1, "offset": 1})
+    assert [s["name"] for s in paged.json()["items"]] == ["Corner ATM"]
+
+
+def test_public_nearby_rejects_bad_params() -> None:
+    client = make_client(FakeRepo())
+    ok = {"lat": 28.6, "lng": 77.2}
+    for params in (
+        {"lng": 77.2},
+        {"lat": 28.6},
+        {**ok, "radius_km": 0},
+        {**ok, "radius_km": -1},
+        {**ok, "radius_km": 50.1},
+        {**ok, "lat": 91},
+        {**ok, "lng": "abc"},
+        {**ok, "limit": 0},
+        {**ok, "offset": -1},
+        {**ok, "category": "bank"},
+    ):
+        assert client.get("/api/v1/services/nearby", params=params).status_code == 422, params
+    assert client.get("/api/v1/services/nearby", params={**ok, "radius_km": 50}).status_code == 200
+
+
+def test_public_nearby_no_results_is_200_with_empty_list() -> None:
+    response = make_client(FakeRepo()).get("/api/v1/services/nearby", params={"lat": 0, "lng": 0})
+    assert response.status_code == 200
+    assert (response.json()["items"], response.json()["total"]) == ([], 0)
