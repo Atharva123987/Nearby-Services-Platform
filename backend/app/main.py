@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import health
+from app.api.v1 import api_router
 from app.cache.redis import create_redis
 from app.core.config import Settings, get_settings
 from app.core.errors import REQUEST_ID_HEADER, register_exception_handlers
@@ -60,6 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(RequestContextMiddleware, expose_errors=not settings.is_prod)
 
     app.include_router(health.router)
+    app.include_router(api_router)
     return app
 
 

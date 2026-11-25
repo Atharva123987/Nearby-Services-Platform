@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help env up down logs ps restart clean install backend-dev frontend-dev lint format typecheck test precommit
+.PHONY: help env up down logs ps restart clean install migrate backend-dev frontend-dev lint format typecheck test precommit
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -28,6 +28,9 @@ install: ## Install backend + frontend deps and git hooks
 	cd backend && uv sync
 	cd frontend && npm ci
 	uvx pre-commit install
+
+migrate: ## Apply DB migrations (alembic upgrade head) inside the api container
+	docker compose exec api alembic upgrade head
 
 backend-dev: ## Run the API on the host with reload
 	cd backend && uv run uvicorn app.main:app --reload --port 8000
