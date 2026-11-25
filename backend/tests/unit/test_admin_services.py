@@ -3,10 +3,16 @@ from datetime import UTC, datetime
 
 from fastapi.testclient import TestClient
 
-from app.api.deps import get_admin_repository, get_current_admin, get_service_repository
+from app.api.deps import (
+    get_admin_repository,
+    get_current_admin,
+    get_redis,
+    get_service_repository,
+)
 from app.core.config import Settings
 from app.main import create_app
 from app.models.admin import Admin
+from tests.unit.test_cache import FakeRedis
 from tests.unit.test_service_service import FakeRepo
 
 SETTINGS = Settings(_env_file=None, jwt_secret="z" * 48, cors_origins="http://localhost:3000")
@@ -20,6 +26,8 @@ def make_client(repo: FakeRepo) -> TestClient:
     )
     app.dependency_overrides[get_current_admin] = lambda: admin
     app.dependency_overrides[get_service_repository] = lambda: repo
+    redis = FakeRedis()
+    app.dependency_overrides[get_redis] = lambda: redis
     return TestClient(app)
 
 
@@ -73,6 +81,7 @@ def test_admin_service_routes_require_auth() -> None:
     app = create_app(SETTINGS)
     app.dependency_overrides[get_admin_repository] = lambda: None  # never reached without a token
     app.dependency_overrides[get_service_repository] = FakeRepo
+    app.dependency_overrides[get_redis] = FakeRedis
     client = TestClient(app)
     assert client.post("/api/v1/admin/services", json=BODY).status_code == 401
     assert client.delete(f"/api/v1/admin/services/{uuid.uuid4()}").status_code == 401
@@ -156,6 +165,10 @@ def test_public_nearby_filters_and_orders() -> None:
     assert body["total"] == 2
     assert body["query"] == {**params, "limit": 20, "offset": 0}
     assert all(round(s["distance_km"], 2) == s["distance_km"] for s in body["items"])
+    assert response.headers["X-Cache"] == "MISS"
+    again = client.get("/api/v1/services/nearby", params=params)
+    assert again.headers["X-Cache"] == "HIT"
+    assert again.json() == body
     paged = client.get("/api/v1/services/nearby", params={**params, "limit": 1, "offset": 1})
     assert [s["name"] for s in paged.json()["items"]] == ["Corner ATM"]
 

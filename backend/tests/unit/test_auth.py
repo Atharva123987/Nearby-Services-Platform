@@ -160,7 +160,8 @@ def test_me_without_authorization_header_is_401() -> None:
 def test_me_rejects_bad_tokens(header: object) -> None:
     admin = make_admin()
     response = client_for(FakeRepo(admin)).get(
-        "/api/v1/auth/me", headers={"Authorization": header(str(admin.id))}  # type: ignore[operator]
+        "/api/v1/auth/me",
+        headers={"Authorization": header(str(admin.id))},  # type: ignore[operator]
     )
     assert response.status_code == 401
 

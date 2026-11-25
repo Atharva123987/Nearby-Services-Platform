@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
@@ -55,10 +55,12 @@ async def list_services(
 
 @router.get("/nearby", response_model=NearbyPage)
 async def nearby_services(
-    service: ServiceServiceDep, query: Annotated[NearbyQuery, Query()]
+    service: ServiceServiceDep, query: Annotated[NearbyQuery, Query()], response: Response
 ) -> NearbyPage:
     """Services within `radius_km` of (`lat`, `lng`), nearest first."""
-    return await service.nearby(query)
+    page, hit = await service.nearby(query)
+    response.headers["X-Cache"] = "HIT" if hit else "MISS"
+    return page
 
 
 @router.get("/{service_id}", response_model=ServiceRead)

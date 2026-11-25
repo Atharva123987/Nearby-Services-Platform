@@ -5,6 +5,10 @@ from __future__ import annotations
 import uuid
 from typing import Protocol
 
+from redis.asyncio import Redis
+
+from app.core.cache import get_or_set
+from app.core.config import Settings
 from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
 from app.schemas.service import (
@@ -60,8 +64,16 @@ class ServiceRepositoryProtocol(Protocol):
 
 
 class ServiceService:
-    def __init__(self, repository: ServiceRepositoryProtocol) -> None:
+    def __init__(
+        self,
+        repository: ServiceRepositoryProtocol,
+        *,
+        cache: Redis | None = None,
+        settings: Settings | None = None,
+    ) -> None:
         self._repo = repository
+        self._cache = cache
+        self._settings = settings
 
     async def create(self, data: ServiceCreate) -> ServiceRead:
         await self._ensure_not_duplicate(data.name, data.latitude, data.longitude)
@@ -93,7 +105,25 @@ class ServiceService:
         )
         return ServicePage(items=items, page=page, page_size=page_size, total=total)
 
-    async def nearby(self, query: NearbyQuery) -> NearbyPage:
+    async def nearby(self, query: NearbyQuery) -> tuple[NearbyPage, bool]:
+        """Return ``(page, cache_hit)``."""
+        if self._cache is None or self._settings is None:
+            return await self._nearby_from_db(query), False
+        data, hit = await get_or_set(
+            self._cache,
+            f"nearby:{query.model_dump_json()}",
+            lambda: self._load_nearby(query),
+            ttl=self._settings.cache_ttl_search_seconds,
+            empty_ttl=self._settings.cache_ttl_empty_seconds,
+            is_empty=lambda v: not v["items"],
+        )
+        return NearbyPage.model_validate(data), hit
+
+    async def _load_nearby(self, query: NearbyQuery) -> dict:
+        page = await self._nearby_from_db(query)
+        return page.model_dump(mode="json")
+
+    async def _nearby_from_db(self, query: NearbyQuery) -> NearbyPage:
         rows, total = await self._repo.nearby(
             lat=query.lat,
             lng=query.lng,
