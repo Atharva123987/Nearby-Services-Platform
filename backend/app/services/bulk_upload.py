@@ -79,7 +79,7 @@ def parse_upload(fmt: str, data: bytes) -> list[dict[str, Any]]:
 
 
 def _parse_csv(text: str) -> list[dict[str, Any]]:
-    reader = csv.reader(io.StringIO(text, newline=""))
+    reader = csv.reader(io.StringIO(text, newline=""), strict=True)
     try:
         header = [h.strip().lower() for h in next(reader)]
         _check_columns(header)
@@ -103,15 +103,7 @@ def _parse_json(text: str) -> list[dict[str, Any]]:
         raise InvalidFileError(f"malformed JSON: {exc.msg} (line {exc.lineno})") from exc
     if not isinstance(payload, list) or not all(isinstance(r, dict) for r in payload):
         raise InvalidFileError("JSON file must be an array of objects")
-    rows = []
-    for index, record in enumerate(payload):
-        missing = [c for c in REQUIRED_COLUMNS if c not in record]
-        if missing:
-            raise InvalidFileError(
-                f"row {index + 1} is missing required fields: {', '.join(missing)}"
-            )
-        rows.append({k: record[k] for k in _KNOWN_COLUMNS if k in record})
-    return rows
+    return [{k: record[k] for k in _KNOWN_COLUMNS if k in record} for record in payload]
 
 
 def _check_columns(header: list[str]) -> None:

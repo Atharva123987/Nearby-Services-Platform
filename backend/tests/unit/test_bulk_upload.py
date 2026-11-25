@@ -43,12 +43,12 @@ def test_json_keeps_known_fields() -> None:
         ("csv", b"  \n", 422),
         ("csv", HEADER.encode() + b"\n", 422),  # header only
         ("csv", b"name,category\nA,atm\n", 422),  # missing columns
+        ("csv", (HEADER + ',notes\nA,atm,1,2,"incomplete').encode(), 422),
         ("csv", b"\x89PNG\r\n\x1a\n\x00\x00", 422),  # binary
         ("csv", b"\xff\xfe\xfa", 422),  # not UTF-8
         ("json", b"{not json", 422),
         ("json", b'{"name": "a"}', 422),  # not an array
         ("json", b"[]", 422),
-        ("json", b'[{"name": "a", "category": "atm"}]', 422),  # missing fields
         ("csv", b"a" * (MAX_UPLOAD_BYTES + 1), 413),
         ("csv", (HEADER + "\n" + "A,atm,1,2\n" * (MAX_UPLOAD_ROWS + 1)).encode(), 413),
     ],
@@ -88,6 +88,24 @@ def test_bulk_endpoint() -> None:
 
 
 GOOD: dict[str, Any] = {"name": "A", "category": "atm", "latitude": "1", "longitude": "2"}
+
+
+@pytest.mark.parametrize(("mode", "inserted"), [("strict", 0), ("partial", 1)])
+def test_bulk_json_reports_missing_fields_by_row(mode: str, inserted: int) -> None:
+    repo = FakeRepo()
+    client = make_client(repo)
+    incomplete = {key: value for key, value in GOOD.items() if key != "longitude"}
+    response = client.post(
+        URL,
+        params={"mode": mode},
+        files={"file": ("services.json", json.dumps([GOOD, incomplete]), "application/json")},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert (body["total"], body["inserted"], body["failed"]) == (2, inserted, 1)
+    assert [(error["row"], error["field"]) for error in body["errors"]] == [(2, "longitude")]
+    assert len(repo.items) == inserted
 
 
 def run_bulk(rows: list[dict[str, Any]], mode: str = "partial") -> tuple[Any, FakeRepo, FakeRedis]:
