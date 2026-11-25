@@ -11,6 +11,7 @@ from app.core.config import Settings, get_settings
 from app.repositories.admin_repository import AdminRepository
 from app.repositories.health_repository import HealthRepository
 from app.repositories.service_repository import ServiceRepository
+from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
 from app.services.service_service import ServiceService
 
@@ -56,3 +57,7 @@ AdminRepositoryDep = Annotated[AdminRepository, Depends(get_admin_repository)]
 
 def get_service_service(repository: ServiceRepositoryDep) -> ServiceService:
     return ServiceService(repository)
+
+
+def get_auth_service(repository: AdminRepositoryDep, settings: SettingsDep) -> AuthService:
+    return AuthService(repository, settings)

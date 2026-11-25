@@ -13,6 +13,9 @@ import jwt
 from app.core.config import Settings
 from app.core.errors import AppError
 
+# bcrypt only looks at the first 72 bytes (and bcrypt>=5 raises beyond that).
+MAX_PASSWORD_BYTES = 72
+
 
 class TokenType(StrEnum):
     ACCESS = "access"
@@ -26,12 +29,23 @@ class InvalidTokenError(AppError):
     code = "invalid_token"
 
 
+class InvalidCredentialsError(AppError):
+    """Login failed. One message for unknown email, wrong password and inactive admin."""
+
+    status_code = 401
+    code = "invalid_credentials"
+
+
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(password: str, password_hash: str) -> bool:
-    return bcrypt.checkpw(password.encode(), password_hash.encode())
+    """Constant-time check (bcrypt.checkpw)."""
+    encoded = password.encode()
+    if len(encoded) > MAX_PASSWORD_BYTES:
+        return False
+    return bcrypt.checkpw(encoded, password_hash.encode())
 
 
 def _create_token(subject: str, token_type: TokenType, ttl: timedelta, settings: Settings) -> str:

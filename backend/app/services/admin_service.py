@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from app.core.errors import AppError, ConflictError
-from app.core.security import hash_password
+from app.core.security import MAX_PASSWORD_BYTES, hash_password
 from app.models.admin import Admin
 from app.schemas.admin import normalize_email
 
@@ -28,6 +28,8 @@ class AdminService:
             raise AppError("A valid email is required")
         if len(password) < MIN_PASSWORD_LENGTH:
             raise AppError(f"Password must be at least {MIN_PASSWORD_LENGTH} characters")
+        if len(password.encode()) > MAX_PASSWORD_BYTES:
+            raise AppError(f"Password must be at most {MAX_PASSWORD_BYTES} bytes")
         if await self._repo.get_by_email(email) is not None:
             raise ConflictError(f"Admin {email} already exists")
         admin = await self._repo.create(email, hash_password(password))
