@@ -6,6 +6,7 @@ process environment. Every variable is documented in the repo-root ``.env.exampl
 
 from __future__ import annotations
 
+import ipaddress
 import os
 from enum import StrEnum
 from functools import lru_cache
@@ -94,6 +95,8 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     rate_limit_default_per_minute: int = Field(default=120, ge=1)
     rate_limit_auth_per_minute: int = Field(default=10, ge=1)
+    # Proxy IPs/CIDRs whose X-Forwarded-For we trust. Empty => header ignored (spoofable).
+    trusted_proxies: Annotated[list[str], NoDecode] = []
 
     # --- Cache TTLs (seconds) -----------------------------------------------
     cache_ttl_default_seconds: int = Field(default=300, ge=0)
@@ -111,6 +114,20 @@ class Settings(BaseSettings):
         """Accept a comma-separated string (``a,b``) as well as a list."""
         if isinstance(value, str):
             return [origin.strip().rstrip("/") for origin in value.split(",") if origin.strip()]
+        return value
+
+    @field_validator("trusted_proxies", mode="before")
+    @classmethod
+    def _split_proxies(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [proxy.strip() for proxy in value.split(",") if proxy.strip()]
+        return value
+
+    @field_validator("trusted_proxies")
+    @classmethod
+    def _validate_proxies(cls, value: list[str]) -> list[str]:
+        for proxy in value:
+            ipaddress.ip_network(proxy, strict=False)  # raises ValueError if malformed
         return value
 
     @model_validator(mode="after")
