@@ -23,6 +23,14 @@ _ALLOWED_TYPES = {
 _GENERIC_TYPES = {"", "application/octet-stream"}
 
 
+# Header comes from the parser's own column lists, so the template can't drift from it.
+CSV_TEMPLATE = (
+    ",".join(REQUIRED_COLUMNS + OPTIONAL_COLUMNS)
+    + "\n"
+    + 'Corner ATM,atm,19.9975,73.7898,4.5,"{""open_24h"": true}"\n'
+)
+
+
 class PayloadTooLargeError(AppError):
     status_code = 413
     code = "payload_too_large"

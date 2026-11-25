@@ -48,6 +48,8 @@ services:
       REDIS_URL: redis://redis:6379/0
     ports:
       - "${API_PORT:-8000}:8000"
+    volumes:
+      - ./data:/data:ro  # sample datasets for `make seed`
     depends_on:
       db:
         condition: service_healthy

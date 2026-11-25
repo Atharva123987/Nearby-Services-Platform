@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -122,3 +123,28 @@ def test_strict_inserts_nothing_on_error() -> None:
 
     result, repo, _ = run_bulk([GOOD], mode="strict")
     assert result.inserted == 1 and repo.commits == 1
+
+
+DATA_DIR = Path(__file__).resolve().parents[3] / "data"
+
+
+@pytest.mark.parametrize("name", ["sample_services.csv", "sample_services.json"])
+def test_sample_files_load_in_strict_mode(name: str) -> None:
+    path = DATA_DIR / name
+    rows = parse_upload(file_format(path.name, None), path.read_bytes())
+    result, _, _ = run_bulk(rows, mode="strict")
+    assert result.errors == []
+    assert result.inserted == result.total >= 500
+    categories = {r["category"] for r in rows}
+    assert categories == {"hospital", "atm", "shop", "other"}
+    assert any(r.get("rating") in ("", None) for r in rows)
+    assert any(r.get("metadata") in ("", None) for r in rows)
+
+
+def test_template_downloads_and_parses() -> None:
+    response = make_client(FakeRepo()).get(f"{URL}/template")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/csv")
+    assert "attachment" in response.headers["content-disposition"]
+    result, _, _ = run_bulk(parse_upload("csv", response.content), mode="strict")
+    assert (result.inserted, result.errors) == (1, [])

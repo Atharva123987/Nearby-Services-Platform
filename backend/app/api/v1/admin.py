@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Query, UploadFile, status
+from fastapi import APIRouter, Depends, Query, Response, UploadFile, status
 
 from app.api.deps import ServiceServiceDep, admin_write_rate_limit, get_current_admin
 from app.schemas.service import (
@@ -16,7 +16,7 @@ from app.schemas.service import (
     ServiceRead,
     ServiceUpdate,
 )
-from app.services.bulk_upload import MAX_UPLOAD_BYTES, file_format, parse_upload
+from app.services.bulk_upload import CSV_TEMPLATE, MAX_UPLOAD_BYTES, file_format, parse_upload
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_current_admin)])
 write_limit = [Depends(admin_write_rate_limit)]
@@ -59,6 +59,16 @@ async def bulk_upload_services(
     fmt = file_format(file.filename, file.content_type)
     rows = parse_upload(fmt, await file.read(MAX_UPLOAD_BYTES + 1))
     return await service.bulk_create(rows, mode)
+
+
+@router.get("/services/bulk/template", response_class=Response)
+async def bulk_upload_template() -> Response:
+    """CSV with the columns the bulk upload expects and one example row."""
+    return Response(
+        CSV_TEMPLATE,
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="services_template.csv"'},
+    )
 
 
 @router.patch("/services/{service_id}", response_model=ServiceRead, dependencies=write_limit)

@@ -1,0 +1,5622 @@
+[
+  {
+    "name": "College Road General Hospital",
+    "category": "hospital",
+    "latitude": 20.008846,
+    "longitude": 73.7536,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road SBI ATM",
+    "category": "atm",
+    "latitude": 20.009741,
+    "longitude": 73.774412,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "College Road Supermarket",
+    "category": "shop",
+    "latitude": 20.003626,
+    "longitude": 73.753715,
+    "rating": 3.8,
+    "metadata": null
+  },
+  {
+    "name": "College Road Post Office",
+    "category": "other",
+    "latitude": 19.998272,
+    "longitude": 73.768597,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Medical Clinic",
+    "category": "hospital",
+    "latitude": 20.012926,
+    "longitude": 73.753156,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.997232,
+    "longitude": 73.775973,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road Medical Store",
+    "category": "shop",
+    "latitude": 19.995726,
+    "longitude": 73.755321,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Police Station",
+    "category": "other",
+    "latitude": 20.011014,
+    "longitude": 73.765869,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.013406,
+    "longitude": 73.767844,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road ICICI ATM",
+    "category": "atm",
+    "latitude": 19.9946,
+    "longitude": 73.75847,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road Hardware Store",
+    "category": "shop",
+    "latitude": 19.995415,
+    "longitude": 73.758587,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Petrol Pump",
+    "category": "other",
+    "latitude": 20.008756,
+    "longitude": 73.761756,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.01598,
+    "longitude": 73.768553,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.997422,
+    "longitude": 73.762107,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road Kirana Store",
+    "category": "shop",
+    "latitude": 20.00886,
+    "longitude": 73.766367,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Public Library",
+    "category": "other",
+    "latitude": 19.998997,
+    "longitude": 73.75377,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Dental Clinic",
+    "category": "hospital",
+    "latitude": 20.01613,
+    "longitude": 73.774033,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road किराणा दुकान",
+    "category": "atm",
+    "latitude": 20.015449,
+    "longitude": 73.764012,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "College Road Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.999419,
+    "longitude": 73.766473,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "College Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "College Road Bus Depot",
+    "category": "other",
+    "latitude": 20.003086,
+    "longitude": 73.758264,
+    "rating": 3.8,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road General Hospital",
+    "category": "hospital",
+    "latitude": 20.001131,
+    "longitude": 73.745632,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road SBI ATM",
+    "category": "atm",
+    "latitude": 20.001525,
+    "longitude": 73.752159,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Supermarket",
+    "category": "shop",
+    "latitude": 20.012699,
+    "longitude": 73.766306,
+    "rating": 2.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Gangapur Road Post Office",
+    "category": "other",
+    "latitude": 20.016361,
+    "longitude": 73.755887,
+    "rating": 4.1,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road Medical Clinic",
+    "category": "hospital",
+    "latitude": 20.010434,
+    "longitude": 73.753889,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 20.012014,
+    "longitude": 73.747288,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Medical Store",
+    "category": "shop",
+    "latitude": 20.020892,
+    "longitude": 73.750163,
+    "rating": 4.0,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road Police Station",
+    "category": "other",
+    "latitude": 20.0183,
+    "longitude": 73.755945,
+    "rating": 3.8,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.00778,
+    "longitude": 73.743467,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road ICICI ATM",
+    "category": "atm",
+    "latitude": 20.00738,
+    "longitude": 73.74439,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Hardware Store",
+    "category": "shop",
+    "latitude": 20.022727,
+    "longitude": 73.745056,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Gangapur Road Petrol Pump",
+    "category": "other",
+    "latitude": 20.01838,
+    "longitude": 73.746081,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Gangapur Road Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.020938,
+    "longitude": 73.753155,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Axis Bank ATM",
+    "category": "atm",
+    "latitude": 20.004828,
+    "longitude": 73.750481,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Kirana Store",
+    "category": "shop",
+    "latitude": 20.015597,
+    "longitude": 73.753514,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Gangapur Road Public Library",
+    "category": "other",
+    "latitude": 20.008114,
+    "longitude": 73.757119,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road Dental Clinic",
+    "category": "hospital",
+    "latitude": 20.015146,
+    "longitude": 73.748495,
+    "rating": 4.6,
+    "metadata": null
+  },
+  {
+    "name": "Gangapur Road मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 20.005712,
+    "longitude": 73.759055,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Gangapur Road Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 20.003175,
+    "longitude": 73.765452,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Gangapur Road Bus Depot",
+    "category": "other",
+    "latitude": 20.01938,
+    "longitude": 73.74757,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Gangapur Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati General Hospital",
+    "category": "hospital",
+    "latitude": 20.008666,
+    "longitude": 73.794209,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati SBI ATM",
+    "category": "atm",
+    "latitude": 20.000862,
+    "longitude": 73.792663,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati Supermarket",
+    "category": "shop",
+    "latitude": 20.01918,
+    "longitude": 73.788968,
+    "rating": 3.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Post Office",
+    "category": "other",
+    "latitude": 20.005185,
+    "longitude": 73.788995,
+    "rating": 3.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Medical Clinic",
+    "category": "hospital",
+    "latitude": 20.011708,
+    "longitude": 73.784214,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 20.020733,
+    "longitude": 73.803369,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Panchavati Medical Store",
+    "category": "shop",
+    "latitude": 20.010155,
+    "longitude": 73.78813,
+    "rating": 2.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Police Station",
+    "category": "other",
+    "latitude": 20.022147,
+    "longitude": 73.789365,
+    "rating": 3.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.021476,
+    "longitude": 73.80689,
+    "rating": 4.3,
+    "metadata": null
+  },
+  {
+    "name": "Panchavati ICICI ATM",
+    "category": "atm",
+    "latitude": 20.005621,
+    "longitude": 73.806249,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati Hardware Store",
+    "category": "shop",
+    "latitude": 20.011513,
+    "longitude": 73.800951,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Petrol Pump",
+    "category": "other",
+    "latitude": 20.010568,
+    "longitude": 73.803465,
+    "rating": 4.9,
+    "metadata": null
+  },
+  {
+    "name": "Panchavati Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.00296,
+    "longitude": 73.797281,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Panchavati Axis Bank ATM",
+    "category": "atm",
+    "latitude": 20.019867,
+    "longitude": 73.788909,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati Kirana Store",
+    "category": "shop",
+    "latitude": 20.013365,
+    "longitude": 73.793061,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Public Library",
+    "category": "other",
+    "latitude": 20.003402,
+    "longitude": 73.800189,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Dental Clinic",
+    "category": "hospital",
+    "latitude": 20.0057,
+    "longitude": 73.790588,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Panchavati आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 20.022463,
+    "longitude": 73.806906,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Panchavati Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 20.003616,
+    "longitude": 73.789365,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Panchavati Bus Depot",
+    "category": "other",
+    "latitude": 20.007369,
+    "longitude": 73.786786,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Panchavati",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road General Hospital",
+    "category": "hospital",
+    "latitude": 19.964694,
+    "longitude": 73.841695,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road SBI ATM",
+    "category": "atm",
+    "latitude": 19.948185,
+    "longitude": 73.841921,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road Supermarket",
+    "category": "shop",
+    "latitude": 19.944223,
+    "longitude": 73.82877,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Post Office",
+    "category": "other",
+    "latitude": 19.947536,
+    "longitude": 73.840516,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.947336,
+    "longitude": 73.837725,
+    "rating": 4.6,
+    "metadata": null
+  },
+  {
+    "name": "Nashik Road HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.951166,
+    "longitude": 73.83264,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Nashik Road Medical Store",
+    "category": "shop",
+    "latitude": 19.959507,
+    "longitude": 73.841291,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Police Station",
+    "category": "other",
+    "latitude": 19.951264,
+    "longitude": 73.826232,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.962694,
+    "longitude": 73.839094,
+    "rating": 4.0,
+    "metadata": null
+  },
+  {
+    "name": "Nashik Road ICICI ATM",
+    "category": "atm",
+    "latitude": 19.944059,
+    "longitude": 73.833398,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road Hardware Store",
+    "category": "shop",
+    "latitude": 19.960107,
+    "longitude": 73.846657,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Petrol Pump",
+    "category": "other",
+    "latitude": 19.943467,
+    "longitude": 73.844723,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.944709,
+    "longitude": 73.848317,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.962154,
+    "longitude": 73.826595,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road Kirana Store",
+    "category": "shop",
+    "latitude": 19.948972,
+    "longitude": 73.84834,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Public Library",
+    "category": "other",
+    "latitude": 19.947403,
+    "longitude": 73.844897,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.961606,
+    "longitude": 73.831338,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Nashik Road किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.960088,
+    "longitude": 73.831462,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Nashik Road Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.945635,
+    "longitude": 73.833878,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Nashik Road Bus Depot",
+    "category": "other",
+    "latitude": 19.956396,
+    "longitude": 73.835592,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Nashik Road",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO General Hospital",
+    "category": "hospital",
+    "latitude": 19.970768,
+    "longitude": 73.80629,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO SBI ATM",
+    "category": "atm",
+    "latitude": 19.970602,
+    "longitude": 73.79343,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Supermarket",
+    "category": "shop",
+    "latitude": 19.975528,
+    "longitude": 73.797549,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Post Office",
+    "category": "other",
+    "latitude": 19.974113,
+    "longitude": 73.800011,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.980923,
+    "longitude": 73.800266,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.969679,
+    "longitude": 73.798942,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Medical Store",
+    "category": "shop",
+    "latitude": 19.975534,
+    "longitude": 73.803352,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Police Station",
+    "category": "other",
+    "latitude": 19.977801,
+    "longitude": 73.792658,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.990569,
+    "longitude": 73.799256,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO ICICI ATM",
+    "category": "atm",
+    "latitude": 19.98115,
+    "longitude": 73.78301,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Hardware Store",
+    "category": "shop",
+    "latitude": 19.978317,
+    "longitude": 73.79692,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Petrol Pump",
+    "category": "other",
+    "latitude": 19.973129,
+    "longitude": 73.794356,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "CIDCO Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.970035,
+    "longitude": 73.795371,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.986027,
+    "longitude": 73.799147,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Kirana Store",
+    "category": "shop",
+    "latitude": 19.972779,
+    "longitude": 73.783586,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Public Library",
+    "category": "other",
+    "latitude": 19.969748,
+    "longitude": 73.792947,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.979865,
+    "longitude": 73.788856,
+    "rating": 2.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.986481,
+    "longitude": 73.785558,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "CIDCO Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.972221,
+    "longitude": 73.805991,
+    "rating": 2.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "CIDCO Bus Depot",
+    "category": "other",
+    "latitude": 19.98836,
+    "longitude": 73.793955,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "CIDCO",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur General Hospital",
+    "category": "hospital",
+    "latitude": 20.000291,
+    "longitude": 73.740801,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur SBI ATM",
+    "category": "atm",
+    "latitude": 19.998115,
+    "longitude": 73.737934,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur Supermarket",
+    "category": "shop",
+    "latitude": 20.007533,
+    "longitude": 73.735848,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Post Office",
+    "category": "other",
+    "latitude": 20.001304,
+    "longitude": 73.73638,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.98786,
+    "longitude": 73.724857,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.989321,
+    "longitude": 73.72355,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur Medical Store",
+    "category": "shop",
+    "latitude": 20.002954,
+    "longitude": 73.719541,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Police Station",
+    "category": "other",
+    "latitude": 19.990964,
+    "longitude": 73.728083,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.006562,
+    "longitude": 73.736374,
+    "rating": 2.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur ICICI ATM",
+    "category": "atm",
+    "latitude": 20.004083,
+    "longitude": 73.738483,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur Hardware Store",
+    "category": "shop",
+    "latitude": 19.996057,
+    "longitude": 73.73594,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Petrol Pump",
+    "category": "other",
+    "latitude": 19.991266,
+    "longitude": 73.72846,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.002299,
+    "longitude": 73.727704,
+    "rating": 3.7,
+    "metadata": null
+  },
+  {
+    "name": "Satpur Axis Bank ATM",
+    "category": "atm",
+    "latitude": 20.000934,
+    "longitude": 73.718647,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur Kirana Store",
+    "category": "shop",
+    "latitude": 19.999545,
+    "longitude": 73.71865,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Public Library",
+    "category": "other",
+    "latitude": 19.987207,
+    "longitude": 73.727098,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.995099,
+    "longitude": 73.736048,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Satpur आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.986465,
+    "longitude": 73.730946,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Satpur Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.994399,
+    "longitude": 73.733603,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Satpur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Satpur Bus Depot",
+    "category": "other",
+    "latitude": 20.008791,
+    "longitude": 73.722785,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Indira Nagar General Hospital",
+    "category": "hospital",
+    "latitude": 19.963029,
+    "longitude": 73.784067,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar SBI ATM",
+    "category": "atm",
+    "latitude": 19.978406,
+    "longitude": 73.772027,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar Supermarket",
+    "category": "shop",
+    "latitude": 19.97795,
+    "longitude": 73.770749,
+    "rating": 4.9,
+    "metadata": null
+  },
+  {
+    "name": "Indira Nagar Post Office",
+    "category": "other",
+    "latitude": 19.960616,
+    "longitude": 73.775487,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.97716,
+    "longitude": 73.769824,
+    "rating": 4.1,
+    "metadata": null
+  },
+  {
+    "name": "Indira Nagar HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.97854,
+    "longitude": 73.788407,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar Medical Store",
+    "category": "shop",
+    "latitude": 19.962905,
+    "longitude": 73.791612,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Police Station",
+    "category": "other",
+    "latitude": 19.968894,
+    "longitude": 73.780143,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.962533,
+    "longitude": 73.791059,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar ICICI ATM",
+    "category": "atm",
+    "latitude": 19.970452,
+    "longitude": 73.785611,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar Hardware Store",
+    "category": "shop",
+    "latitude": 19.966482,
+    "longitude": 73.787397,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Petrol Pump",
+    "category": "other",
+    "latitude": 19.977545,
+    "longitude": 73.774441,
+    "rating": 4.6,
+    "metadata": null
+  },
+  {
+    "name": "Indira Nagar Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.981159,
+    "longitude": 73.773853,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.960689,
+    "longitude": 73.788423,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Indira Nagar Kirana Store",
+    "category": "shop",
+    "latitude": 19.965091,
+    "longitude": 73.787148,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Public Library",
+    "category": "other",
+    "latitude": 19.96663,
+    "longitude": 73.768244,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.971726,
+    "longitude": 73.786196,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.97903,
+    "longitude": 73.770233,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Indira Nagar Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.976603,
+    "longitude": 73.775349,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Indira Nagar Bus Depot",
+    "category": "other",
+    "latitude": 19.970212,
+    "longitude": 73.785902,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Indira Nagar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka General Hospital",
+    "category": "hospital",
+    "latitude": 19.987034,
+    "longitude": 73.783896,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka SBI ATM",
+    "category": "atm",
+    "latitude": 19.999293,
+    "longitude": 73.785444,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Supermarket",
+    "category": "shop",
+    "latitude": 19.992621,
+    "longitude": 73.79839,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Post Office",
+    "category": "other",
+    "latitude": 19.983413,
+    "longitude": 73.785659,
+    "rating": 2.9,
+    "metadata": null
+  },
+  {
+    "name": "Dwarka Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.993819,
+    "longitude": 73.787583,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.984031,
+    "longitude": 73.801843,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Medical Store",
+    "category": "shop",
+    "latitude": 20.001945,
+    "longitude": 73.794778,
+    "rating": 3.6,
+    "metadata": null
+  },
+  {
+    "name": "Dwarka Police Station",
+    "category": "other",
+    "latitude": 19.982233,
+    "longitude": 73.803586,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.982778,
+    "longitude": 73.796107,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Dwarka ICICI ATM",
+    "category": "atm",
+    "latitude": 19.994508,
+    "longitude": 73.788292,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Hardware Store",
+    "category": "shop",
+    "latitude": 19.983843,
+    "longitude": 73.799347,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Petrol Pump",
+    "category": "other",
+    "latitude": 19.993542,
+    "longitude": 73.791812,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.988329,
+    "longitude": 73.795905,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.985987,
+    "longitude": 73.786065,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Kirana Store",
+    "category": "shop",
+    "latitude": 19.984769,
+    "longitude": 73.785172,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Dwarka Public Library",
+    "category": "other",
+    "latitude": 19.991812,
+    "longitude": 73.795251,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.997872,
+    "longitude": 73.791897,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.996001,
+    "longitude": 73.796868,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dwarka Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.991203,
+    "longitude": 73.794069,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dwarka Bus Depot",
+    "category": "other",
+    "latitude": 19.982714,
+    "longitude": 73.784982,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Dwarka",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata General Hospital",
+    "category": "hospital",
+    "latitude": 19.939927,
+    "longitude": 73.760984,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata SBI ATM",
+    "category": "atm",
+    "latitude": 19.945011,
+    "longitude": 73.769851,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Pathardi Phata Supermarket",
+    "category": "shop",
+    "latitude": 19.933957,
+    "longitude": 73.768369,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Pathardi Phata Post Office",
+    "category": "other",
+    "latitude": 19.956086,
+    "longitude": 73.778063,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.949135,
+    "longitude": 73.764468,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.944292,
+    "longitude": 73.773636,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata Medical Store",
+    "category": "shop",
+    "latitude": 19.937356,
+    "longitude": 73.772048,
+    "rating": 3.7,
+    "metadata": null
+  },
+  {
+    "name": "Pathardi Phata Police Station",
+    "category": "other",
+    "latitude": 19.941351,
+    "longitude": 73.765999,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.949648,
+    "longitude": 73.764917,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata ICICI ATM",
+    "category": "atm",
+    "latitude": 19.943916,
+    "longitude": 73.765548,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata Hardware Store",
+    "category": "shop",
+    "latitude": 19.956284,
+    "longitude": 73.7677,
+    "rating": 5.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Petrol Pump",
+    "category": "other",
+    "latitude": 19.946022,
+    "longitude": 73.767918,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.94801,
+    "longitude": 73.77624,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.943515,
+    "longitude": 73.774758,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Pathardi Phata Kirana Store",
+    "category": "shop",
+    "latitude": 19.956356,
+    "longitude": 73.772613,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Public Library",
+    "category": "other",
+    "latitude": 19.946254,
+    "longitude": 73.760237,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.935819,
+    "longitude": 73.777971,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.939562,
+    "longitude": 73.778033,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Pathardi Phata Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.93885,
+    "longitude": 73.77123,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Pathardi Phata Bus Depot",
+    "category": "other",
+    "latitude": 19.954104,
+    "longitude": 73.778737,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Pathardi Phata",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad General Hospital",
+    "category": "hospital",
+    "latitude": 19.970422,
+    "longitude": 73.740186,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad SBI ATM",
+    "category": "atm",
+    "latitude": 19.962087,
+    "longitude": 73.751974,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad Supermarket",
+    "category": "shop",
+    "latitude": 19.951566,
+    "longitude": 73.740926,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Post Office",
+    "category": "other",
+    "latitude": 19.958928,
+    "longitude": 73.735723,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.953605,
+    "longitude": 73.746613,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.964925,
+    "longitude": 73.747474,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad Medical Store",
+    "category": "shop",
+    "latitude": 19.963929,
+    "longitude": 73.747698,
+    "rating": 3.7,
+    "metadata": null
+  },
+  {
+    "name": "Ambad Police Station",
+    "category": "other",
+    "latitude": 19.960055,
+    "longitude": 73.742164,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.960623,
+    "longitude": 73.738966,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad ICICI ATM",
+    "category": "atm",
+    "latitude": 19.951705,
+    "longitude": 73.739268,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad Hardware Store",
+    "category": "shop",
+    "latitude": 19.956125,
+    "longitude": 73.744625,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Petrol Pump",
+    "category": "other",
+    "latitude": 19.968624,
+    "longitude": 73.73712,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.968937,
+    "longitude": 73.728862,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.970102,
+    "longitude": 73.751938,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad Kirana Store",
+    "category": "shop",
+    "latitude": 19.958415,
+    "longitude": 73.730363,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Public Library",
+    "category": "other",
+    "latitude": 19.964656,
+    "longitude": 73.749682,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.955041,
+    "longitude": 73.736996,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ambad किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.961582,
+    "longitude": 73.74702,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Ambad Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.949895,
+    "longitude": 73.7489,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Ambad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ambad Bus Depot",
+    "category": "other",
+    "latitude": 19.951435,
+    "longitude": 73.739068,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Mhasrul General Hospital",
+    "category": "hospital",
+    "latitude": 20.047311,
+    "longitude": 73.809629,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul SBI ATM",
+    "category": "atm",
+    "latitude": 20.036294,
+    "longitude": 73.802102,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul Supermarket",
+    "category": "shop",
+    "latitude": 20.038183,
+    "longitude": 73.794002,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Post Office",
+    "category": "other",
+    "latitude": 20.039597,
+    "longitude": 73.793693,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Medical Clinic",
+    "category": "hospital",
+    "latitude": 20.035086,
+    "longitude": 73.811471,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 20.044459,
+    "longitude": 73.805872,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Mhasrul Medical Store",
+    "category": "shop",
+    "latitude": 20.042554,
+    "longitude": 73.799921,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Police Station",
+    "category": "other",
+    "latitude": 20.04257,
+    "longitude": 73.796456,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.045302,
+    "longitude": 73.80382,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul ICICI ATM",
+    "category": "atm",
+    "latitude": 20.043512,
+    "longitude": 73.795414,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul Hardware Store",
+    "category": "shop",
+    "latitude": 20.04191,
+    "longitude": 73.805577,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Petrol Pump",
+    "category": "other",
+    "latitude": 20.04594,
+    "longitude": 73.792215,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.051316,
+    "longitude": 73.80074,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul Axis Bank ATM",
+    "category": "atm",
+    "latitude": 20.047793,
+    "longitude": 73.799564,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul Kirana Store",
+    "category": "shop",
+    "latitude": 20.045917,
+    "longitude": 73.796129,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Public Library",
+    "category": "other",
+    "latitude": 20.031378,
+    "longitude": 73.811196,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Mhasrul Dental Clinic",
+    "category": "hospital",
+    "latitude": 20.051214,
+    "longitude": 73.80731,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "Mhasrul मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 20.040878,
+    "longitude": 73.798915,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Mhasrul Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 20.044136,
+    "longitude": 73.802029,
+    "rating": 4.9,
+    "metadata": null
+  },
+  {
+    "name": "Mhasrul Bus Depot",
+    "category": "other",
+    "latitude": 20.033612,
+    "longitude": 73.788601,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Mhasrul",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad General Hospital",
+    "category": "hospital",
+    "latitude": 20.023313,
+    "longitude": 73.754517,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad SBI ATM",
+    "category": "atm",
+    "latitude": 20.027799,
+    "longitude": 73.756355,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad Supermarket",
+    "category": "shop",
+    "latitude": 20.025305,
+    "longitude": 73.764823,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Post Office",
+    "category": "other",
+    "latitude": 20.021256,
+    "longitude": 73.763887,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Medical Clinic",
+    "category": "hospital",
+    "latitude": 20.028059,
+    "longitude": 73.770814,
+    "rating": 3.5,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 20.029744,
+    "longitude": 73.762795,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad Medical Store",
+    "category": "shop",
+    "latitude": 20.018785,
+    "longitude": 73.761893,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Police Station",
+    "category": "other",
+    "latitude": 20.020385,
+    "longitude": 73.769456,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Children's Hospital",
+    "category": "hospital",
+    "latitude": 20.027555,
+    "longitude": 73.757555,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad ICICI ATM",
+    "category": "atm",
+    "latitude": 20.028913,
+    "longitude": 73.768906,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad Hardware Store",
+    "category": "shop",
+    "latitude": 20.032332,
+    "longitude": 73.753513,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad Petrol Pump",
+    "category": "other",
+    "latitude": 20.03155,
+    "longitude": 73.754647,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Eye Care Centre",
+    "category": "hospital",
+    "latitude": 20.038873,
+    "longitude": 73.760885,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad Axis Bank ATM",
+    "category": "atm",
+    "latitude": 20.018068,
+    "longitude": 73.773602,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad Kirana Store",
+    "category": "shop",
+    "latitude": 20.02112,
+    "longitude": 73.759016,
+    "rating": 4.2,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad Public Library",
+    "category": "other",
+    "latitude": 20.018357,
+    "longitude": 73.77196,
+    "rating": 3.3,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad Dental Clinic",
+    "category": "hospital",
+    "latitude": 20.019258,
+    "longitude": 73.770801,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Makhmalabad आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 20.036672,
+    "longitude": 73.765318,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Makhmalabad Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 20.030092,
+    "longitude": 73.77569,
+    "rating": null,
+    "metadata": {
+      "city": "Nashik",
+      "area": "Makhmalabad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Makhmalabad Bus Depot",
+    "category": "other",
+    "latitude": 20.038808,
+    "longitude": 73.765515,
+    "rating": 4.9,
+    "metadata": null
+  },
+  {
+    "name": "Andheri General Hospital",
+    "category": "hospital",
+    "latitude": 19.118496,
+    "longitude": 72.844639,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri SBI ATM",
+    "category": "atm",
+    "latitude": 19.108764,
+    "longitude": 72.836939,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri Supermarket",
+    "category": "shop",
+    "latitude": 19.108576,
+    "longitude": 72.8416,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Post Office",
+    "category": "other",
+    "latitude": 19.130871,
+    "longitude": 72.847733,
+    "rating": 4.0,
+    "metadata": null
+  },
+  {
+    "name": "Andheri Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.123843,
+    "longitude": 72.855467,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.112161,
+    "longitude": 72.845837,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri Medical Store",
+    "category": "shop",
+    "latitude": 19.115134,
+    "longitude": 72.845884,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Police Station",
+    "category": "other",
+    "latitude": 19.122963,
+    "longitude": 72.843983,
+    "rating": 4.8,
+    "metadata": null
+  },
+  {
+    "name": "Andheri Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.126963,
+    "longitude": 72.837238,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri ICICI ATM",
+    "category": "atm",
+    "latitude": 19.126482,
+    "longitude": 72.848353,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri Hardware Store",
+    "category": "shop",
+    "latitude": 19.120478,
+    "longitude": 72.842912,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Petrol Pump",
+    "category": "other",
+    "latitude": 19.122968,
+    "longitude": 72.853007,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.12141,
+    "longitude": 72.84344,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.112382,
+    "longitude": 72.837597,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri Kirana Store",
+    "category": "shop",
+    "latitude": 19.115821,
+    "longitude": 72.853303,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Public Library",
+    "category": "other",
+    "latitude": 19.130389,
+    "longitude": 72.854642,
+    "rating": 4.1,
+    "metadata": null
+  },
+  {
+    "name": "Andheri Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.129298,
+    "longitude": 72.854907,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Andheri किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.114416,
+    "longitude": 72.843156,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Andheri Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.127877,
+    "longitude": 72.848592,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Andheri Bus Depot",
+    "category": "other",
+    "latitude": 19.107736,
+    "longitude": 72.852907,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Andheri",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra General Hospital",
+    "category": "hospital",
+    "latitude": 19.056481,
+    "longitude": 72.834818,
+    "rating": 3.9,
+    "metadata": null
+  },
+  {
+    "name": "Bandra SBI ATM",
+    "category": "atm",
+    "latitude": 19.048863,
+    "longitude": 72.821278,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Bandra Supermarket",
+    "category": "shop",
+    "latitude": 19.063775,
+    "longitude": 72.82403,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Post Office",
+    "category": "other",
+    "latitude": 19.054156,
+    "longitude": 72.835619,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.054398,
+    "longitude": 72.833784,
+    "rating": 4.2,
+    "metadata": null
+  },
+  {
+    "name": "Bandra HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.057086,
+    "longitude": 72.831884,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Bandra Medical Store",
+    "category": "shop",
+    "latitude": 19.054834,
+    "longitude": 72.82257,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Police Station",
+    "category": "other",
+    "latitude": 19.055475,
+    "longitude": 72.817686,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.064488,
+    "longitude": 72.829506,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "Bandra ICICI ATM",
+    "category": "atm",
+    "latitude": 19.068282,
+    "longitude": 72.818515,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Bandra Hardware Store",
+    "category": "shop",
+    "latitude": 19.069708,
+    "longitude": 72.838191,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Petrol Pump",
+    "category": "other",
+    "latitude": 19.057625,
+    "longitude": 72.820264,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.066832,
+    "longitude": 72.832335,
+    "rating": 4.8,
+    "metadata": null
+  },
+  {
+    "name": "Bandra Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.067868,
+    "longitude": 72.82334,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Bandra Kirana Store",
+    "category": "shop",
+    "latitude": 19.060175,
+    "longitude": 72.826998,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Public Library",
+    "category": "other",
+    "latitude": 19.051635,
+    "longitude": 72.829752,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.069342,
+    "longitude": 72.825885,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Bandra मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.05327,
+    "longitude": 72.821015,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Bandra Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.062058,
+    "longitude": 72.835745,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Bandra Bus Depot",
+    "category": "other",
+    "latitude": 19.059459,
+    "longitude": 72.835607,
+    "rating": 3.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Bandra",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar General Hospital",
+    "category": "hospital",
+    "latitude": 19.019348,
+    "longitude": 72.851047,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar SBI ATM",
+    "category": "atm",
+    "latitude": 19.009423,
+    "longitude": 72.837439,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Supermarket",
+    "category": "shop",
+    "latitude": 19.013068,
+    "longitude": 72.842392,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Post Office",
+    "category": "other",
+    "latitude": 19.01325,
+    "longitude": 72.846646,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.007642,
+    "longitude": 72.856542,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.016905,
+    "longitude": 72.849104,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Medical Store",
+    "category": "shop",
+    "latitude": 19.027301,
+    "longitude": 72.846594,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Police Station",
+    "category": "other",
+    "latitude": 19.017215,
+    "longitude": 72.839421,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Dadar Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.027379,
+    "longitude": 72.844043,
+    "rating": 3.8,
+    "metadata": null
+  },
+  {
+    "name": "Dadar ICICI ATM",
+    "category": "atm",
+    "latitude": 19.011746,
+    "longitude": 72.846306,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Hardware Store",
+    "category": "shop",
+    "latitude": 19.018346,
+    "longitude": 72.83961,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Petrol Pump",
+    "category": "other",
+    "latitude": 19.013921,
+    "longitude": 72.850149,
+    "rating": 4.1,
+    "metadata": null
+  },
+  {
+    "name": "Dadar Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.008068,
+    "longitude": 72.852081,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.027552,
+    "longitude": 72.856759,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Kirana Store",
+    "category": "shop",
+    "latitude": 19.019786,
+    "longitude": 72.839194,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Public Library",
+    "category": "other",
+    "latitude": 19.015207,
+    "longitude": 72.850081,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.0248,
+    "longitude": 72.855316,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.02225,
+    "longitude": 72.848433,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Dadar Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.015962,
+    "longitude": 72.844484,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Dadar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Dadar Bus Depot",
+    "category": "other",
+    "latitude": 19.028544,
+    "longitude": 72.847471,
+    "rating": 2.8,
+    "metadata": null
+  },
+  {
+    "name": "Colaba General Hospital",
+    "category": "hospital",
+    "latitude": 18.914966,
+    "longitude": 72.805127,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba SBI ATM",
+    "category": "atm",
+    "latitude": 18.895606,
+    "longitude": 72.810782,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba Supermarket",
+    "category": "shop",
+    "latitude": 18.897845,
+    "longitude": 72.811741,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Post Office",
+    "category": "other",
+    "latitude": 18.914117,
+    "longitude": 72.806673,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Medical Clinic",
+    "category": "hospital",
+    "latitude": 18.900401,
+    "longitude": 72.813361,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 18.907516,
+    "longitude": 72.810127,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba Medical Store",
+    "category": "shop",
+    "latitude": 18.905956,
+    "longitude": 72.822743,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Police Station",
+    "category": "other",
+    "latitude": 18.90578,
+    "longitude": 72.809463,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Children's Hospital",
+    "category": "hospital",
+    "latitude": 18.914305,
+    "longitude": 72.82193,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba ICICI ATM",
+    "category": "atm",
+    "latitude": 18.910088,
+    "longitude": 72.823679,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba Hardware Store",
+    "category": "shop",
+    "latitude": 18.897162,
+    "longitude": 72.823001,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Petrol Pump",
+    "category": "other",
+    "latitude": 18.901247,
+    "longitude": 72.824427,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Eye Care Centre",
+    "category": "hospital",
+    "latitude": 18.917414,
+    "longitude": 72.808029,
+    "rating": 3.4,
+    "metadata": null
+  },
+  {
+    "name": "Colaba Axis Bank ATM",
+    "category": "atm",
+    "latitude": 18.895978,
+    "longitude": 72.814748,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba Kirana Store",
+    "category": "shop",
+    "latitude": 18.918569,
+    "longitude": 72.811698,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Public Library",
+    "category": "other",
+    "latitude": 18.91484,
+    "longitude": 72.818299,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Dental Clinic",
+    "category": "hospital",
+    "latitude": 18.914614,
+    "longitude": 72.819406,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Colaba किराणा दुकान",
+    "category": "atm",
+    "latitude": 18.905466,
+    "longitude": 72.802826,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Colaba Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 18.900842,
+    "longitude": 72.822739,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Colaba Bus Depot",
+    "category": "other",
+    "latitude": 18.897368,
+    "longitude": 72.809614,
+    "rating": 2.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Colaba",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai General Hospital",
+    "category": "hospital",
+    "latitude": 19.124654,
+    "longitude": 72.904971,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai SBI ATM",
+    "category": "atm",
+    "latitude": 19.119922,
+    "longitude": 72.894394,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai Supermarket",
+    "category": "shop",
+    "latitude": 19.111407,
+    "longitude": 72.897446,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Post Office",
+    "category": "other",
+    "latitude": 19.115598,
+    "longitude": 72.909945,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.107224,
+    "longitude": 72.906625,
+    "rating": 5.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.114971,
+    "longitude": 72.905283,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai Medical Store",
+    "category": "shop",
+    "latitude": 19.129145,
+    "longitude": 72.900088,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Police Station",
+    "category": "other",
+    "latitude": 19.113875,
+    "longitude": 72.911591,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.11358,
+    "longitude": 72.895064,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "Powai ICICI ATM",
+    "category": "atm",
+    "latitude": 19.124299,
+    "longitude": 72.905151,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai Hardware Store",
+    "category": "shop",
+    "latitude": 19.120762,
+    "longitude": 72.913476,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Petrol Pump",
+    "category": "other",
+    "latitude": 19.116584,
+    "longitude": 72.901043,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Powai Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.106606,
+    "longitude": 72.916401,
+    "rating": 5.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.11168,
+    "longitude": 72.912079,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Powai Kirana Store",
+    "category": "shop",
+    "latitude": 19.114167,
+    "longitude": 72.91274,
+    "rating": 3.3,
+    "metadata": null
+  },
+  {
+    "name": "Powai Public Library",
+    "category": "other",
+    "latitude": 19.114432,
+    "longitude": 72.915348,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Powai Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.128969,
+    "longitude": 72.905909,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Powai मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.124828,
+    "longitude": 72.91145,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Powai Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.120059,
+    "longitude": 72.913736,
+    "rating": 3.3,
+    "metadata": null
+  },
+  {
+    "name": "Powai Bus Depot",
+    "category": "other",
+    "latitude": 19.121462,
+    "longitude": 72.901356,
+    "rating": 3.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Powai",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali General Hospital",
+    "category": "hospital",
+    "latitude": 19.225437,
+    "longitude": 72.846017,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali SBI ATM",
+    "category": "atm",
+    "latitude": 19.223589,
+    "longitude": 72.868521,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Supermarket",
+    "category": "shop",
+    "latitude": 19.218801,
+    "longitude": 72.8603,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Post Office",
+    "category": "other",
+    "latitude": 19.239867,
+    "longitude": 72.848427,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "Borivali Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.218614,
+    "longitude": 72.863684,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.231522,
+    "longitude": 72.861297,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Medical Store",
+    "category": "shop",
+    "latitude": 19.225928,
+    "longitude": 72.863314,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Police Station",
+    "category": "other",
+    "latitude": 19.232589,
+    "longitude": 72.850991,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.228977,
+    "longitude": 72.854288,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali ICICI ATM",
+    "category": "atm",
+    "latitude": 19.227711,
+    "longitude": 72.868913,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Hardware Store",
+    "category": "shop",
+    "latitude": 19.238995,
+    "longitude": 72.856789,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Petrol Pump",
+    "category": "other",
+    "latitude": 19.227849,
+    "longitude": 72.866568,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.237293,
+    "longitude": 72.85267,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.238392,
+    "longitude": 72.865433,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Kirana Store",
+    "category": "shop",
+    "latitude": 19.239256,
+    "longitude": 72.860305,
+    "rating": 3.8,
+    "metadata": null
+  },
+  {
+    "name": "Borivali Public Library",
+    "category": "other",
+    "latitude": 19.221824,
+    "longitude": 72.848333,
+    "rating": 2.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.225854,
+    "longitude": 72.864288,
+    "rating": 4.0,
+    "metadata": null
+  },
+  {
+    "name": "Borivali आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.224423,
+    "longitude": 72.86899,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Borivali Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.229617,
+    "longitude": 72.86346,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Borivali Bus Depot",
+    "category": "other",
+    "latitude": 19.232416,
+    "longitude": 72.855799,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Borivali",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla General Hospital",
+    "category": "hospital",
+    "latitude": 19.079326,
+    "longitude": 72.887855,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla SBI ATM",
+    "category": "atm",
+    "latitude": 19.082457,
+    "longitude": 72.87383,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Kurla Supermarket",
+    "category": "shop",
+    "latitude": 19.064272,
+    "longitude": 72.876452,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Post Office",
+    "category": "other",
+    "latitude": 19.083182,
+    "longitude": 72.893978,
+    "rating": 3.1,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.07382,
+    "longitude": 72.875504,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.064647,
+    "longitude": 72.895099,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Kurla Medical Store",
+    "category": "shop",
+    "latitude": 19.07641,
+    "longitude": 72.889795,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Police Station",
+    "category": "other",
+    "latitude": 19.080406,
+    "longitude": 72.873181,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.074443,
+    "longitude": 72.888127,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla ICICI ATM",
+    "category": "atm",
+    "latitude": 19.072553,
+    "longitude": 72.887552,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla Hardware Store",
+    "category": "shop",
+    "latitude": 19.08356,
+    "longitude": 72.884091,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Petrol Pump",
+    "category": "other",
+    "latitude": 19.062351,
+    "longitude": 72.873938,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.07516,
+    "longitude": 72.880002,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.084009,
+    "longitude": 72.875638,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla Kirana Store",
+    "category": "shop",
+    "latitude": 19.07408,
+    "longitude": 72.880159,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Public Library",
+    "category": "other",
+    "latitude": 19.062923,
+    "longitude": 72.879465,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.081367,
+    "longitude": 72.876333,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.078915,
+    "longitude": 72.884458,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Kurla Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.07257,
+    "longitude": 72.879905,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Kurla",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Kurla Bus Depot",
+    "category": "other",
+    "latitude": 19.072731,
+    "longitude": 72.8957,
+    "rating": 3.4,
+    "metadata": null
+  },
+  {
+    "name": "Ghatkopar General Hospital",
+    "category": "hospital",
+    "latitude": 19.085877,
+    "longitude": 72.917176,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar SBI ATM",
+    "category": "atm",
+    "latitude": 19.094332,
+    "longitude": 72.906342,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Supermarket",
+    "category": "shop",
+    "latitude": 19.09146,
+    "longitude": 72.914333,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Post Office",
+    "category": "other",
+    "latitude": 19.078672,
+    "longitude": 72.909277,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.092346,
+    "longitude": 72.902713,
+    "rating": 4.2,
+    "metadata": null
+  },
+  {
+    "name": "Ghatkopar HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.097402,
+    "longitude": 72.905454,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Medical Store",
+    "category": "shop",
+    "latitude": 19.082138,
+    "longitude": 72.918535,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Police Station",
+    "category": "other",
+    "latitude": 19.086002,
+    "longitude": 72.897087,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.08537,
+    "longitude": 72.906968,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar ICICI ATM",
+    "category": "atm",
+    "latitude": 19.088714,
+    "longitude": 72.8999,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Hardware Store",
+    "category": "shop",
+    "latitude": 19.091744,
+    "longitude": 72.903182,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Petrol Pump",
+    "category": "other",
+    "latitude": 19.09101,
+    "longitude": 72.903195,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.097518,
+    "longitude": 72.910009,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.07464,
+    "longitude": 72.90739,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Kirana Store",
+    "category": "shop",
+    "latitude": 19.09279,
+    "longitude": 72.914628,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Public Library",
+    "category": "other",
+    "latitude": 19.078092,
+    "longitude": 72.911097,
+    "rating": 4.6,
+    "metadata": null
+  },
+  {
+    "name": "Ghatkopar Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.090337,
+    "longitude": 72.896758,
+    "rating": 2.8,
+    "metadata": null
+  },
+  {
+    "name": "Ghatkopar मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.081529,
+    "longitude": 72.899634,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Ghatkopar Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.083849,
+    "longitude": 72.914599,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Ghatkopar Bus Depot",
+    "category": "other",
+    "latitude": 19.075495,
+    "longitude": 72.899314,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Ghatkopar",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad General Hospital",
+    "category": "hospital",
+    "latitude": 19.186611,
+    "longitude": 72.84353,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad SBI ATM",
+    "category": "atm",
+    "latitude": 19.182503,
+    "longitude": 72.854528,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad Supermarket",
+    "category": "shop",
+    "latitude": 19.189439,
+    "longitude": 72.85264,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Post Office",
+    "category": "other",
+    "latitude": 19.187394,
+    "longitude": 72.841397,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.178975,
+    "longitude": 72.85292,
+    "rating": 3.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.19309,
+    "longitude": 72.842563,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Malad Medical Store",
+    "category": "shop",
+    "latitude": 19.190239,
+    "longitude": 72.845113,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Police Station",
+    "category": "other",
+    "latitude": 19.193311,
+    "longitude": 72.842971,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.184617,
+    "longitude": 72.842155,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad ICICI ATM",
+    "category": "atm",
+    "latitude": 19.196393,
+    "longitude": 72.852708,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Malad Hardware Store",
+    "category": "shop",
+    "latitude": 19.188776,
+    "longitude": 72.850084,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Petrol Pump",
+    "category": "other",
+    "latitude": 19.189311,
+    "longitude": 72.83726,
+    "rating": 4.3,
+    "metadata": null
+  },
+  {
+    "name": "Malad Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.192498,
+    "longitude": 72.836124,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.196441,
+    "longitude": 72.857082,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad Kirana Store",
+    "category": "shop",
+    "latitude": 19.178787,
+    "longitude": 72.859134,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Public Library",
+    "category": "other",
+    "latitude": 19.176147,
+    "longitude": 72.849779,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Malad Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.195918,
+    "longitude": 72.840202,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.197932,
+    "longitude": 72.845528,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Malad Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.196479,
+    "longitude": 72.859091,
+    "rating": 4.7,
+    "metadata": null
+  },
+  {
+    "name": "Malad Bus Depot",
+    "category": "other",
+    "latitude": 19.187631,
+    "longitude": 72.838575,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Malad",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur General Hospital",
+    "category": "hospital",
+    "latitude": 19.053239,
+    "longitude": 72.900354,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur SBI ATM",
+    "category": "atm",
+    "latitude": 19.044827,
+    "longitude": 72.891204,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Chembur Supermarket",
+    "category": "shop",
+    "latitude": 19.051214,
+    "longitude": 72.894674,
+    "rating": 4.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Post Office",
+    "category": "other",
+    "latitude": 19.053827,
+    "longitude": 72.906675,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.060048,
+    "longitude": 72.900867,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.044635,
+    "longitude": 72.891875,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur Medical Store",
+    "category": "shop",
+    "latitude": 19.046153,
+    "longitude": 72.894759,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Police Station",
+    "category": "other",
+    "latitude": 19.047447,
+    "longitude": 72.905849,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.056826,
+    "longitude": 72.889991,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur ICICI ATM",
+    "category": "atm",
+    "latitude": 19.04993,
+    "longitude": 72.90056,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur Hardware Store",
+    "category": "shop",
+    "latitude": 19.057085,
+    "longitude": 72.895963,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Petrol Pump",
+    "category": "other",
+    "latitude": 19.047281,
+    "longitude": 72.903251,
+    "rating": 2.8,
+    "metadata": null
+  },
+  {
+    "name": "Chembur Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.058146,
+    "longitude": 72.903038,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.0531,
+    "longitude": 72.904438,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur Kirana Store",
+    "category": "shop",
+    "latitude": 19.046139,
+    "longitude": 72.906614,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Public Library",
+    "category": "other",
+    "latitude": 19.05709,
+    "longitude": 72.890374,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.052332,
+    "longitude": 72.902245,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.052688,
+    "longitude": 72.89129,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Chembur Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.054196,
+    "longitude": 72.890683,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Chembur Bus Depot",
+    "category": "other",
+    "latitude": 19.052518,
+    "longitude": 72.899463,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Chembur",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli General Hospital",
+    "category": "hospital",
+    "latitude": 19.024966,
+    "longitude": 72.822359,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli SBI ATM",
+    "category": "atm",
+    "latitude": 19.019479,
+    "longitude": 72.806087,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli Supermarket",
+    "category": "shop",
+    "latitude": 19.00713,
+    "longitude": 72.828859,
+    "rating": 2.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Post Office",
+    "category": "other",
+    "latitude": 19.006362,
+    "longitude": 72.814813,
+    "rating": 4.4,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.021101,
+    "longitude": 72.815089,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.027362,
+    "longitude": 72.814015,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli Medical Store",
+    "category": "shop",
+    "latitude": 19.021483,
+    "longitude": 72.817943,
+    "rating": 3.4,
+    "metadata": null
+  },
+  {
+    "name": "Worli Police Station",
+    "category": "other",
+    "latitude": 19.018494,
+    "longitude": 72.817692,
+    "rating": 3.1,
+    "metadata": null
+  },
+  {
+    "name": "Worli Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.006146,
+    "longitude": 72.812161,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli ICICI ATM",
+    "category": "atm",
+    "latitude": 19.025361,
+    "longitude": 72.81094,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli Hardware Store",
+    "category": "shop",
+    "latitude": 19.012216,
+    "longitude": 72.827498,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Petrol Pump",
+    "category": "other",
+    "latitude": 19.015662,
+    "longitude": 72.823385,
+    "rating": 2.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.008022,
+    "longitude": 72.805806,
+    "rating": 4.3,
+    "metadata": null
+  },
+  {
+    "name": "Worli Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.023373,
+    "longitude": 72.814654,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli Kirana Store",
+    "category": "shop",
+    "latitude": 19.010814,
+    "longitude": 72.82573,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Public Library",
+    "category": "other",
+    "latitude": 19.012542,
+    "longitude": 72.824579,
+    "rating": 3.3,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.021741,
+    "longitude": 72.812696,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Worli मेडिकल स्टोअर",
+    "category": "atm",
+    "latitude": 19.010905,
+    "longitude": 72.812212,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Worli Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.028364,
+    "longitude": 72.826113,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Worli Bus Depot",
+    "category": "other",
+    "latitude": 19.017495,
+    "longitude": 72.828335,
+    "rating": 4.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Worli",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon General Hospital",
+    "category": "hospital",
+    "latitude": 19.16195,
+    "longitude": 72.850592,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon SBI ATM",
+    "category": "atm",
+    "latitude": 19.172406,
+    "longitude": 72.851964,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Supermarket",
+    "category": "shop",
+    "latitude": 19.161518,
+    "longitude": 72.857582,
+    "rating": 4.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Post Office",
+    "category": "other",
+    "latitude": 19.177527,
+    "longitude": 72.853975,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.15918,
+    "longitude": 72.856121,
+    "rating": 4.6,
+    "metadata": null
+  },
+  {
+    "name": "Goregaon HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.17169,
+    "longitude": 72.845172,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Medical Store",
+    "category": "shop",
+    "latitude": 19.170468,
+    "longitude": 72.85507,
+    "rating": 3.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Police Station",
+    "category": "other",
+    "latitude": 19.171683,
+    "longitude": 72.854012,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.177268,
+    "longitude": 72.840968,
+    "rating": 4.9,
+    "metadata": null
+  },
+  {
+    "name": "Goregaon ICICI ATM",
+    "category": "atm",
+    "latitude": 19.17829,
+    "longitude": 72.852094,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Hardware Store",
+    "category": "shop",
+    "latitude": 19.168806,
+    "longitude": 72.845508,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Petrol Pump",
+    "category": "other",
+    "latitude": 19.163436,
+    "longitude": 72.853408,
+    "rating": 3.2,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.166235,
+    "longitude": 72.842967,
+    "rating": 3.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.176244,
+    "longitude": 72.849497,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Kirana Store",
+    "category": "shop",
+    "latitude": 19.167801,
+    "longitude": 72.845911,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Public Library",
+    "category": "other",
+    "latitude": 19.176734,
+    "longitude": 72.854499,
+    "rating": 2.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Goregaon Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.163416,
+    "longitude": 72.860601,
+    "rating": 4.1,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon आरोग्य दवाखाना",
+    "category": "atm",
+    "latitude": 19.160476,
+    "longitude": 72.860318,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Goregaon Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.169701,
+    "longitude": 72.852374,
+    "rating": 4.5,
+    "metadata": null
+  },
+  {
+    "name": "Goregaon Bus Depot",
+    "category": "other",
+    "latitude": 19.171588,
+    "longitude": 72.85232,
+    "rating": 3.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Goregaon",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle General Hospital",
+    "category": "hospital",
+    "latitude": 19.08841,
+    "longitude": 72.832812,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle SBI ATM",
+    "category": "atm",
+    "latitude": 19.105344,
+    "longitude": 72.841897,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle Supermarket",
+    "category": "shop",
+    "latitude": 19.092554,
+    "longitude": 72.848972,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Post Office",
+    "category": "other",
+    "latitude": 19.095957,
+    "longitude": 72.846828,
+    "rating": 4.0,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Medical Clinic",
+    "category": "hospital",
+    "latitude": 19.098709,
+    "longitude": 72.832159,
+    "rating": 2.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle HDFC Bank ATM",
+    "category": "atm",
+    "latitude": 19.093594,
+    "longitude": 72.85546,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Vile Parle Medical Store",
+    "category": "shop",
+    "latitude": 19.106516,
+    "longitude": 72.848177,
+    "rating": 4.8,
+    "metadata": null
+  },
+  {
+    "name": "Vile Parle Police Station",
+    "category": "other",
+    "latitude": 19.089312,
+    "longitude": 72.835574,
+    "rating": 3.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Children's Hospital",
+    "category": "hospital",
+    "latitude": 19.093416,
+    "longitude": 72.841526,
+    "rating": 3.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle ICICI ATM",
+    "category": "atm",
+    "latitude": 19.110766,
+    "longitude": 72.837421,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle Hardware Store",
+    "category": "shop",
+    "latitude": 19.107349,
+    "longitude": 72.84769,
+    "rating": 4.4,
+    "metadata": null
+  },
+  {
+    "name": "Vile Parle Petrol Pump",
+    "category": "other",
+    "latitude": 19.096102,
+    "longitude": 72.845265,
+    "rating": null,
+    "metadata": null
+  },
+  {
+    "name": "Vile Parle Eye Care Centre",
+    "category": "hospital",
+    "latitude": 19.091113,
+    "longitude": 72.843997,
+    "rating": 4.5,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle Axis Bank ATM",
+    "category": "atm",
+    "latitude": 19.107591,
+    "longitude": 72.834289,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle Kirana Store",
+    "category": "shop",
+    "latitude": 19.088021,
+    "longitude": 72.837074,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Public Library",
+    "category": "other",
+    "latitude": 19.088117,
+    "longitude": 72.833784,
+    "rating": 4.7,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Dental Clinic",
+    "category": "hospital",
+    "latitude": 19.08779,
+    "longitude": 72.85429,
+    "rating": 4.9,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle किराणा दुकान",
+    "category": "atm",
+    "latitude": 19.105054,
+    "longitude": 72.849105,
+    "rating": null,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": true
+    }
+  },
+  {
+    "name": "Vile Parle Shah & Sons, General Store",
+    "category": "shop",
+    "latitude": 19.088846,
+    "longitude": 72.835899,
+    "rating": 4.6,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  },
+  {
+    "name": "Vile Parle Bus Depot",
+    "category": "other",
+    "latitude": 19.108517,
+    "longitude": 72.839962,
+    "rating": 2.8,
+    "metadata": {
+      "city": "Mumbai",
+      "area": "Vile Parle",
+      "open_24h": false
+    }
+  }
+]
