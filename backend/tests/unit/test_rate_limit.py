@@ -8,11 +8,15 @@ from app.api.deps import (
     get_admin_repository,
     get_current_admin,
     get_db_session,
+    get_redis,
+    get_service_repository,
 )
 from app.core.config import Settings
 from app.core.rate_limit import client_ip
 from app.main import create_app
 from tests.unit.test_auth import PASSWORD, FakeRepo, make_admin
+from tests.unit.test_cache import FakeRedis as FakeServiceCache
+from tests.unit.test_service_service import FakeRepo as FakeServiceRepo
 
 PROXIES = ["10.0.0.0/8"]
 ADMIN = make_admin()
@@ -127,6 +131,28 @@ def test_admin_write_tier() -> None:
     client = TestClient(build(FakeRedis()))
     assert client.post("/api/v1/admin/services", json={}).status_code == 422
     assert client.post("/api/v1/admin/services", json={}).status_code == 429
+
+
+def test_successful_delete_has_rate_limit_headers(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RATE_LIMIT_ADMIN_WRITE_PER_MINUTE", "2")
+    monkeypatch.setattr("time.time", lambda: 1_800_000_000.0)
+    app = build(FakeRedis())
+    repo = FakeServiceRepo()
+    app.dependency_overrides[get_service_repository] = lambda: repo
+    app.dependency_overrides[get_redis] = FakeServiceCache
+    client = TestClient(app)
+    created = client.post(
+        "/api/v1/admin/services",
+        json={"name": "Corner ATM", "category": "atm", "latitude": 28.6, "longitude": 77.2},
+    )
+    assert created.status_code == 201
+    response = client.delete(f"/api/v1/admin/services/{created.json()['id']}")
+
+    assert response.status_code == 204
+    assert response.content == b""
+    assert response.headers["X-RateLimit-Limit"] == "2"
+    assert response.headers["X-RateLimit-Remaining"] == "0"
+    assert int(response.headers["X-RateLimit-Reset"]) % 60 == 0
 
 
 def test_success_response_has_rate_limit_headers() -> None:

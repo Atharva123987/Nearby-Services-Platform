@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, Depends, Query, status
 
 from app.api.deps import ServiceServiceDep, admin_write_rate_limit, get_current_admin
 from app.schemas.service import (
@@ -56,7 +56,6 @@ async def update_service(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=write_limit,
 )
-async def delete_service(service_id: uuid.UUID, service: ServiceServiceDep) -> Response:
+async def delete_service(service_id: uuid.UUID, service: ServiceServiceDep) -> None:
     """Repeating a delete returns 404 (the service is already gone)."""
     await service.delete(service_id)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)

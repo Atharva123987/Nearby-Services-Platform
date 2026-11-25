@@ -36,7 +36,7 @@ seed: ## Load dev seed data (200 services in Nashik + Mumbai); safe to re-run
 	docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"' < db/seeds/0001_nashik_mumbai.sql
 
 backend-dev: ## Run the API on the host with reload
-	cd backend && uv run uvicorn app.main:app --reload --port 8000
+	cd backend && uv run uvicorn app.main:app --reload --port 8000 --no-proxy-headers
 
 frontend-dev: ## Run Next.js on the host
 	cd frontend && npm run dev
