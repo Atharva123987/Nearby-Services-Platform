@@ -1,5 +1,6 @@
 """Shared FastAPI dependencies."""
 
+import hashlib
 import logging
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable
@@ -18,6 +19,7 @@ from app.models.admin import Admin
 from app.repositories.admin_repository import AdminRepository
 from app.repositories.health_repository import HealthRepository
 from app.repositories.service_repository import ServiceRepository
+from app.schemas.admin import normalize_email
 from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
 from app.services.service_service import ServiceService
@@ -96,51 +98,104 @@ async def get_current_admin(
 CurrentAdminDep = Annotated[Admin, Depends(get_current_admin)]
 
 
+def _client_ip(request: Request, settings: Settings) -> str:
+    return rate_limit.client_ip(
+        request.client.host if request.client else None,
+        request.headers.get("x-forwarded-for"),
+        settings.trusted_proxies,
+    )
+
+
+async def enforce_rate_limit(
+    request: Request,
+    response: Response,
+    settings: Settings,
+    key: str,
+    limit: int,
+    *,
+    window_seconds: int = rate_limit.WINDOW_SECONDS,
+    fail_open: bool,
+) -> None:
+    """Count one request against ``key``; 429 once ``limit`` is exceeded in the window.
+
+    Sets ``X-RateLimit-Limit/Remaining/Reset`` (reset = Unix time the window ends). When
+    several limits apply to a request, the last one checked sets them.
+    """
+    if not settings.rate_limit_enabled:
+        return
+    try:
+        count, reset_at = await rate_limit.hit(request.app.state.redis, key, window_seconds)
+    except RedisError as exc:
+        logger.warning("rate limit check failed", extra={"key": key, "error": str(exc)})
+        if fail_open:
+            return
+        raise HTTPException(503, "Service temporarily unavailable") from exc
+    headers = {
+        "X-RateLimit-Limit": str(limit),
+        "X-RateLimit-Remaining": str(max(limit - count, 0)),
+        "X-RateLimit-Reset": str(reset_at),
+    }
+    if count > limit:
+        retry_after = max(reset_at - int(time.time()), 1)
+        raise HTTPException(
+            429, "Rate limit exceeded", headers={**headers, "Retry-After": str(retry_after)}
+        )
+    response.headers.update(headers)
+
+
 def rate_limiter(
     scope: str, limit_setting: str, *, fail_open: bool
 ) -> Callable[[Request, Response, SettingsDep], Awaitable[None]]:
-    """Per-IP limit of ``settings.<limit_setting>`` requests per minute (see core/rate_limit).
-
-    Sets ``X-RateLimit-Limit/Remaining/Reset`` (reset = Unix time the window ends). When
-    several tiers apply to a route, the route's own (stricter) tier sets them last.
-    """
+    """Per-IP limit of ``settings.<limit_setting>`` requests per minute."""
 
     async def dependency(request: Request, response: Response, settings: SettingsDep) -> None:
-        if not settings.rate_limit_enabled:
-            return
-        redis = request.app.state.redis
-        ip = rate_limit.client_ip(
-            request.client.host if request.client else None,
-            request.headers.get("x-forwarded-for"),
-            settings.trusted_proxies,
-        )
+        key = f"{scope}:{_client_ip(request, settings)}"
         limit: int = getattr(settings, limit_setting)
-        try:
-            count, reset_at = await rate_limit.hit(redis, f"{scope}:{ip}")
-        except RedisError as exc:
-            logger.warning("rate limit check failed", extra={"scope": scope, "error": str(exc)})
-            if fail_open:
-                return
-            raise HTTPException(503, "Service temporarily unavailable") from exc
-        headers = {
-            "X-RateLimit-Limit": str(limit),
-            "X-RateLimit-Remaining": str(max(limit - count, 0)),
-            "X-RateLimit-Reset": str(reset_at),
-        }
-        if count > limit:
-            retry_after = max(reset_at - int(time.time()), 1)
-            raise HTTPException(
-                429, "Rate limit exceeded", headers={**headers, "Retry-After": str(retry_after)}
-            )
-        response.headers.update(headers)
+        await enforce_rate_limit(request, response, settings, key, limit, fail_open=fail_open)
 
     return dependency
 
 
-# Public routes stay up if Redis is down; login does not (no brute force during an outage).
+# Public routes stay up if Redis is down.
 default_rate_limit = rate_limiter("default", "rate_limit_default_per_minute", fail_open=True)
-auth_rate_limit = rate_limiter("auth", "rate_limit_auth_per_minute", fail_open=False)
 nearby_rate_limit = rate_limiter("nearby", "rate_limit_nearby_per_minute", fail_open=True)
 admin_write_rate_limit = rate_limiter(
     "admin_write", "rate_limit_admin_write_per_minute", fail_open=True
 )
+
+_LOGIN_WINDOWS = ((60, "rate_limit_login_per_minute"), (3600, "rate_limit_login_per_hour"))
+
+
+def _login_email_key(email: str) -> str:
+    # Hashed so Redis keys don't hold email addresses.
+    return "login:email:" + hashlib.sha256(normalize_email(email).encode()).hexdigest()
+
+
+async def enforce_login_rate_limit(
+    request: Request, response: Response, settings: Settings, email: str
+) -> None:
+    """Per-IP and per-email login limits. Fails closed: no brute force while Redis is down."""
+    for key in (f"login:ip:{_client_ip(request, settings)}", _login_email_key(email)):
+        for window_seconds, limit_setting in _LOGIN_WINDOWS:
+            await enforce_rate_limit(
+                request,
+                response,
+                settings,
+                key,
+                getattr(settings, limit_setting),
+                window_seconds=window_seconds,
+                fail_open=False,
+            )
+
+
+async def reset_login_email_rate_limit(request: Request, settings: Settings, email: str) -> None:
+    """Called after a successful login. Per-IP counters are kept, so logging in to one
+    valid account does not reset an attacker's IP budget."""
+    if not settings.rate_limit_enabled:
+        return
+    key = _login_email_key(email)
+    try:
+        for window_seconds, _ in _LOGIN_WINDOWS:
+            await rate_limit.reset(request.app.state.redis, key, window_seconds)
+    except RedisError as exc:
+        logger.warning("login rate limit reset failed", extra={"error": str(exc)})

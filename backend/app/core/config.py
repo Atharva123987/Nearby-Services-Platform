@@ -97,7 +97,9 @@ class Settings(BaseSettings):
     rate_limit_default_per_minute: int = Field(default=100, ge=1)
     rate_limit_nearby_per_minute: int = Field(default=30, ge=1)
     rate_limit_admin_write_per_minute: int = Field(default=60, ge=1)
-    rate_limit_auth_per_minute: int = Field(default=10, ge=1)
+    # Login: enforced separately per client IP and per email (slows credential stuffing).
+    rate_limit_login_per_minute: int = Field(default=5, ge=1)
+    rate_limit_login_per_hour: int = Field(default=20, ge=1)
     # Proxy IPs/CIDRs whose X-Forwarded-For we trust. Empty => header ignored (spoofable).
     trusted_proxies: Annotated[list[str], NoDecode] = []
 

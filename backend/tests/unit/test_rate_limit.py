@@ -3,12 +3,19 @@ from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 from redis.exceptions import ConnectionError as RedisConnectionError
 
-from app.api.deps import default_rate_limit, get_current_admin, get_db_session
+from app.api.deps import (
+    default_rate_limit,
+    get_admin_repository,
+    get_current_admin,
+    get_db_session,
+)
 from app.core.config import Settings
 from app.core.rate_limit import client_ip
 from app.main import create_app
+from tests.unit.test_auth import PASSWORD, FakeRepo, make_admin
 
 PROXIES = ["10.0.0.0/8"]
+ADMIN = make_admin()
 
 
 def test_ignores_forwarded_for_without_trusted_proxies() -> None:
@@ -57,6 +64,9 @@ class FakeRedis:
     def pipeline(self, transaction: bool = True) -> FakePipeline:
         return FakePipeline(self)
 
+    async def delete(self, key: str) -> None:
+        self.counts.pop(key, None)
+
 
 @pytest.fixture(autouse=True)
 def low_limits(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -66,7 +76,8 @@ def low_limits(monkeypatch: pytest.MonkeyPatch) -> None:
         "RATE_LIMIT_DEFAULT_PER_MINUTE": "2",
         "RATE_LIMIT_NEARBY_PER_MINUTE": "1",
         "RATE_LIMIT_ADMIN_WRITE_PER_MINUTE": "1",
-        "RATE_LIMIT_AUTH_PER_MINUTE": "1",
+        "RATE_LIMIT_LOGIN_PER_MINUTE": "2",
+        "RATE_LIMIT_LOGIN_PER_HOUR": "100",
     }.items():
         monkeypatch.setenv(name, value)
 
@@ -77,6 +88,7 @@ def build(redis: FakeRedis) -> FastAPI:
     # No DB in unit tests; the requests below fail validation before touching it.
     app.dependency_overrides[get_db_session] = lambda: None
     app.dependency_overrides[get_current_admin] = lambda: None
+    app.dependency_overrides[get_admin_repository] = lambda: FakeRepo(ADMIN)
     return app
 
 
@@ -146,9 +158,51 @@ def test_redis_down_fails_closed_for_login() -> None:
     assert response.status_code == 503
 
 
-def test_login_has_stricter_limit() -> None:
-    client = TestClient(build(FakeRedis()))
-    body = {"email": "a@b.co", "password": "x"}
-    # Limiters run before body validation, so the second call is rejected by the limiter.
-    assert client.post("/api/v1/auth/login", json={}).status_code == 422
-    assert client.post("/api/v1/auth/login", json=body).status_code == 429
+def login(client: TestClient, email: str, password: str = "wrong") -> int:  # noqa: S107
+    response = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    status: int = response.status_code
+    return status
+
+
+def client_from(app: FastAPI, ip: str) -> TestClient:
+    return TestClient(app, client=(ip, 50000))
+
+
+def test_login_limited_per_ip(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RATE_LIMIT_DEFAULT_PER_MINUTE", "100")
+    client = client_from(build(FakeRedis()), "1.1.1.1")
+    # Different emails each time: the per-IP counter still trips.
+    assert [login(client, f"u{i}@example.com") for i in range(3)] == [401, 401, 429]
+
+
+def test_login_limited_per_email_across_ips(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RATE_LIMIT_DEFAULT_PER_MINUTE", "100")
+    app = build(FakeRedis())
+    codes = [login(client_from(app, f"1.1.1.{i}"), "victim@example.com") for i in range(3)]
+    assert codes == [401, 401, 429]
+    # The email key is normalised, so case/whitespace changes don't dodge it.
+    assert login(client_from(app, "1.1.1.9"), " VICTIM@example.com ") == 429
+
+
+def test_successful_login_resets_email_counter(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RATE_LIMIT_DEFAULT_PER_MINUTE", "100")
+    app = build(FakeRedis())
+    email = ADMIN.email
+    assert login(client_from(app, "2.2.2.1"), email) == 401
+    assert login(client_from(app, "2.2.2.1"), email, PASSWORD) == 200
+    # Without the reset, the second of these would be the email's 4th attempt (> 2).
+    assert login(client_from(app, "2.2.2.2"), email) == 401
+    assert login(client_from(app, "2.2.2.3"), email) == 401
+    assert login(client_from(app, "2.2.2.4"), email) == 429
+
+
+def test_login_hourly_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("RATE_LIMIT_DEFAULT_PER_MINUTE", "100")
+    monkeypatch.setenv("RATE_LIMIT_LOGIN_PER_MINUTE", "100")
+    monkeypatch.setenv("RATE_LIMIT_LOGIN_PER_HOUR", "2")
+    client = client_from(build(FakeRedis()), "3.3.3.3")
+    assert [login(client, "a@example.com") for _ in range(2)] == [401, 401]
+    response = client.post("/api/v1/auth/login", json={"email": "a@example.com", "password": "x"})
+    assert response.status_code == 429
+    assert response.headers["X-RateLimit-Limit"] == "2"
+    assert 0 < int(response.headers["Retry-After"]) <= 3600

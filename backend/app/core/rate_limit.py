@@ -43,13 +43,21 @@ def client_ip(peer: str | None, forwarded_for: str | None, trusted_proxies: list
     return ip
 
 
-async def hit(redis: Redis, key: str) -> tuple[int, int]:
+def _window_key(key: str, window_seconds: int, now: int) -> str:
+    return f"ratelimit:{key}:{window_seconds}:{now // window_seconds}"
+
+
+async def hit(redis: Redis, key: str, window_seconds: int = WINDOW_SECONDS) -> tuple[int, int]:
     """Count one request. Returns ``(count_in_window, window_reset_epoch)``. Raises ``RedisError``."""
     now = int(time.time())
-    window = now // WINDOW_SECONDS
-    window_key = f"ratelimit:{key}:{window}"
+    window_key = _window_key(key, window_seconds, now)
     async with redis.pipeline(transaction=True) as pipe:
         pipe.incr(window_key)
-        pipe.expire(window_key, WINDOW_SECONDS)
+        pipe.expire(window_key, window_seconds)
         count, _ = await pipe.execute()
-    return int(count), (window + 1) * WINDOW_SECONDS
+    return int(count), (now // window_seconds + 1) * window_seconds
+
+
+async def reset(redis: Redis, key: str, window_seconds: int = WINDOW_SECONDS) -> None:
+    """Clear the current window's counter for ``key``. Raises ``RedisError``."""
+    await redis.delete(_window_key(key, window_seconds, int(time.time())))

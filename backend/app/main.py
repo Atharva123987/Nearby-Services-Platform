@@ -58,7 +58,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=[REQUEST_ID_HEADER],
+        # Browsers can only read these cross-origin if exposed (frontend shows "retry in Ns").
+        expose_headers=[
+            REQUEST_ID_HEADER,
+            "Retry-After",
+            "X-RateLimit-Limit",
+            "X-RateLimit-Remaining",
+            "X-RateLimit-Reset",
+        ],
     )
     app.add_middleware(RequestContextMiddleware, expose_errors=not settings.is_prod)
 
