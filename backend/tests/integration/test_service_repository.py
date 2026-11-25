@@ -212,11 +212,11 @@ def test_nearby_uses_metres_orders_by_distance_and_filters() -> None:
         items, total = await repo.nearby(
             lat=0, lng=0, radius_m=2000, limit=10, offset=0, category=ServiceCategory.ATM
         )
-        assert ([s.name for s in items], total) == (["Near ATM"], 1)
-        assert 1100 < items[0].distance_m < 1120
+        assert ([s.name for s, _ in items], total) == (["Near ATM"], 1)
+        assert 1100 < items[0][1] < 1120
 
         items, total = await repo.nearby(lat=0, lng=0, radius_m=10_000, limit=2, offset=0)
-        assert ([s.name for s in items], total) == (["Hospital", "Near ATM"], 3)
+        assert ([s.name for s, _ in items], total) == (["Hospital", "Near ATM"], 3)
 
     in_rollback(body)
 
@@ -225,9 +225,9 @@ def test_nearby_includes_point_exactly_on_the_radius() -> None:
     async def body(session: AsyncSession) -> None:
         repo = ServiceRepository(session)
         await repo.create(ServiceCreate(name="Edge", category="atm", latitude=0.01, longitude=0))
-        (found,), _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=1, offset=0)
-        items, _ = await repo.nearby(lat=0, lng=0, radius_m=found.distance_m, limit=1, offset=0)
-        assert [s.name for s in items] == ["Edge"]
+        ((_, distance_m),), _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=1, offset=0)
+        items, _ = await repo.nearby(lat=0, lng=0, radius_m=distance_m, limit=1, offset=0)
+        assert [s.name for s, _ in items] == ["Edge"]
 
     in_rollback(body)
 
@@ -238,7 +238,8 @@ def test_nearby_breaks_distance_ties_by_id() -> None:
         for name in ("A", "B", "C"):
             await repo.create(ServiceCreate(name=name, category="atm", latitude=0.01, longitude=0))
         items, _ = await repo.nearby(lat=0, lng=0, radius_m=5000, limit=10, offset=0)
-        assert [s.id for s in items] == sorted(s.id for s in items)
+        ids = [s.id for s, _ in items]
+        assert ids == sorted(ids)
 
     in_rollback(body)
 
@@ -251,11 +252,11 @@ def test_nearby_across_antimeridian_and_pole() -> None:
 
         # 179.9 -> -179.9 is ~22 km over the antimeridian, not ~40,000 km the long way round.
         items, _ = await repo.nearby(lat=0, lng=179.9, radius_m=25_000, limit=10, offset=0)
-        assert [s.name for s in items] == ["West"]
-        assert 22_000 < items[0].distance_m < 22_500
+        assert [s.name for s, _ in items] == ["West"]
+        assert 22_000 < items[0][1] < 22_500
 
         # (89.9, 0) -> (89.9, 180) is ~22 km straight over the pole.
         items, _ = await repo.nearby(lat=89.9, lng=0, radius_m=25_000, limit=10, offset=0)
-        assert [s.name for s in items] == ["Pole"]
+        assert [s.name for s, _ in items] == ["Pole"]
 
     in_rollback(body)

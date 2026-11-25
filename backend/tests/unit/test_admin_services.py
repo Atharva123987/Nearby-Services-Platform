@@ -153,7 +153,9 @@ def test_public_nearby_filters_and_orders() -> None:
     assert response.status_code == 200
     body = response.json()
     assert [s["name"] for s in body["items"]] == ["Closer ATM", "Corner ATM"]
-    assert (body["limit"], body["offset"], body["total"]) == (20, 0, 2)
+    assert body["total"] == 2
+    assert body["query"] == {**params, "limit": 20, "offset": 0}
+    assert all(round(s["distance_km"], 2) == s["distance_km"] for s in body["items"])
     paged = client.get("/api/v1/services/nearby", params={**params, "limit": 1, "offset": 1})
     assert [s["name"] for s in paged.json()["items"]] == ["Corner ATM"]
 
@@ -175,3 +177,9 @@ def test_public_nearby_rejects_bad_params() -> None:
     ):
         assert client.get("/api/v1/services/nearby", params=params).status_code == 422, params
     assert client.get("/api/v1/services/nearby", params={**ok, "radius_km": 50}).status_code == 200
+
+
+def test_public_nearby_no_results_is_200_with_empty_list() -> None:
+    response = make_client(FakeRepo()).get("/api/v1/services/nearby", params={"lat": 0, "lng": 0})
+    assert response.status_code == 200
+    assert (response.json()["items"], response.json()["total"]) == ([], 0)

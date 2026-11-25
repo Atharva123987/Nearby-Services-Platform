@@ -36,7 +36,7 @@ class ServiceRepositoryProtocol(Protocol):
         limit: int,
         offset: int,
         category: ServiceCategory | None = None,
-    ) -> tuple[list[NearbyServiceRead], int]: ...
+    ) -> tuple[list[tuple[ServiceRead, float]], int]: ...
     async def list(
         self,
         *,
@@ -94,7 +94,7 @@ class ServiceService:
         return ServicePage(items=items, page=page, page_size=page_size, total=total)
 
     async def nearby(self, query: NearbyQuery) -> NearbyPage:
-        items, total = await self._repo.nearby(
+        rows, total = await self._repo.nearby(
             lat=query.lat,
             lng=query.lng,
             radius_m=query.radius_km * 1000,
@@ -102,7 +102,11 @@ class ServiceService:
             offset=query.offset,
             category=query.category,
         )
-        return NearbyPage(items=items, limit=query.limit, offset=query.offset, total=total)
+        items = [
+            NearbyServiceRead(**s.model_dump(), distance_km=round(distance_m / 1000, 2))
+            for s, distance_m in rows
+        ]
+        return NearbyPage(items=items, total=total, query=query)
 
     async def update(self, service_id: uuid.UUID, data: ServiceUpdate) -> ServiceRead:
         current = await self.get(service_id, for_update=True)

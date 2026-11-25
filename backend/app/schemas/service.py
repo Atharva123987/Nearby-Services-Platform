@@ -178,11 +178,10 @@ class ServicePage(BaseModel):
 
 
 class NearbyServiceRead(ServiceRead):
-    distance_m: float
+    distance_km: float
 
 
 class NearbyPage(BaseModel):
     items: list[NearbyServiceRead]
-    limit: int
-    offset: int
     total: int
+    query: NearbyQuery

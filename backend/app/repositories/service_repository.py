@@ -13,7 +13,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.service import Service, ServiceCategory
 from app.schemas.service import (
     BBox,
-    NearbyServiceRead,
     ServiceCreate,
     ServiceRead,
     ServiceUpdate,
@@ -74,8 +73,8 @@ class ServiceRepository:
         limit: int,
         offset: int,
         category: ServiceCategory | None = None,
-    ) -> tuple[list[NearbyServiceRead], int]:
-        """Services within radius_m metres, nearest first, plus the total."""
+    ) -> tuple[list[tuple[ServiceRead, float]], int]:
+        """(service, distance in metres) within radius_m, nearest first, plus the total."""
         origin = make_point(lat=lat, lng=lng)
         filters: list[ColumnElement[bool]] = [func.ST_DWithin(Service.location, origin, radius_m)]
         if category is not None:
@@ -96,11 +95,7 @@ class ServiceRepository:
             .offset(offset)
         )
         rows = (await self._session.execute(stmt)).all()
-        items = [
-            NearbyServiceRead(**_to_read(row).model_dump(), distance_m=row.distance_m)
-            for row in rows
-        ]
-        return items, total
+        return [(_to_read(row), row.distance_m) for row in rows], total
 
     async def list(
         self,

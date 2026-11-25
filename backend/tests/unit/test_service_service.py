@@ -10,7 +10,6 @@ from app.models.service import ServiceCategory
 from app.schemas.service import (
     BBox,
     NearbyQuery,
-    NearbyServiceRead,
     ServiceCreate,
     ServiceRead,
     ServiceUpdate,
@@ -53,18 +52,18 @@ class FakeRepo:
         limit: int,
         offset: int,
         category: ServiceCategory | None = None,
-    ) -> tuple[list[NearbyServiceRead], int]:
+    ) -> tuple[list[tuple[ServiceRead, float]], int]:
         def dist(s: ServiceRead) -> float:  # equirectangular approximation, fine for tests
             x = math.radians(s.longitude - lng) * math.cos(math.radians((s.latitude + lat) / 2))
             return math.hypot(x, math.radians(s.latitude - lat)) * 6_371_000
 
         matches = sorted(
             (
-                NearbyServiceRead(**s.model_dump(), distance_m=dist(s))
+                (s, dist(s))
                 for s in self.items.values()
                 if (category is None or s.category == category) and dist(s) <= radius_m
             ),
-            key=lambda s: s.distance_m,
+            key=lambda m: m[1],
         )
         return matches[offset : offset + limit], len(matches)
 
@@ -201,4 +200,5 @@ def test_nearby_converts_km_and_orders_by_distance() -> None:
     page = asyncio.run(service.nearby(NearbyQuery(lat=0, lng=0, radius_km=10)))
     assert [s.name for s in page.items] == ["near", "far"]
     assert page.total == 2
-    assert 1100 < page.items[0].distance_m < 1125
+    assert page.items[0].distance_km == 1.11  # 0.01 deg of latitude, rounded to 2 dp
+    assert page.query.radius_km == 10

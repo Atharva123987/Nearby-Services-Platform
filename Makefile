@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help env up down logs ps restart clean install migrate backend-dev frontend-dev lint format typecheck test precommit
+.PHONY: help env up down logs ps restart clean install migrate seed backend-dev frontend-dev lint format typecheck test precommit
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -31,6 +31,9 @@ install: ## Install backend + frontend deps and git hooks
 
 migrate: ## Apply DB migrations (alembic upgrade head) inside the api container
 	docker compose exec api alembic upgrade head
+
+seed: ## Load dev seed data (200 services in Nashik + Mumbai); safe to re-run
+	docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"' < db/seeds/0001_nashik_mumbai.sql
 
 backend-dev: ## Run the API on the host with reload
 	cd backend && uv run uvicorn app.main:app --reload --port 8000
