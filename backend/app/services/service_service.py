@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import math
 import uuid
+from collections.abc import Awaitable, Callable
 from typing import Protocol
 
 from redis.asyncio import Redis
@@ -21,6 +23,10 @@ from app.schemas.service import (
     ServiceRead,
     ServiceUpdate,
 )
+
+# Bump to invalidate every cached public read at once.
+CACHE_VERSION = 1
+CACHE_PREFIX = f"services:v{CACHE_VERSION}"
 
 # Same name (case-insensitive) within this many metres counts as a duplicate.
 DUPLICATE_RADIUS_M = 10.0
@@ -105,23 +111,79 @@ class ServiceService:
         )
         return ServicePage(items=items, page=page, page_size=page_size, total=total)
 
+    async def cached_get(self, service_id: uuid.UUID) -> tuple[ServiceRead, bool]:
+        """Public detail read. Returns ``(service, cache_hit)``. Not-found is not cached."""
+
+        async def load() -> dict:
+            return (await self.get(service_id)).model_dump(mode="json")
+
+        data, hit = await self._cached(
+            f"{CACHE_PREFIX}:service:{service_id}",
+            load,
+            ttl=self._settings.cache_ttl_service_detail_seconds if self._settings else 0,
+        )
+        return ServiceRead.model_validate(data), hit
+
+    async def cached_list(
+        self,
+        page: int,
+        page_size: int,
+        category: ServiceCategory | None = None,
+        bbox: BBox | None = None,
+    ) -> tuple[ServicePage, bool]:
+        """Public list read (admin list uses ``list`` and is never cached)."""
+        bbox_key = bbox.model_dump_json() if bbox else None
+        key = f"{CACHE_PREFIX}:list:{page}:{page_size}:{category}:{bbox_key}"
+
+        async def load() -> dict:
+            result = await self.list(page, page_size, category=category, bbox=bbox)
+            return result.model_dump(mode="json")
+
+        data, hit = await self._cached(
+            key, load, ttl=self._settings.cache_ttl_default_seconds if self._settings else 0
+        )
+        return ServicePage.model_validate(data), hit
+
     async def nearby(self, query: NearbyQuery) -> tuple[NearbyPage, bool]:
-        """Return ``(page, cache_hit)``."""
-        if self._cache is None or self._settings is None:
-            return await self._nearby_from_db(query), False
-        data, hit = await get_or_set(
-            self._cache,
-            f"nearby:{query.model_dump_json()}",
-            lambda: self._load_nearby(query),
-            ttl=self._settings.cache_ttl_search_seconds,
-            empty_ttl=self._settings.cache_ttl_empty_seconds,
-            is_empty=lambda v: not v["items"],
+        """Return ``(page, cache_hit)``.
+
+        lat/lng are rounded to 3 decimals (~110 m) and the radius up to the next 0.5 km,
+        so nearby users share cache entries.
+        """
+        query = query.model_copy(
+            update={
+                "lat": round(query.lat, 3),
+                "lng": round(query.lng, 3),
+                "radius_km": math.ceil(query.radius_km * 2) / 2,
+            }
+        )
+        key = (
+            f"{CACHE_PREFIX}:nearby:{query.lat}:{query.lng}:{query.radius_km}"
+            f":{query.category}:{query.limit}:{query.offset}"
+        )
+
+        async def load() -> dict:
+            return (await self._nearby_from_db(query)).model_dump(mode="json")
+
+        data, hit = await self._cached(
+            key, load, ttl=self._settings.cache_ttl_search_seconds if self._settings else 0
         )
         return NearbyPage.model_validate(data), hit
 
-    async def _load_nearby(self, query: NearbyQuery) -> dict:
-        page = await self._nearby_from_db(query)
-        return page.model_dump(mode="json")
+    async def _cached(
+        self, key: str, load: Callable[[], Awaitable[dict]], *, ttl: int
+    ) -> tuple[dict, bool]:
+        """Cache-aside over ``load``; results with no ``items`` get the short empty TTL."""
+        if self._cache is None or self._settings is None:
+            return await load(), False
+        return await get_or_set(
+            self._cache,
+            key,
+            load,
+            ttl=ttl,
+            empty_ttl=self._settings.cache_ttl_empty_seconds,
+            is_empty=lambda v: "items" in v and not v["items"],
+        )
 
     async def _nearby_from_db(self, query: NearbyQuery) -> NearbyPage:
         rows, total = await self._repo.nearby(

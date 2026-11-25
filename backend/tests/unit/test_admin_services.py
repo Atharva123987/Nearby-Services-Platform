@@ -196,3 +196,32 @@ def test_public_nearby_no_results_is_200_with_empty_list() -> None:
     response = make_client(FakeRepo()).get("/api/v1/services/nearby", params={"lat": 0, "lng": 0})
     assert response.status_code == 200
     assert (response.json()["items"], response.json()["total"]) == ([], 0)
+
+
+def test_public_list_and_detail_are_cached() -> None:
+    client = make_client(FakeRepo())
+    service_id = client.post("/api/v1/admin/services", json=BODY).json()["id"]
+    params = {"category": "atm", "page_size": 5}
+    assert client.get("/api/v1/services", params=params).headers["X-Cache"] == "MISS"
+    assert client.get("/api/v1/services", params=params).headers["X-Cache"] == "HIT"
+    other = client.get("/api/v1/services", params={**params, "page_size": 6})
+    assert other.headers["X-Cache"] == "MISS"
+    assert client.get(f"/api/v1/services/{service_id}").headers["X-Cache"] == "MISS"
+    detail = client.get(f"/api/v1/services/{service_id}")
+    assert detail.headers["X-Cache"] == "HIT"
+    assert detail.json()["id"] == service_id
+    assert "X-Cache" not in client.get("/api/v1/admin/services").headers
+
+
+def test_nearby_rounds_coordinates_to_share_cache_entries() -> None:
+    client = make_client(FakeRepo())
+    client.post("/api/v1/admin/services", json=BODY)
+    first = client.get(
+        "/api/v1/services/nearby", params={"lat": 28.60001, "lng": 77.2, "radius_km": 4.2}
+    )
+    assert first.headers["X-Cache"] == "MISS"
+    assert first.json()["query"]["radius_km"] == 4.5
+    second = client.get(
+        "/api/v1/services/nearby", params={"lat": 28.60004, "lng": 77.2, "radius_km": 4.4}
+    )
+    assert second.headers["X-Cache"] == "HIT"
