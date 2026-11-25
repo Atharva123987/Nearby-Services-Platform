@@ -6,7 +6,15 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 
 from app.api.deps import ServiceServiceDep
-from app.schemas.service import PAGE_SIZE_MAX, BBox, CategoryParam, ServicePage, ServiceRead
+from app.schemas.service import (
+    PAGE_SIZE_MAX,
+    BBox,
+    CategoryParam,
+    NearbyPage,
+    NearbyQuery,
+    ServicePage,
+    ServiceRead,
+)
 
 router = APIRouter(prefix="/services", tags=["services"])
 
@@ -43,6 +51,14 @@ async def list_services(
 ) -> ServicePage:
     """`bbox` limits results to services inside the map viewport (edges included)."""
     return await service.list(page, page_size, category=category, bbox=bbox)
+
+
+@router.get("/nearby", response_model=NearbyPage)
+async def nearby_services(
+    service: ServiceServiceDep, query: Annotated[NearbyQuery, Query()]
+) -> NearbyPage:
+    """Services within `radius_km` of (`lat`, `lng`), nearest first."""
+    return await service.nearby(query)
 
 
 @router.get("/{service_id}", response_model=ServiceRead)

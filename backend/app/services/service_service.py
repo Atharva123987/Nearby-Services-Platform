@@ -7,7 +7,16 @@ from typing import Protocol
 
 from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
-from app.schemas.service import BBox, ServiceCreate, ServicePage, ServiceRead, ServiceUpdate
+from app.schemas.service import (
+    BBox,
+    NearbyPage,
+    NearbyQuery,
+    NearbyServiceRead,
+    ServiceCreate,
+    ServicePage,
+    ServiceRead,
+    ServiceUpdate,
+)
 
 # Same name (case-insensitive) within this many metres counts as a duplicate.
 DUPLICATE_RADIUS_M = 10.0
@@ -18,6 +27,16 @@ class ServiceRepositoryProtocol(Protocol):
     async def get(
         self, service_id: uuid.UUID, *, for_update: bool = False
     ) -> ServiceRead | None: ...
+    async def nearby(
+        self,
+        *,
+        lat: float,
+        lng: float,
+        radius_m: float,
+        limit: int,
+        offset: int,
+        category: ServiceCategory | None = None,
+    ) -> tuple[list[NearbyServiceRead], int]: ...
     async def list(
         self,
         *,
@@ -73,6 +92,17 @@ class ServiceService:
             bbox=bbox,
         )
         return ServicePage(items=items, page=page, page_size=page_size, total=total)
+
+    async def nearby(self, query: NearbyQuery) -> NearbyPage:
+        items, total = await self._repo.nearby(
+            lat=query.lat,
+            lng=query.lng,
+            radius_m=query.radius_km * 1000,
+            limit=query.limit,
+            offset=query.offset,
+            category=query.category,
+        )
+        return NearbyPage(items=items, limit=query.limit, offset=query.offset, total=total)
 
     async def update(self, service_id: uuid.UUID, data: ServiceUpdate) -> ServiceRead:
         current = await self.get(service_id, for_update=True)

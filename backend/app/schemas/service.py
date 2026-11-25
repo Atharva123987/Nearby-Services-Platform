@@ -64,6 +64,19 @@ def _check_metadata_size(value: dict[str, Any] | None) -> dict[str, Any] | None:
 CategoryParam = Annotated[ServiceCategory, BeforeValidator(parse_category)]
 
 PAGE_SIZE_MAX = 200
+# Upper bound on the nearby search radius, so a request can't scan the whole table.
+RADIUS_KM_MAX = 50
+
+
+class NearbyQuery(BaseModel):
+    """Query params for GET /services/nearby."""
+
+    lat: Latitude
+    lng: Longitude
+    radius_km: float = Field(default=5, gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)
+    category: CategoryParam | None = None
+    limit: int = Field(default=20, ge=1, le=PAGE_SIZE_MAX)
+    offset: int = Field(default=0, ge=0)
 
 
 class BBox(BaseModel):
@@ -161,4 +174,15 @@ class ServicePage(BaseModel):
     items: list[ServiceRead]
     page: int
     page_size: int
+    total: int
+
+
+class NearbyServiceRead(ServiceRead):
+    distance_m: float
+
+
+class NearbyPage(BaseModel):
+    items: list[NearbyServiceRead]
+    limit: int
+    offset: int
     total: int

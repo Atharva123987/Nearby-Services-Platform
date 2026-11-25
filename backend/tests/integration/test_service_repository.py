@@ -194,3 +194,28 @@ def test_list_bbox_returns_only_services_inside() -> None:
         assert total == 1 and [s.name for s in items] == ["In"]
 
     in_rollback(body)
+
+
+def test_nearby_uses_metres_orders_by_distance_and_filters() -> None:
+    async def body(session: AsyncSession) -> None:
+        repo = ServiceRepository(session)
+        # ~1.1 km and ~5.6 km north of the origin, plus a hospital right next to it.
+        for name, lat, category in (
+            ("Near ATM", 0.01, "atm"),
+            ("Far ATM", 0.05, "atm"),
+            ("Hospital", 0.001, "hospital"),
+        ):
+            await repo.create(
+                ServiceCreate(name=name, category=category, latitude=lat, longitude=0)
+            )
+
+        items, total = await repo.nearby(
+            lat=0, lng=0, radius_m=2000, limit=10, offset=0, category=ServiceCategory.ATM
+        )
+        assert ([s.name for s in items], total) == (["Near ATM"], 1)
+        assert 1100 < items[0].distance_m < 1120
+
+        items, total = await repo.nearby(lat=0, lng=0, radius_m=10_000, limit=2, offset=0)
+        assert ([s.name for s in items], total) == (["Hospital", "Near ATM"], 3)
+
+    in_rollback(body)
