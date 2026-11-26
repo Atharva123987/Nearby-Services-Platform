@@ -53,3 +53,11 @@ export interface Admin {
   is_active: boolean;
   created_at: string;
 }
+
+// Mirrors BulkUploadResult (backend/app/schemas/service.py).
+export interface BulkUploadResult {
+  total: number;
+  inserted: number;
+  failed: number;
+  errors: { row: number; field: string | null; message: string }[];
+}
