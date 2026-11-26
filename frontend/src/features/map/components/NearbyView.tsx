@@ -1,12 +1,19 @@
 "use client";
 
-import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  skipToken,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchNearby, serviceKeys } from "@/features/services/api";
+import { CATEGORY_STYLES } from "@/features/services/categories";
 import { CategoryChips } from "@/features/services/components/CategoryChips";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { ApiError } from "@/lib/api/client";
+import { formatDistance } from "@/lib/geo";
 import { useMapStore } from "@/stores/map-store";
 import type { LatLng } from "@/types/api";
 
@@ -35,7 +42,39 @@ function parseCenter(lat: string | null, lng: string | null): LatLng | null {
     : null;
 }
 
-/** /nearby: pick a centre (my location or a map click) and a radius; shows services inside it. */
+/** 429 notice that counts down the server's Retry-After before allowing a retry. */
+function RateLimitNotice({
+  seconds,
+  onRetry,
+}: {
+  seconds: number;
+  onRetry: () => void;
+}) {
+  const [left, setLeft] = useState(seconds);
+  useEffect(() => {
+    if (left <= 0) return;
+    const id = setTimeout(() => setLeft(left - 1), 1000);
+    return () => clearTimeout(id);
+  }, [left]);
+
+  return (
+    <p role="alert" className="flex items-center gap-2 text-amber-800">
+      {left > 0
+        ? `Too many searches. Try again in ${left}s.`
+        : "Too many searches."}
+      <button
+        type="button"
+        onClick={onRetry}
+        disabled={left > 0}
+        className="font-medium underline disabled:opacity-50"
+      >
+        Retry
+      </button>
+    </p>
+  );
+}
+
+/** /nearby: pick a centre (my location or a map click) and a radius; lists services inside it. */
 export function NearbyView() {
   const searchParams = useSearchParams();
   const [center, setCenter] = useState(() =>
@@ -46,6 +85,7 @@ export function NearbyView() {
   );
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [focus, setFocus] = useState<{ id: string } | null>(null);
   const category = useMapStore((s) => s.selectedCategory);
   const setUserLocation = useMapStore((s) => s.setUserLocation);
   // Dragging the slider fires one request once it settles; React Query aborts stale ones.
@@ -65,11 +105,36 @@ export function NearbyView() {
   const params = center
     ? { center, radiusKm: debouncedRadius, category }
     : null;
-  const { data, isError, isFetching, refetch } = useQuery({
+  const {
+    data,
+    error,
+    errorUpdatedAt,
+    isError,
+    isFetching,
+    isFetchNextPageError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    refetch,
+  } = useInfiniteQuery({
     queryKey: serviceKeys.nearby(params),
-    queryFn: params ? ({ signal }) => fetchNearby(params, signal) : skipToken,
+    queryFn: params
+      ? ({ pageParam, signal }) => fetchNearby(params, pageParam, signal)
+      : skipToken,
+    initialPageParam: 0,
+    getNextPageParam: (last, pages) => {
+      const loaded = pages.reduce((n, page) => n + page.items.length, 0);
+      return loaded < last.total ? loaded : undefined;
+    },
     placeholderData: keepPreviousData,
   });
+  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const total = data?.pages[0]?.total;
+  const retry = () => (isFetchNextPageError ? fetchNextPage() : refetch());
+  const retryAfter =
+    error instanceof ApiError && error.status === 429
+      ? ((error.details as { retryAfter: number | null }).retryAfter ?? 0)
+      : null;
 
   function pick(next: LatLng) {
     setCenter(next);
@@ -103,11 +168,10 @@ export function NearbyView() {
   }
 
   let status = "Use your location or click the map to set the centre.";
-  if (center && data) {
-    status = `${data.total} services within ${debouncedRadius} km`;
-    if (data.items.length < data.total) {
-      status += ` (showing nearest ${data.items.length})`;
-    }
+  if (center && total === 0) {
+    status = `No services within ${debouncedRadius} km. Try increasing the radius.`;
+  } else if (center && total !== undefined) {
+    status = `${total} services within ${debouncedRadius} km, nearest first`;
   } else if (center) {
     status = "Loading…";
   }
@@ -118,8 +182,9 @@ export function NearbyView() {
         center={center}
         radiusKm={radiusKm}
         fitRadiusKm={debouncedRadius}
-        services={data?.items ?? []}
+        services={items}
         onPick={pick}
+        focus={focus}
       />
       {/* Inset so the panel never covers the top-left zoom controls. */}
       <div className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex flex-col items-center gap-2">
@@ -152,23 +217,72 @@ export function NearbyView() {
               {locationError} Click on the map to choose a centre instead.
             </p>
           )}
-          {isError ? (
-            <p role="alert" className="flex items-center gap-2 text-red-700">
-              Couldn&apos;t load services.
-              <button
-                type="button"
-                onClick={() => refetch()}
-                disabled={isFetching}
-                className="font-medium underline disabled:opacity-50"
-              >
-                {isFetching ? "Retrying…" : "Retry"}
-              </button>
-            </p>
-          ) : (
-            <p role="status" className="text-gray-600">
-              {status}
-            </p>
+          <p role="status" className="text-gray-600">
+            {status}
+          </p>
+          {items.length > 0 && (
+            <ul className="max-h-[40vh] divide-y overflow-y-auto">
+              {items.map((service) => {
+                const style = CATEGORY_STYLES[service.category];
+                return (
+                  <li key={service.id}>
+                    <button
+                      type="button"
+                      onClick={() => setFocus({ id: service.id })}
+                      className="flex w-full items-center justify-between gap-3 px-1 py-2 text-left hover:bg-gray-50"
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium">
+                          {service.name}
+                        </span>
+                        <span
+                          className="text-xs"
+                          style={{ color: style.color }}
+                        >
+                          {style.label}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-gray-600">
+                        {formatDistance(service.distance_km)}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+              {hasNextPage && !isFetchNextPageError && (
+                <li className="py-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="font-medium text-blue-700 hover:underline disabled:opacity-50"
+                  >
+                    {isFetchingNextPage ? "Loading…" : "Load more"}
+                  </button>
+                </li>
+              )}
+            </ul>
           )}
+          {isError &&
+            (retryAfter !== null ? (
+              <RateLimitNotice
+                key={errorUpdatedAt}
+                seconds={retryAfter}
+                onRetry={retry}
+              />
+            ) : (
+              <p role="alert" className="flex items-center gap-2 text-red-700">
+                Couldn&apos;t load services.
+                <button
+                  type="button"
+                  onClick={retry}
+                  disabled={isFetching}
+                  className="font-medium underline disabled:opacity-50"
+                >
+                  {isFetching ? "Retrying…" : "Retry"}
+                </button>
+              </p>
+            ))}
         </div>
       </div>
     </div>

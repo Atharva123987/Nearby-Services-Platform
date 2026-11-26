@@ -1,7 +1,7 @@
 "use client";
 
 import L from "leaflet";
-import { useEffect } from "react";
+import { type RefObject, useCallback, useEffect, useRef } from "react";
 import {
   Circle,
   CircleMarker,
@@ -22,6 +22,8 @@ interface NearbyMapProps {
   fitRadiusKm: number;
   services: Service[];
   onPick: (center: LatLng) => void;
+  /** A new object per list click, so clicking the same item again re-opens it. */
+  focus: { id: string } | null;
 }
 
 function ClickToPick({ onPick }: { onPick: (center: LatLng) => void }) {
@@ -48,13 +50,36 @@ function FitToCircle({
   return null;
 }
 
+function FocusMarker({
+  focus,
+  markers,
+}: {
+  focus: { id: string } | null;
+  markers: RefObject<Map<string, L.Marker>>;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    const marker = focus && markers.current.get(focus.id);
+    if (!marker) return;
+    map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15));
+    marker.openPopup();
+  }, [map, focus, markers]);
+  return null;
+}
+
 export default function NearbyMap({
   center,
   radiusKm,
   fitRadiusKm,
   services,
   onPick,
+  focus,
 }: NearbyMapProps) {
+  const markers = useRef(new Map<string, L.Marker>());
+  const registerMarker = useCallback((id: string, marker: L.Marker | null) => {
+    if (marker) markers.current.set(id, marker);
+    else markers.current.delete(id);
+  }, []);
   const userLocation = useMapStore((s) => s.userLocation);
   const start = center ?? userLocation ?? config.defaultCenter;
 
@@ -69,6 +94,7 @@ export default function NearbyMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ClickToPick onPick={onPick} />
+      <FocusMarker focus={focus} markers={markers} />
       {center && (
         <>
           <FitToCircle center={center} radiusKm={fitRadiusKm} />
@@ -99,6 +125,7 @@ export default function NearbyMap({
             center?.lng ?? start.lng,
           )}
           userLocation={userLocation}
+          onRef={registerMarker}
         />
       ))}
     </MapContainer>

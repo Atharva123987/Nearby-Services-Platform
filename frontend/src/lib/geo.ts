@@ -10,3 +10,8 @@ export function distanceKm(a: LatLng, b: LatLng): number {
     Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * 6371 * Math.asin(Math.sqrt(h));
 }
+
+/** "850 m" under 1 km, otherwise "3.4 km". */
+export function formatDistance(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+}

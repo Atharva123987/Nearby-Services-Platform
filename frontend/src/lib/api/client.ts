@@ -47,7 +47,13 @@ export async function apiFetch<T>(
         retryAfter > 0
           ? `Too many requests, retry in ${retryAfter}s`
           : "Too many requests, please try again shortly";
-      throw new ApiError(429, "too_many_requests", message, null, requestId);
+      throw new ApiError(
+        429,
+        "too_many_requests",
+        message,
+        { retryAfter: retryAfter > 0 ? retryAfter : null },
+        requestId,
+      );
     }
     if (isErrorBody(body)) {
       const { code, message, details, request_id } = body.error;

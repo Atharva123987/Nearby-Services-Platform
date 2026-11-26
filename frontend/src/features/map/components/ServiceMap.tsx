@@ -24,7 +24,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import { fetchServicesInView, serviceKeys } from "@/features/services/api";
 import { CATEGORY_STYLES, formatRating } from "@/features/services/categories";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
-import { distanceKm } from "@/lib/geo";
+import { distanceKm, formatDistance } from "@/lib/geo";
 import { useMapStore } from "@/stores/map-store";
 import type { LatLng, Service, ServiceCategory } from "@/types/api";
 
@@ -117,7 +117,7 @@ function ServicePopup({
       <p className="!m-0 text-xs">{formatRating(service.rating)}</p>
       {userLocation && (
         <p className="!m-0 text-xs">
-          {distanceKm(userLocation, position).toFixed(1)} km away
+          {formatDistance(distanceKm(userLocation, position))} away
         </p>
       )}
       <Link href={`/services/${service.id}`} className="text-xs">
@@ -131,10 +131,13 @@ export const ServiceMarker = memo(function ServiceMarker({
   service,
   longitude,
   userLocation,
+  onRef,
 }: {
   service: Service;
   longitude: number;
   userLocation: LatLng | null;
+  /** Lets a parent open this marker's popup (e.g. from a results list). */
+  onRef?: (id: string, marker: L.Marker | null) => void;
 }) {
   // Keep the position stable so the cluster does not remove an unchanged marker
   // while its popup is open.
@@ -144,7 +147,11 @@ export const ServiceMarker = memo(function ServiceMarker({
   );
 
   return (
-    <Marker position={position} icon={categoryIcons[service.category]}>
+    <Marker
+      ref={onRef && ((marker) => onRef(service.id, marker))}
+      position={position}
+      icon={categoryIcons[service.category]}
+    >
       <Popup>
         <ServicePopup service={service} userLocation={userLocation} />
       </Popup>

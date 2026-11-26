@@ -44,16 +44,20 @@ export async function fetchServicesInView({
   };
 }
 
+export const NEARBY_PAGE_SIZE = 20;
+
 /** Services within `radiusKm` of `center`, nearest first. `signal` cancels stale requests. */
 export function fetchNearby(
   { center, radiusKm, category }: NearbyParams,
+  offset: number,
   signal?: AbortSignal,
 ): Promise<NearbyPage> {
   const query = new URLSearchParams({
     lat: String(center.lat),
     lng: String(center.lng),
     radius_km: String(radiusKm),
-    limit: "200",
+    limit: String(NEARBY_PAGE_SIZE),
+    offset: String(offset),
   });
   if (category) query.set("category", category);
   return apiFetch<NearbyPage>(`/api/v1/services/nearby?${query}`, { signal });
