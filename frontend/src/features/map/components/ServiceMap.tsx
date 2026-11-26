@@ -170,8 +170,8 @@ export default function ServiceMap() {
 
   return (
     <div className="relative h-full w-full">
-      {/* Inset so overlays never cover the top-left zoom controls. */}
-      <div className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex justify-center">
+      {/* Inset past the zoom controls and below the category chips. */}
+      <div className="pointer-events-none absolute inset-x-14 top-14 z-[1000] flex justify-center">
         {isError ? (
           <div
             role="alert"

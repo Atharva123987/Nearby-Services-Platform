@@ -13,3 +13,10 @@ export const CATEGORY_STYLES: Record<
 export function formatRating(rating: string | null): string {
   return rating === null ? "No rating" : `${Number(rating).toFixed(1)} ★`;
 }
+
+/** Reads a `?category=` value; anything unknown falls back to "All" (null). */
+export function parseCategory(value: string | null): ServiceCategory | null {
+  return value !== null && Object.hasOwn(CATEGORY_STYLES, value)
+    ? (value as ServiceCategory)
+    : null;
+}
