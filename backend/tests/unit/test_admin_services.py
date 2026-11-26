@@ -256,3 +256,16 @@ def test_update_invalidates_cached_reads() -> None:
     nearby = client.get("/api/v1/services/nearby", params=params)
     assert nearby.headers["X-Cache"] == "MISS"
     assert nearby.json()["items"][0]["name"] == "Renamed ATM"
+
+
+def test_delete_invalidates_cached_reads() -> None:
+    client = make_client(FakeRepo())
+    service_id = client.post("/api/v1/admin/services", json=BODY).json()["id"]
+    url, params = "/api/v1/services/nearby", {"lat": 28.6, "lng": 77.2}
+    client.get(f"/api/v1/services/{service_id}")
+    client.get(url, params=params)
+    assert client.get(url, params=params).headers["X-Cache"] == "HIT"
+    client.delete(f"/api/v1/admin/services/{service_id}")
+    assert client.get(f"/api/v1/services/{service_id}").status_code == 404
+    nearby = client.get(url, params=params)
+    assert (nearby.headers["X-Cache"], nearby.json()["items"]) == ("MISS", [])
