@@ -151,6 +151,9 @@ export const ServiceMarker = memo(function ServiceMarker({
       ref={onRef && ((marker) => onRef(service.id, marker))}
       position={position}
       icon={categoryIcons[service.category]}
+      // Screen readers announce the marker by name instead of its glyph.
+      title={service.name}
+      alt={`${service.name} (${CATEGORY_STYLES[service.category].label})`}
     >
       <Popup>
         <ServicePopup service={service} userLocation={userLocation} />
@@ -206,6 +209,30 @@ export default function ServiceMap() {
           )
         )}
       </div>
+      {/* Keyboard alternative to the markers: hidden until a Tab focuses it. */}
+      <nav
+        aria-label="Services in view"
+        className="sr-only z-[1001] focus-within:not-sr-only focus-within:absolute focus-within:bottom-3 focus-within:left-3 focus-within:max-h-[50vh] focus-within:w-72 focus-within:overflow-y-auto focus-within:rounded-md focus-within:bg-white focus-within:p-3 focus-within:text-sm focus-within:shadow"
+      >
+        <p className="font-medium">
+          {data?.items.length ?? 0} services in view
+        </p>
+        <ul className="mt-2 divide-y">
+          {data?.items.map((service) => (
+            <li key={service.id} className="py-1">
+              <Link
+                href={`/services/${service.id}`}
+                className="text-blue-700 hover:underline"
+              >
+                {service.name}
+              </Link>{" "}
+              <span className="text-xs text-gray-600">
+                {CATEGORY_STYLES[service.category].label}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <MapContainer
         center={[viewport.lat, viewport.lng]}
         zoom={viewport.zoom}
