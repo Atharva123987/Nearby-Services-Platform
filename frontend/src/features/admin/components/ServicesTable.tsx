@@ -220,10 +220,14 @@ export function ServicesTable() {
             <button
               type="button"
               onClick={() => {
-                remove.mutate(deleting);
+                remove.mutate(deleting, {
+                  onSuccess: () => {
+                    if (data?.items.length === 1 && page > 1) {
+                      setPage((current) => current === page ? page - 1 : current);
+                    }
+                  },
+                });
                 setDeleting(null);
-                // Deleting the only row on a page steps back one page.
-                if (data?.items.length === 1 && page > 1) setPage(page - 1);
               }}
               className="rounded bg-red-600 px-4 py-2 font-medium text-white"
             >
