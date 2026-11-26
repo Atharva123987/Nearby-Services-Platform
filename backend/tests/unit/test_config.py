@@ -12,13 +12,17 @@ def make(**overrides: Any) -> Settings:
     return Settings(_env_file=None, **overrides)
 
 
-def test_dev_allows_default_secret() -> None:
+def test_dev_allows_default_secret(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("JWT_SECRET", raising=False)
     settings = make(app_env="dev")
     assert settings.jwt_secret.get_secret_value() == DEV_JWT_SECRET
 
 
 @pytest.mark.parametrize("secret", [None, DEV_JWT_SECRET, "change-me", "short-but-unique"])
-def test_prod_rejects_missing_default_or_short_secret(secret: str | None) -> None:
+def test_prod_rejects_missing_default_or_short_secret(
+    secret: str | None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("JWT_SECRET", raising=False)
     overrides: dict[str, object] = {"app_env": "prod"}
     if secret is not None:
         overrides["jwt_secret"] = secret
