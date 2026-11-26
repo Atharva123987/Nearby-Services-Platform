@@ -45,3 +45,11 @@ export interface NearbyPage {
   items: NearbyService[];
   total: number;
 }
+
+// Mirrors AdminRead (backend/app/schemas/admin.py).
+export interface Admin {
+  id: string;
+  email: string;
+  is_active: boolean;
+  created_at: string;
+}

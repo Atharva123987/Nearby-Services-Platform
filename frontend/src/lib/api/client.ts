@@ -23,14 +23,18 @@ function isErrorBody(value: unknown): value is ApiErrorBody {
   );
 }
 
-/** All HTTP to the backend goes through here; non-2xx responses become `ApiError`. */
+/**
+ * All HTTP to the backend goes through here; non-2xx responses become `ApiError`.
+ * Pass `baseUrl: ""` for this app's own route handlers (e.g. /api/auth/login).
+ */
 export async function apiFetch<T>(
   path: string,
   init?: RequestInit,
+  baseUrl: string = config.apiUrl,
 ): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(`${config.apiUrl}${path}`, {
+    response = await fetch(`${baseUrl}${path}`, {
       ...init,
       headers: { Accept: "application/json", ...init?.headers },
     });
