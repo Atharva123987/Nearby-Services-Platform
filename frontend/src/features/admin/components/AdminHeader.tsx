@@ -9,6 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/services", label: "Services" },
+  { href: "/admin/upload", label: "Bulk upload" },
 ];
 
 export function AdminHeader() {

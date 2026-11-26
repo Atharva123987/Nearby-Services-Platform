@@ -6,6 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import {
@@ -22,7 +23,6 @@ import {
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { ApiError } from "@/lib/api/client";
 import type { Service, ServiceCategory, ServicePage } from "@/types/api";
-import { EditServiceDialog } from "./EditServiceDialog";
 
 const PAGE_SIZE = 20;
 const CATEGORIES = Object.keys(CATEGORY_STYLES) as ServiceCategory[];
@@ -33,7 +33,6 @@ export function ServicesTable() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ServiceCategory | null>(null);
   const [page, setPage] = useState(1);
-  const [editing, setEditing] = useState<Service | null>(null);
   const [deleting, setDeleting] = useState<Service | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(search.trim(), 300);
@@ -160,13 +159,12 @@ export function ServicesTable() {
                   {new Date(service.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-2 text-right whitespace-nowrap">
-                  <button
-                    type="button"
-                    onClick={() => setEditing(service)}
+                  <Link
+                    href={`/admin/services/${service.id}/edit`}
                     className="text-blue-600 hover:underline"
                   >
                     Edit
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => setDeleting(service)}
@@ -205,10 +203,6 @@ export function ServicesTable() {
           </button>
         </div>
       </div>
-
-      {editing && (
-        <EditServiceDialog service={editing} onClose={() => setEditing(null)} />
-      )}
 
       {deleting && (
         <Modal title="Delete service?" onClose={() => setDeleting(null)}>
