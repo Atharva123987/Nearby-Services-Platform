@@ -223,7 +223,9 @@ export function ServicesTable() {
                 remove.mutate(deleting, {
                   onSuccess: () => {
                     if (data?.items.length === 1 && page > 1) {
-                      setPage((current) => current === page ? page - 1 : current);
+                      setPage((current) =>
+                        current === page ? page - 1 : current,
+                      );
                     }
                   },
                 });
