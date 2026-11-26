@@ -32,7 +32,9 @@ export function CategoryChips() {
     if (category) params.set("category", category);
     else params.delete("category");
     const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
   }
 
   return (

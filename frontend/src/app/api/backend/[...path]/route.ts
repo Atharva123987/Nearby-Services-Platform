@@ -1,6 +1,8 @@
 // Authenticated pass-through: /api/backend/<path> -> API /api/v1/<path> with the access token
 // from the httpOnly cookie as a Bearer header. On a 401 it refreshes once and retries.
+import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
+import { serviceTag } from "@/features/services/api";
 import {
   ACCESS_COOKIE,
   REFRESH_COOKIE,
@@ -55,6 +57,18 @@ async function forward(request: NextRequest, { params }: Context) {
     status: upstream.status,
     headers,
   });
+  // An admin edit/delete expires that service's cached detail page right away.
+  const [scope, resource, id] = path;
+  if (
+    upstream.ok &&
+    ["PATCH", "DELETE"].includes(request.method) &&
+    scope === "admin" &&
+    resource === "services" &&
+    id
+  ) {
+    revalidateTag(serviceTag(id), { expire: 0 });
+  }
+
   if (refreshed) setAuthCookies(response, refreshed);
   else if (upstream.status === 401) clearAuthCookies(response);
   return response;

@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api/client";
 import type {
   LatLng,
   NearbyPage,
+  Service,
   ServiceCategory,
   ServicePage,
 } from "@/types/api";
@@ -42,6 +43,21 @@ export async function fetchServicesInView({
     items: pages.flatMap((page) => page.items),
     total: pages.reduce((total, page) => total + page.total, 0),
   };
+}
+
+/** Next data-cache tag for one service's detail page; admin writes revalidate it. */
+export const serviceTag = (id: string) => `service:${id}`;
+
+/**
+ * Server-only: one service for the /services/[id] page, cached by Next (ISR).
+ * Admin edits revalidate the tag; the short `revalidate` is the fallback.
+ */
+export function fetchServiceDetail(id: string, baseUrl: string) {
+  return apiFetch<Service>(
+    `/api/v1/services/${encodeURIComponent(id)}`,
+    { next: { revalidate: 60, tags: [serviceTag(id)] } },
+    baseUrl,
+  );
 }
 
 export const NEARBY_PAGE_SIZE = 20;
