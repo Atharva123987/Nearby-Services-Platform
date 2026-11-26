@@ -64,7 +64,7 @@ export function BulkUpload() {
         Upload a .csv or .json file (max 5 MB, 10,000 rows) with columns name,
         category, latitude, longitude and optional rating, metadata. Valid rows
         are added; invalid rows are listed below.{" "}
-        <a href={BULK_TEMPLATE_URL} className="text-blue-600 hover:underline">
+        <a href={BULK_TEMPLATE_URL} className="text-teal-800 hover:underline">
           Download the CSV template
         </a>
       </p>
@@ -113,7 +113,7 @@ export function BulkUpload() {
           type="button"
           disabled={!file || upload.isPending}
           onClick={() => file && upload.mutate(file)}
-          className="rounded bg-gray-900 px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="rounded bg-teal-800 hover:bg-teal-900 px-4 py-2 font-medium text-white disabled:opacity-50"
         >
           {upload.isPending ? "Uploading…" : "Upload"}
         </button>

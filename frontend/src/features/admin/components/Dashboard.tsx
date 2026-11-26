@@ -28,7 +28,7 @@ export function Dashboard() {
 
   return (
     <div className="flex flex-col gap-8">
-      <section>
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         <h2 className="mb-3 font-semibold">Services by category</h2>
         {counts.isError && (
           <p className="text-sm text-red-600">Could not load counts.</p>
@@ -46,10 +46,10 @@ export function Dashboard() {
         </div>
       </section>
 
-      <section>
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="font-semibold">Recently added</h2>
-          <Link href="/admin/services" className="text-sm text-blue-600">
+          <Link href="/admin/services" className="text-sm text-teal-800">
             Manage services →
           </Link>
         </div>

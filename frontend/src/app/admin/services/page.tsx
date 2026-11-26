@@ -5,7 +5,7 @@ import { ServicesTable } from "@/features/admin/components/ServicesTable";
 // Protected by src/proxy.ts.
 export default function AdminServicesPage() {
   return (
-    <div className="min-h-dvh bg-white text-gray-900">
+    <div className="min-h-[calc(100dvh-4rem)] bg-stone-50 text-slate-900">
       <AdminHeader />
       <main className="mx-auto max-w-6xl p-6">
         <div className="mb-4 flex items-center justify-between">

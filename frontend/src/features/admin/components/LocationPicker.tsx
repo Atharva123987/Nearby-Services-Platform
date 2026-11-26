@@ -6,7 +6,8 @@ import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { BaseMapTiles } from "@/components/ui/BaseMapTiles";
+import { MapContainer, Marker, useMapEvents } from "react-leaflet";
 import { config } from "@/lib/config";
 import type { LatLng } from "@/types/api";
 
@@ -37,14 +38,12 @@ export default function LocationPicker({
 }) {
   return (
     <MapContainer
+      maxZoom={20}
       center={value ?? config.defaultCenter}
       zoom={value ? 15 : config.defaultZoom}
       className="h-64 w-full rounded border border-gray-300"
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+      <BaseMapTiles />
       <ClickToPick onPick={onPick} />
       {value && <Marker position={value} />}
     </MapContainer>

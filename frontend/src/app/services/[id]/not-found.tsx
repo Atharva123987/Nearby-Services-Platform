@@ -8,7 +8,7 @@ export default function ServiceNotFound() {
       <p className="text-sm text-gray-600">
         This service doesn&apos;t exist or has been removed.
       </p>
-      <Link href="/nearby" className="text-sm text-blue-600 hover:underline">
+      <Link href="/" className="text-sm text-blue-600 hover:underline">
         Find services nearby
       </Link>
     </main>

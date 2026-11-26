@@ -25,10 +25,7 @@ export default function ErrorPage({
         >
           Try again
         </button>
-        <Link
-          href="/nearby"
-          className="self-center text-blue-600 hover:underline"
-        >
+        <Link href="/" className="self-center text-blue-600 hover:underline">
           Go to the map
         </Link>
       </div>

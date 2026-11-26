@@ -36,14 +36,16 @@ export interface ServicePage {
   total: number;
 }
 
-// Mirrors NearbyServiceRead / NearbyPage (backend/app/schemas/service.py).
-export interface NearbyService extends Service {
+// Mirrors NearbyMarker / NearbyMarkers (backend/app/schemas/service.py).
+export interface NearbyMarker extends Pick<
+  Service,
+  "id" | "name" | "category" | "rating" | "latitude" | "longitude"
+> {
   distance_km: number;
 }
 
-export interface NearbyPage {
-  items: NearbyService[];
-  total: number;
+export interface NearbyMarkers {
+  items: NearbyMarker[];
 }
 
 // Mirrors AdminRead (backend/app/schemas/admin.py).

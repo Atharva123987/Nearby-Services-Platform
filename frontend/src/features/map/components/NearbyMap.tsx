@@ -1,30 +1,34 @@
+/// <reference types="leaflet.markercluster" />
 "use client";
 
+import "leaflet/dist/leaflet.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { type RefObject, useCallback, useEffect, useRef } from "react";
+import { BaseMapTiles } from "@/components/ui/BaseMapTiles";
+import { useCallback, useEffect, useRef } from "react";
 import {
   Circle,
   CircleMarker,
   MapContainer,
-  TileLayer,
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import { NEARBY_PAGE_SIZE } from "@/features/services/api";
 import { config } from "@/lib/config";
 import { useMapStore } from "@/stores/map-store";
-import type { LatLng, Service } from "@/types/api";
-import { longitudeInView, ServiceMarker } from "./ServiceMap";
+import type { LatLng, NearbyMarker } from "@/types/api";
+import { longitudeInView, ServiceMarker } from "./ServiceMarker";
 
 interface NearbyMapProps {
   center: LatLng | null;
   radiusKm: number;
   /** Debounced radius, so the map only re-zooms once the slider settles. */
   fitRadiusKm: number;
-  services: Service[];
-  onPick: (center: LatLng) => void;
+  services: NearbyMarker[];
+  onPick?: (center: LatLng) => void;
   /** A new object per list click, so clicking the same item again re-opens it. */
   focus: { id: string } | null;
-  controls: RefObject<HTMLDivElement | null>;
 }
 
 function ClickToPick({ onPick }: { onPick: (center: LatLng) => void }) {
@@ -37,45 +41,35 @@ function ClickToPick({ onPick }: { onPick: (center: LatLng) => void }) {
   return null;
 }
 
-function FitToCircle({
+function SearchViewport({
   center,
   radiusKm,
 }: {
-  center: LatLng;
+  center: LatLng | null;
   radiusKm: number;
 }) {
   const map = useMap();
   useEffect(() => {
-    map.fitBounds(L.latLng(center).toBounds(radiusKm * 2000));
-  }, [map, center, radiusKm]);
-  return null;
-}
-
-function FocusMarker({
-  focus,
-  markers,
-  controls,
-}: {
-  focus: { id: string } | null;
-  markers: RefObject<Map<string, L.Marker>>;
-  controls: RefObject<HTMLDivElement | null>;
-}) {
-  const map = useMap();
-  useEffect(() => {
-    const marker = focus && markers.current.get(focus.id);
-    if (!marker) return;
-    const popup = marker.getPopup();
-    if (popup && controls.current) {
-      const mapTop = map.getContainer().getBoundingClientRect().top;
-      const controlsBottom = controls.current.getBoundingClientRect().bottom;
-      popup.options.autoPanPaddingTopLeft = L.point(
-        5,
-        controlsBottom - mapTop + 5,
-      );
+    const search = JSON.stringify([center, radiusKm]);
+    const saved = useMapStore.getState().viewport;
+    if (saved?.search === search)
+      map.setView(saved.center, saved.zoom, { animate: false });
+    else if (center)
+      map.fitBounds(L.latLng(center).toBounds(radiusKm * 2000), {
+        animate: false,
+      });
+    function remember() {
+      const { lat, lng } = map.getCenter();
+      useMapStore.setState({
+        viewport: { search, center: { lat, lng }, zoom: map.getZoom() },
+      });
     }
-    map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15));
-    marker.openPopup();
-  }, [map, focus, markers, controls]);
+    remember();
+    map.on("moveend", remember);
+    return () => {
+      map.off("moveend", remember);
+    };
+  }, [map, center, radiusKm]);
   return null;
 }
 
@@ -86,35 +80,44 @@ export default function NearbyMap({
   services,
   onPick,
   focus,
-  controls,
 }: NearbyMapProps) {
   const markers = useRef(new Map<string, L.Marker>());
   const registerMarker = useCallback((id: string, marker: L.Marker | null) => {
     if (marker) markers.current.set(id, marker);
     else markers.current.delete(id);
   }, []);
+  const clusters = useRef<L.MarkerClusterGroup>(null);
+  useEffect(() => {
+    const marker = focus && markers.current.get(focus.id);
+    let active = true;
+    if (marker)
+      clusters.current?.zoomToShowLayer(marker, () => {
+        if (active) marker.openPopup();
+      });
+    return () => {
+      active = false;
+    };
+  }, [focus]);
   const userLocation = useMapStore((s) => s.userLocation);
   const start = center ?? userLocation ?? config.defaultCenter;
 
   return (
     <MapContainer
+      maxZoom={20}
       center={[start.lat, start.lng]}
       zoom={config.defaultZoom}
-      className="h-full w-full cursor-crosshair"
+      className={onPick ? "h-full w-full !cursor-crosshair" : "h-full w-full"}
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <ClickToPick onPick={onPick} />
+      <BaseMapTiles />
+      {onPick && <ClickToPick onPick={onPick} />}
+      <SearchViewport center={center} radiusKm={fitRadiusKm} />
       {center && (
         <>
-          <FitToCircle center={center} radiusKm={fitRadiusKm} />
           <Circle
             center={center}
             radius={radiusKm * 1000}
             interactive={false}
-            pathOptions={{ color: "#2563eb", fillOpacity: 0.08 }}
+            pathOptions={{ color: "#0f766e", fillOpacity: 0.08 }}
           />
           <CircleMarker
             center={center}
@@ -122,25 +125,39 @@ export default function NearbyMap({
             interactive={false}
             pathOptions={{
               color: "#fff",
-              fillColor: "#2563eb",
+              fillColor: "#0f766e",
               fillOpacity: 1,
             }}
           />
         </>
       )}
-      {services.map((service) => (
-        <ServiceMarker
-          key={service.id}
-          service={service}
-          longitude={longitudeInView(
-            service.longitude,
-            center?.lng ?? start.lng,
-          )}
-          userLocation={userLocation}
-          onRef={registerMarker}
-        />
-      ))}
-      <FocusMarker focus={focus} markers={markers} controls={controls} />
+      <MarkerClusterGroup
+        ref={clusters}
+        maxClusterRadius={(zoom) => (zoom <= 12 ? 20 : 42)}
+        showCoverageOnHover={false}
+        iconCreateFunction={(cluster) => {
+          const count = cluster.getChildCount();
+          return L.divIcon({
+            className: "service-cluster",
+            html: `<span aria-label="${count} services">${count > NEARBY_PAGE_SIZE ? `${NEARBY_PAGE_SIZE}+` : count}</span>`,
+            iconSize: [29, 24],
+            iconAnchor: [14, 27],
+          });
+        }}
+      >
+        {services.map((service) => (
+          <ServiceMarker
+            key={service.id}
+            service={service}
+            longitude={longitudeInView(
+              service.longitude,
+              center?.lng ?? start.lng,
+            )}
+            userLocation={userLocation}
+            onRef={registerMarker}
+          />
+        ))}
+      </MarkerClusterGroup>
     </MapContainer>
   );
 }

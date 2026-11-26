@@ -6,13 +6,15 @@ import uuid
 from collections.abc import Sequence
 from typing import Any
 
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geometry, WKTElement
 from sqlalchemy import ColumnElement, cast, delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.service import Service, ServiceCategory
 from app.schemas.service import (
     BBox,
+    NearbyArea,
+    NearbyMarker,
     ServiceCreate,
     ServiceRead,
     ServiceUpdate,
@@ -44,6 +46,17 @@ def _to_read(row: Sequence[Any]) -> ServiceRead:
         created_at=service.created_at,
         updated_at=service.updated_at,
     )
+
+
+def _radius_filters(
+    origin: WKTElement, radius_m: float, category: ServiceCategory | None
+) -> list[ColumnElement[bool]]:
+    filters: list[ColumnElement[bool]] = [
+        func.ST_DWithin(Service.location, origin, radius_m + _NEARBY_RADIUS_TOLERANCE_M)
+    ]
+    if category is not None:
+        filters.append(Service.category == category)
+    return filters
 
 
 class ServiceRepository:
@@ -98,11 +111,7 @@ class ServiceRepository:
     ) -> tuple[list[tuple[ServiceRead, float]], int]:
         """(service, distance in metres) within radius_m, nearest first, plus the total."""
         origin = make_point(lat=lat, lng=lng)
-        filters: list[ColumnElement[bool]] = [
-            func.ST_DWithin(Service.location, origin, radius_m + _NEARBY_RADIUS_TOLERANCE_M)
-        ]
-        if category is not None:
-            filters.append(Service.category == category)
+        filters = _radius_filters(origin, radius_m, category)
 
         total = (
             await self._session.execute(select(func.count()).select_from(Service).where(*filters))
@@ -120,6 +129,27 @@ class ServiceRepository:
         )
         rows = (await self._session.execute(stmt)).all()
         return [(_to_read(row), row.distance_m) for row in rows], total
+
+    async def nearby_markers(self, area: NearbyArea) -> list[NearbyMarker]:
+        origin = make_point(lat=area.lat, lng=area.lng)
+        distance = func.ST_Distance(Service.location, origin)
+        stmt = (
+            select(
+                Service.id,
+                Service.name,
+                Service.category,
+                Service.rating,
+                _lat.label("latitude"),
+                _lng.label("longitude"),
+                (func.round(distance / 10.0) / 100.0).label("distance_km"),
+            )
+            .where(*_radius_filters(origin, area.radius_km * 1000, area.category))
+            .order_by(distance, Service.id)
+        )
+        return [
+            NearbyMarker.model_validate(row)
+            for row in (await self._session.execute(stmt)).mappings()
+        ]
 
     async def list(
         self,
