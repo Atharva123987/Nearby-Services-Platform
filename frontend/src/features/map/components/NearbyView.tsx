@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  keepPreviousData,
-  skipToken,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { skipToken, useInfiniteQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchNearby, serviceKeys } from "@/features/services/api";
 import { CATEGORY_STYLES } from "@/features/services/categories";
 import { CategoryChips } from "@/features/services/components/CategoryChips";
@@ -84,8 +80,10 @@ export function NearbyView() {
     parseRadius(searchParams.get("radius")),
   );
   const [locating, setLocating] = useState(false);
+  const locationRequest = useRef(0);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string } | null>(null);
+  const controls = useRef<HTMLDivElement>(null);
   const category = useMapStore((s) => s.selectedCategory);
   const setUserLocation = useMapStore((s) => s.setUserLocation);
   // Dragging the slider fires one request once it settles; React Query aborts stale ones.
@@ -126,7 +124,6 @@ export function NearbyView() {
       const loaded = pages.reduce((n, page) => n + page.items.length, 0);
       return loaded < last.total ? loaded : undefined;
     },
-    placeholderData: keepPreviousData,
   });
   const items = data?.pages.flatMap((page) => page.items) ?? [];
   const total = data?.pages[0]?.total;
@@ -137,6 +134,8 @@ export function NearbyView() {
       : null;
 
   function pick(next: LatLng) {
+    locationRequest.current += 1;
+    setLocating(false);
     setCenter(next);
     setLocationError(null);
   }
@@ -148,14 +147,16 @@ export function NearbyView() {
     }
     setLocating(true);
     setLocationError(null);
+    const request = ++locationRequest.current;
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
+        if (request !== locationRequest.current) return;
         const location = { lat: coords.latitude, lng: coords.longitude };
-        setLocating(false);
         setUserLocation(location);
         pick(location);
       },
       (error) => {
+        if (request !== locationRequest.current) return;
         setLocating(false);
         setLocationError(
           error.code === error.PERMISSION_DENIED
@@ -173,7 +174,7 @@ export function NearbyView() {
   } else if (center && total !== undefined) {
     status = `${total} services within ${debouncedRadius} km, nearest first`;
   } else if (center) {
-    status = "Loading…";
+    status = isError ? "" : "Loading…";
   }
 
   return (
@@ -185,9 +186,13 @@ export function NearbyView() {
         services={items}
         onPick={pick}
         focus={focus}
+        controls={controls}
       />
       {/* Inset so the panel never covers the top-left zoom controls. */}
-      <div className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex flex-col items-center gap-2">
+      <div
+        ref={controls}
+        className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex flex-col items-center gap-2"
+      >
         <div className="pointer-events-auto">
           <CategoryChips />
         </div>

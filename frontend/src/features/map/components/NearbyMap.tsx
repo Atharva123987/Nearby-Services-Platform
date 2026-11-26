@@ -24,6 +24,7 @@ interface NearbyMapProps {
   onPick: (center: LatLng) => void;
   /** A new object per list click, so clicking the same item again re-opens it. */
   focus: { id: string } | null;
+  controls: RefObject<HTMLDivElement | null>;
 }
 
 function ClickToPick({ onPick }: { onPick: (center: LatLng) => void }) {
@@ -53,17 +54,28 @@ function FitToCircle({
 function FocusMarker({
   focus,
   markers,
+  controls,
 }: {
   focus: { id: string } | null;
   markers: RefObject<Map<string, L.Marker>>;
+  controls: RefObject<HTMLDivElement | null>;
 }) {
   const map = useMap();
   useEffect(() => {
     const marker = focus && markers.current.get(focus.id);
     if (!marker) return;
+    const popup = marker.getPopup();
+    if (popup && controls.current) {
+      const mapTop = map.getContainer().getBoundingClientRect().top;
+      const controlsBottom = controls.current.getBoundingClientRect().bottom;
+      popup.options.autoPanPaddingTopLeft = L.point(
+        5,
+        controlsBottom - mapTop + 5,
+      );
+    }
     map.setView(marker.getLatLng(), Math.max(map.getZoom(), 15));
     marker.openPopup();
-  }, [map, focus, markers]);
+  }, [map, focus, markers, controls]);
   return null;
 }
 
@@ -74,6 +86,7 @@ export default function NearbyMap({
   services,
   onPick,
   focus,
+  controls,
 }: NearbyMapProps) {
   const markers = useRef(new Map<string, L.Marker>());
   const registerMarker = useCallback((id: string, marker: L.Marker | null) => {
@@ -94,7 +107,6 @@ export default function NearbyMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ClickToPick onPick={onPick} />
-      <FocusMarker focus={focus} markers={markers} />
       {center && (
         <>
           <FitToCircle center={center} radiusKm={fitRadiusKm} />
@@ -128,6 +140,7 @@ export default function NearbyMap({
           onRef={registerMarker}
         />
       ))}
+      <FocusMarker focus={focus} markers={markers} controls={controls} />
     </MapContainer>
   );
 }
