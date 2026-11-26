@@ -35,3 +35,13 @@ export interface ServicePage {
   page_size: number;
   total: number;
 }
+
+// Mirrors NearbyServiceRead / NearbyPage (backend/app/schemas/service.py).
+export interface NearbyService extends Service {
+  distance_km: number;
+}
+
+export interface NearbyPage {
+  items: NearbyService[];
+  total: number;
+}
