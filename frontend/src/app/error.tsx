@@ -5,10 +5,8 @@ import Link from "next/link";
 // Catches render/data errors in any route below the root layout.
 export default function ErrorPage({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   return (
     <main className="mx-auto max-w-md space-y-3 p-6 text-center text-gray-900">
@@ -22,7 +20,7 @@ export default function ErrorPage({
       <div className="flex justify-center gap-4 text-sm">
         <button
           type="button"
-          onClick={reset}
+          onClick={() => window.location.reload()}
           className="rounded bg-blue-600 px-3 py-1.5 font-medium text-white hover:bg-blue-700"
         >
           Try again
