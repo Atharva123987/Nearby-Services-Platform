@@ -65,7 +65,7 @@ function toBBoxes(bounds: L.LatLngBounds): string[] {
     : [format(west, east)];
 }
 
-function longitudeInView(longitude: number, center: number): number {
+export function longitudeInView(longitude: number, center: number): number {
   return longitude + 360 * Math.round((center - longitude) / 360);
 }
 
@@ -127,7 +127,7 @@ function ServicePopup({
   );
 }
 
-const ServiceMarker = memo(function ServiceMarker({
+export const ServiceMarker = memo(function ServiceMarker({
   service,
   longitude,
   userLocation,
