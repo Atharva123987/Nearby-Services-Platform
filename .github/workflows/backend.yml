@@ -1,0 +1,37 @@
+name: backend
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: fieldguide
+          POSTGRES_PASSWORD: fieldguide
+          POSTGRES_DB: fieldguide
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fieldguide" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://fieldguide:fieldguide@localhost:5432/fieldguide
+      TEST_DATABASE_URL: postgresql+asyncpg://fieldguide:fieldguide@localhost:5432/fieldguide
+      TEST_REDIS_URL: redis://localhost:6379/15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run alembic upgrade head
+      - run: uv run pytest
