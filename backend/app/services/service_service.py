@@ -10,7 +10,7 @@ from typing import Any, Literal, Protocol
 from pydantic import BaseModel, ValidationError
 from redis.asyncio import Redis
 
-from app.core.cache import get_or_set, get_version, invalidate
+from app.cache.cache_aside import get_or_set, get_version, invalidate
 from app.core.config import Settings
 from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
@@ -177,8 +177,7 @@ class ServiceService:
         """Public list read (admin list uses ``list`` and is never cached)."""
         bbox_key = bbox.model_dump_json() if bbox else None
         ttl = self._settings.cache_ttl_default_seconds if self._settings else 0
-        prefix = await self._prefix() if ttl else None
-        key = f"{prefix}:list:{page}:{page_size}:{category}:{bbox_key}" if prefix else None
+        key = await self._versioned_key(ttl, f"list:{page}:{page_size}:{category}:{bbox_key}")
         return await self._cached(
             key,
             lambda: self.list(page, page_size, category=category, bbox=bbox),
@@ -189,24 +188,19 @@ class ServiceService:
     async def nearby(self, query: NearbyQuery) -> tuple[NearbyPage, bool]:
         """Return ``(page, cache_hit)`` for the exact centre and radius."""
         ttl = self._settings.cache_ttl_search_seconds if self._settings else 0
-        prefix = await self._prefix() if ttl else None
-        key = None
-        if prefix:
-            key = (
-                f"{prefix}:nearby:exact:{query.lat}:{query.lng}:{float(query.radius_km)}"
-                f":{query.category}:{query.limit}:{query.offset}"
-            )
+        key = await self._versioned_key(
+            ttl,
+            f"nearby:exact:{query.lat}:{query.lng}:{float(query.radius_km)}"
+            f":{query.category}:{query.limit}:{query.offset}",
+        )
         return await self._cached(
             key, lambda: self._nearby_from_db(query), model=NearbyPage, ttl=ttl
         )
 
     async def nearby_markers(self, area: MarkerArea) -> tuple[NearbyMarkers, bool]:
         ttl = self._settings.cache_ttl_search_seconds if self._settings else 0
-        prefix = await self._prefix() if ttl else None
-        key = (
-            f"{prefix}:markers:{area.lat}:{area.lng}:{area.radius_km}:{area.category}"
-            if prefix
-            else None
+        key = await self._versioned_key(
+            ttl, f"markers:{area.lat}:{area.lng}:{area.radius_km}:{area.category}"
         )
 
         async def load() -> NearbyMarkers:
@@ -280,9 +274,13 @@ class ServiceService:
         await self._repo.commit()
         await self._invalidate(service_id)
 
-    async def _prefix(self) -> str | None:
-        version = await get_version(self._cache, VERSION_KEY) if self._cache else None
-        return f"services:v{version}" if version is not None else None
+    async def _versioned_key(self, ttl: int, suffix: str) -> str | None:
+        """``suffix`` under the current ``services:v{N}`` prefix, or None to skip the cache
+        (caching off, or the version can't be read)."""
+        if not ttl or self._cache is None:
+            return None
+        version = await get_version(self._cache, VERSION_KEY)
+        return f"services:v{version}:{suffix}" if version is not None else None
 
     async def _invalidate(self, *service_ids: uuid.UUID) -> None:
         """Call once per write (bulk uploads too), only after the commit succeeds."""
