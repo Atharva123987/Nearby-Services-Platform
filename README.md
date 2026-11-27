@@ -55,7 +55,7 @@ docker compose exec api python -m app.scripts.create_admin --email admin@example
 | ---------------------------- | ---------------------------------------- |
 | http://localhost:3000        | Frontend (nearby search)                 |
 | http://localhost:3000/admin  | Admin (sign in with the demo creds)      |
-| http://localhost:8000/docs   | Swagger UI (not served when `APP_ENV=prod`) |
+| http://localhost:8000/docs   | Swagger UI                               |
 | http://localhost:8000/health | Liveness                                 |
 | http://localhost:8000/ready  | Readiness (DB required, Redis optional)  |
 
@@ -131,7 +131,7 @@ at most 10 KB). Files are limited to 5 MB / 10,000 rows. A CSV template is serve
 
 Errors always look like `{"error": {"code", "message", "details", "request_id"}}`. Public reads
 return `X-Cache: HIT|MISS`; rate-limited routes return `X-RateLimit-*` headers and `Retry-After`
-on 429. The full schema is at `/docs`. A Postman collection and local environment are in
+on 429. Explore the API in Swagger UI at `/docs` or retrieve the schema at `/openapi.json`. A Postman collection and local environment are in
 [`docs/postman/`](docs/postman) (it does not include `/services/nearby/markers` yet; set
 `adminPassword` in the environment before running the admin requests).
 

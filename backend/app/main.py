@@ -42,9 +42,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
         lifespan=lifespan,
-        docs_url=None if settings.is_prod else "/docs",
+        docs_url="/docs",
         redoc_url=None,
-        openapi_url=None if settings.is_prod else "/openapi.json",
+        openapi_url="/openapi.json",
     )
 
     # Dependencies (SettingsDep) must see the same settings this app was built with.
