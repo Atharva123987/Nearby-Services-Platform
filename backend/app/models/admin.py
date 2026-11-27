@@ -1,4 +1,4 @@
-"""Admin accounts. Passwords are stored only as a bcrypt/argon2 hash."""
+"""Admin accounts. Passwords are stored only as a bcrypt hash."""
 
 from __future__ import annotations
 

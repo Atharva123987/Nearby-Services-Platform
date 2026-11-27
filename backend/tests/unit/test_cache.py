@@ -3,7 +3,7 @@ from typing import Any
 
 from redis.exceptions import ConnectionError as RedisConnectionError
 
-from app.core.cache import get_or_set, get_version, invalidate
+from app.cache.cache_aside import get_or_set, get_version, invalidate
 
 
 class FakeRedis:

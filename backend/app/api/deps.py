@@ -144,24 +144,22 @@ async def enforce_rate_limit(
 
 
 def rate_limiter(
-    scope: str, limit_setting: str, *, fail_open: bool
+    scope: str, limit_setting: str
 ) -> Callable[[Request, Response, SettingsDep], Awaitable[None]]:
-    """Per-IP limit of ``settings.<limit_setting>`` requests per minute."""
+    """Per-IP limit of ``settings.<limit_setting>`` requests per minute. Fails open: the
+    route stays up if Redis is down."""
 
     async def dependency(request: Request, response: Response, settings: SettingsDep) -> None:
         key = f"{scope}:{_client_ip(request, settings)}"
         limit: int = getattr(settings, limit_setting)
-        await enforce_rate_limit(request, response, settings, key, limit, fail_open=fail_open)
+        await enforce_rate_limit(request, response, settings, key, limit, fail_open=True)
 
     return dependency
 
 
-# Public routes stay up if Redis is down.
-default_rate_limit = rate_limiter("default", "rate_limit_default_per_minute", fail_open=True)
-nearby_rate_limit = rate_limiter("nearby", "rate_limit_nearby_per_minute", fail_open=True)
-admin_write_rate_limit = rate_limiter(
-    "admin_write", "rate_limit_admin_write_per_minute", fail_open=True
-)
+default_rate_limit = rate_limiter("default", "rate_limit_default_per_minute")
+nearby_rate_limit = rate_limiter("nearby", "rate_limit_nearby_per_minute")
+admin_write_rate_limit = rate_limiter("admin_write", "rate_limit_admin_write_per_minute")
 
 _LOGIN_WINDOWS = ((60, "rate_limit_login_per_minute"), (3600, "rate_limit_login_per_hour"))
 

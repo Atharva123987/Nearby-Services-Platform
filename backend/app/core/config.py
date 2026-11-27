@@ -21,19 +21,10 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 # .env files exist and configuration comes from the environment alone.
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
-# Secrets that must never be accepted in production.
+# Secrets that must never be accepted in production. Shorter guesses ("secret", ...) already
+# fail the length check, so only the shipped placeholders need listing.
 DEV_JWT_SECRET = "dev-insecure-jwt-secret-change-me"  # noqa: S105
-KNOWN_DEFAULT_SECRETS = frozenset(
-    {
-        "",
-        DEV_JWT_SECRET,
-        "change-me",
-        "changeme",
-        "secret",
-        "jwt-secret",
-        "replace-me-with-a-long-random-string",
-    }
-)
+KNOWN_DEFAULT_SECRETS = frozenset({"", DEV_JWT_SECRET, "replace-me-with-a-long-random-string"})
 MIN_PROD_SECRET_LENGTH = 32
 
 

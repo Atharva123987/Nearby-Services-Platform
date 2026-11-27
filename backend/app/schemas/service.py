@@ -68,13 +68,13 @@ PAGE_SIZE_MAX = 200
 RADIUS_KM_MAX = 50
 
 
-class NearbyArea(BaseModel):
-    """Geographic and category filters shared by nearby searches."""
-
+class NearbyQuery(BaseModel):
     lat: Latitude
     lng: Longitude
     radius_km: float = Field(default=5, gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)
     category: CategoryParam | None = None
+    limit: int = Field(default=20, ge=1, le=PAGE_SIZE_MAX)
+    offset: int = Field(default=0, ge=0)
 
 
 class MarkerArea(BaseModel):
@@ -84,11 +84,6 @@ class MarkerArea(BaseModel):
         Annotated[float, Field(gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)] | Literal["all"]
     ) = 5
     category: CategoryParam | None = None
-
-
-class NearbyQuery(NearbyArea):
-    limit: int = Field(default=20, ge=1, le=PAGE_SIZE_MAX)
-    offset: int = Field(default=0, ge=0)
 
 
 class BBox(BaseModel):
