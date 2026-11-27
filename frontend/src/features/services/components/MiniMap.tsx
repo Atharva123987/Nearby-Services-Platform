@@ -2,7 +2,8 @@
 
 import "leaflet/dist/leaflet.css";
 
-import { CircleMarker, MapContainer, TileLayer } from "react-leaflet";
+import { BaseMapTiles } from "@/components/ui/BaseMapTiles";
+import { CircleMarker, MapContainer } from "react-leaflet";
 import type { LatLng } from "@/types/api";
 
 /** Small static map centred on one service. */
@@ -15,15 +16,13 @@ export default function MiniMap({
 }) {
   return (
     <MapContainer
+      maxZoom={20}
       center={position}
       zoom={16}
       scrollWheelZoom={false}
       className="h-full w-full"
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+      <BaseMapTiles />
       <CircleMarker
         center={position}
         radius={10}

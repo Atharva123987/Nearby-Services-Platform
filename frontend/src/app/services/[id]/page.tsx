@@ -43,7 +43,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6 text-gray-900">
-      <Link href="/nearby" className="text-sm text-blue-600 hover:underline">
+      <Link href="/" className="text-sm text-blue-600 hover:underline">
         ← Back to map
       </Link>
 

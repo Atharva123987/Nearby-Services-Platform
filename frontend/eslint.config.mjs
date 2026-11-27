@@ -7,5 +7,11 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores([
+    ".next/**",
+    "public/maplibre/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
 ]);

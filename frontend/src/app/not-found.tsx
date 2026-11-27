@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="text-sm text-gray-600">
         The page you are looking for doesn&apos;t exist.
       </p>
-      <Link href="/nearby" className="text-sm text-blue-600 hover:underline">
+      <Link href="/" className="text-sm text-blue-600 hover:underline">
         Go to the map
       </Link>
     </main>

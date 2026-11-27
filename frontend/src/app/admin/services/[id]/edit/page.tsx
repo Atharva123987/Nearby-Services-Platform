@@ -9,7 +9,7 @@ export default async function EditServicePage({
 }) {
   const { id } = await params;
   return (
-    <div className="min-h-dvh bg-white text-gray-900">
+    <div className="min-h-[calc(100dvh-4rem)] bg-stone-50 text-slate-900">
       <AdminHeader />
       <main className="mx-auto max-w-6xl p-6">
         <h1 className="mb-4 text-xl font-semibold">Edit service</h1>

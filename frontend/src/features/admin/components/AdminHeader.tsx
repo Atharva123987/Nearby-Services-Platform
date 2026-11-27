@@ -17,16 +17,15 @@ export function AdminHeader() {
   const { data: me } = useQuery({ queryKey: adminKeys.me(), queryFn: fetchMe });
 
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3">
       <nav className="flex items-center gap-4 text-sm">
-        <span className="font-semibold">Fieldguide admin</span>
         {NAV.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
             className={
               pathname === href
-                ? "font-medium text-blue-600"
+                ? "font-medium text-teal-800"
                 : "text-gray-600 hover:text-gray-900"
             }
           >

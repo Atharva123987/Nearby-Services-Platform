@@ -6,7 +6,7 @@ import json
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_validator
 
@@ -68,13 +68,25 @@ PAGE_SIZE_MAX = 200
 RADIUS_KM_MAX = 50
 
 
-class NearbyQuery(BaseModel):
-    """Query params for GET /services/nearby."""
+class NearbyArea(BaseModel):
+    """Geographic and category filters shared by nearby searches."""
 
     lat: Latitude
     lng: Longitude
     radius_km: float = Field(default=5, gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)
     category: CategoryParam | None = None
+
+
+class MarkerArea(BaseModel):
+    lat: Latitude
+    lng: Longitude
+    radius_km: (
+        Annotated[float, Field(gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)] | Literal["all"]
+    ) = 5
+    category: CategoryParam | None = None
+
+
+class NearbyQuery(NearbyArea):
     limit: int = Field(default=20, ge=1, le=PAGE_SIZE_MAX)
     offset: int = Field(default=0, ge=0)
 
@@ -158,13 +170,16 @@ class ServiceUpdate(BaseModel):
         return self
 
 
-class ServiceRead(BaseModel):
+class ServiceSummary(BaseModel):
     id: uuid.UUID
     name: str
     category: ServiceCategory
     latitude: float
     longitude: float
     rating: Decimal | None
+
+
+class ServiceRead(ServiceSummary):
     metadata: dict[str, Any] | None
     created_at: datetime
     updated_at: datetime
@@ -179,6 +194,14 @@ class ServicePage(BaseModel):
 
 class NearbyServiceRead(ServiceRead):
     distance_km: float
+
+
+class NearbyMarker(ServiceSummary):
+    distance_km: float
+
+
+class NearbyMarkers(BaseModel):
+    items: list[NearbyMarker]
 
 
 class NearbyPage(BaseModel):

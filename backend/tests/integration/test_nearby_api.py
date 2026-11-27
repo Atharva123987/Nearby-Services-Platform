@@ -122,3 +122,25 @@ def test_nearby_is_cached_and_redis_starts_empty() -> None:
     # Run twice: the second run would start with a HIT if Redis were not flushed between tests.
     run_api(body)
     run_api(body)
+
+
+def test_map_markers_include_the_whole_radius_independent_of_list_pagination() -> None:
+    async def body(client: AsyncClient, repo: ServiceRepository) -> None:
+        await seed(repo, *((str(i), i / 1000, 0) for i in range(32)))
+        query = {"lat": 0, "lng": 0, "radius_km": 4}
+        page = (await client.get(URL, params=query)).json()
+        assert (len(page["items"]), page["total"]) == (20, 32)
+        markers = (await client.get(f"{URL}/markers", params=query)).json()["items"]
+        assert [item["name"] for item in markers] == [str(i) for i in range(32)]
+        assert "metadata" not in markers[0]
+        assert (await client.get(f"{URL}/markers", params=query)).headers["X-Cache"] == "HIT"
+        smaller = await client.get(f"{URL}/markers", params={**query, "radius_km": 1})
+        assert 0 < len(smaller.json()["items"]) < 20
+        await seed(repo, ("Distant", 5, 0))
+        overview = await client.get(f"{URL}/markers", params={**query, "radius_km": "all"})
+        assert len(overview.json()["items"]) == 33
+        assert overview.json()["items"][-1]["name"] == "Distant"
+        other = await client.get(f"{URL}/markers", params={**query, "category": "shop"})
+        assert other.json()["items"] == []
+
+    run_api(body)

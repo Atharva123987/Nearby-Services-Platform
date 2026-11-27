@@ -4,7 +4,7 @@ import { Dashboard } from "@/features/admin/components/Dashboard";
 // Protected by src/proxy.ts.
 export default function AdminPage() {
   return (
-    <div className="min-h-dvh bg-white text-gray-900">
+    <div className="min-h-[calc(100dvh-4rem)] bg-stone-50 text-slate-900">
       <AdminHeader />
       <main className="mx-auto max-w-5xl p-6">
         <Dashboard />

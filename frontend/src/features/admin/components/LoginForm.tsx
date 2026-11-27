@@ -59,9 +59,11 @@ export function LoginForm() {
     >
       <h1 className="text-xl font-semibold">Admin sign in</h1>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Email
+      <div className="flex flex-col gap-1 text-sm">
+        <label htmlFor="login-email">Email</label>
         <input
+          id="login-email"
+          aria-describedby={errors.email ? "login-email-error" : undefined}
           type="email"
           autoComplete="username"
           className="rounded border border-gray-300 px-3 py-2"
@@ -69,13 +71,19 @@ export function LoginForm() {
           {...register("email")}
         />
         {errors.email && (
-          <span className="text-red-600">{errors.email.message}</span>
+          <span id="login-email-error" className="text-red-600">
+            {errors.email.message}
+          </span>
         )}
-      </label>
+      </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Password
+      <div className="flex flex-col gap-1 text-sm">
+        <label htmlFor="login-password">Password</label>
         <input
+          id="login-password"
+          aria-describedby={
+            errors.password ? "login-password-error" : undefined
+          }
           type="password"
           autoComplete="current-password"
           className="rounded border border-gray-300 px-3 py-2"
@@ -83,9 +91,11 @@ export function LoginForm() {
           {...register("password")}
         />
         {errors.password && (
-          <span className="text-red-600">{errors.password.message}</span>
+          <span id="login-password-error" className="text-red-600">
+            {errors.password.message}
+          </span>
         )}
-      </label>
+      </div>
 
       {errors.root && (
         <p role="alert" className="text-sm text-red-600">
@@ -96,7 +106,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-lg bg-teal-800 hover:bg-teal-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {isSubmitting ? "Signing in…" : "Sign in"}
       </button>

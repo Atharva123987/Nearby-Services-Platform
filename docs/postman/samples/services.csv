@@ -1,0 +1,4 @@
+name,category,latitude,longitude,rating,metadata
+City Hospital,hospital,28.6139,77.2090,4.5,"{""phone"": ""+91-11-2345-6789""}"
+Corner ATM,atm,28.6151,77.2101,4.0,"{""open_24h"": true}"
+Green Grocers,shop,28.6170,77.2125,,

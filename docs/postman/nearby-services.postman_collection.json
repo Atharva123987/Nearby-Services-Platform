@@ -1,0 +1,3939 @@
+{
+  "info": {
+    "name": "Nearby Services API",
+    "description": "All endpoints of the Nearby Services backend, with request/response examples for success and error cases.\n\n**Setup**: import this collection and `nearby-services.local.postman_environment.json`, select the environment and set `adminEmail` / `adminPassword` to the seeded admin (`ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`). Run **Auth → Login**: its test script stores `accessToken` and `refreshToken`. **Admin → Create service** stores `serviceId`.\n\n**Errors** always use one envelope:\n```json\n{\n  \"error\": {\n    \"code\": \"not_found\",\n    \"message\": \"Service ... not found\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}\n```\n`request_id` matches the `X-Request-ID` response header (sent on every response; you can pass your own).\n\n| Status | code | When |\n|---|---|---|\n| 401 | `invalid_credentials` | Login failed |\n| 401 | `invalid_token` | Missing, malformed, expired or wrong-type token |\n| 403 | `forbidden` | Admin account inactive |\n| 404 | `not_found` | Service does not exist |\n| 409 | `conflict` | Same name within 10 m |\n| 413 | `payload_too_large` | Bulk file > 5 MB or > 10k rows |\n| 415 | `unsupported_media_type` | Bulk file not .csv/.json |\n| 422 | `validation_error` | Bad body/query/path; `details` lists each field |\n| 422 | `invalid_file` | Bulk file unreadable / malformed |\n| 429 | `too_many_requests` | Rate limit hit; see `Retry-After` |\n| 500 | `internal_error` | Unexpected server error |\n| 503 | `service_unavailable` | Login rate limiter (Redis) down |\n\n**Rate limits**: all /api/v1 routes are limited per IP and return `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` (Unix time). `/services/nearby`, admin writes and login have extra limits. /health and /ready are never limited.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "serviceId",
+      "value": "8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "description": "Unversioned probes. Not under /api/v1, never rate limited.",
+      "auth": {
+        "type": "noauth"
+      },
+      "item": [
+        {
+          "name": "Liveness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Liveness probe. Always 200 while the process serves HTTP; touches no dependencies. Not rate limited, no auth."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                },
+                "description": "Liveness probe. Always 200 while the process serves HTTP; touches no dependencies. Not rate limited, no auth."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Readiness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ready",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ready"
+              ]
+            },
+            "description": "Readiness probe. 200 `ok` when database and Redis are up, 200 `degraded` when only Redis is down (served without caching), 503 `unavailable` when the database is down. Not rate limited, no auth."
+          },
+          "response": [
+            {
+              "name": "200 All dependencies healthy",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/ready",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "ready"
+                  ]
+                },
+                "description": "Readiness probe. 200 `ok` when database and Redis are up, 200 `degraded` when only Redis is down (served without caching), 503 `unavailable` when the database is down. Not rate limited, no auth."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\",\n  \"checks\": {\n    \"database\": {\n      \"status\": \"ok\",\n      \"latency_ms\": 1.84,\n      \"error\": null\n    },\n    \"redis\": {\n      \"status\": \"ok\",\n      \"latency_ms\": 0.62,\n      \"error\": null\n    }\n  }\n}"
+            },
+            {
+              "name": "200 Degraded (Redis down)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/ready",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "ready"
+                  ]
+                },
+                "description": "Readiness probe. 200 `ok` when database and Redis are up, 200 `degraded` when only Redis is down (served without caching), 503 `unavailable` when the database is down. Not rate limited, no auth."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"status\": \"degraded\",\n  \"checks\": {\n    \"database\": {\n      \"status\": \"ok\",\n      \"latency_ms\": 2.1,\n      \"error\": null\n    },\n    \"redis\": {\n      \"status\": \"fail\",\n      \"latency_ms\": null,\n      \"error\": \"Error 111 connecting to redis:6379. Connection refused.\"\n    }\n  }\n}"
+            },
+            {
+              "name": "503 Database unavailable",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/ready",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "ready"
+                  ]
+                },
+                "description": "Readiness probe. 200 `ok` when database and Redis are up, 200 `degraded` when only Redis is down (served without caching), 503 `unavailable` when the database is down. Not rate limited, no auth."
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"status\": \"unavailable\",\n  \"checks\": {\n    \"database\": {\n      \"status\": \"fail\",\n      \"latency_ms\": null,\n      \"error\": \"timeout after 2.0s\"\n    },\n    \"redis\": {\n      \"status\": \"ok\",\n      \"latency_ms\": 0.7,\n      \"error\": null\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Admin authentication. Access tokens go in `Authorization: Bearer <token>`.",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZDllN2IxYSIsInR5cGUiOiJhY2Nlc3MifQ.sig\",\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZDllN2IxYSIsInR5cGUiOiJyZWZyZXNoIn0.sig\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 1800\n}"
+            },
+            {
+              "name": "401 Invalid credentials",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"wrong-password\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_credentials\",\n    \"message\": \"Invalid email or password\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Missing password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\",\n          \"password\"\n        ],\n        \"msg\": \"Field required\",\n        \"type\": \"missing\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "429 Too many login attempts",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "Retry-After",
+                  "value": "42"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "60"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "0"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"too_many_requests\",\n    \"message\": \"Rate limit exceeded\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "503 Rate limiter unavailable",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange admin email + password for an access token (30 min) and refresh token (7 days). The test script stores both in collection variables.\n\nRate limited per IP and per email (per minute and per hour). Every attempt counts; a successful login clears the per-email counter. Fails closed: 503 if Redis is down.\n\nErrors: 401 `invalid_credentials` (unknown email, wrong password or inactive admin all give the same message), 422 `validation_error`, 429 `too_many_requests`, 503 `service_unavailable`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"service_unavailable\",\n    \"message\": \"Service temporarily unavailable\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', body.access_token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refresh_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Exchange a refresh token for a new token pair. Errors: 401 `invalid_token` (expired, malformed, wrong signature, an access token sent instead, or admin inactive/deleted), 422 `validation_error`.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange a refresh token for a new token pair. Errors: 401 `invalid_token` (expired, malformed, wrong signature, an access token sent instead, or admin inactive/deleted), 422 `validation_error`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZDllN2IxYSIsInR5cGUiOiJhY2Nlc3MifQ.sig\",\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyZDllN2IxYSIsInR5cGUiOiJyZWZyZXNoIn0.sig\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 1800\n}"
+            },
+            {
+              "name": "401 Expired refresh token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange a refresh token for a new token pair. Errors: 401 `invalid_token` (expired, malformed, wrong signature, an access token sent instead, or admin inactive/deleted), 422 `validation_error`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Access token sent instead",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange a refresh token for a new token pair. Errors: 401 `invalid_token` (expired, malformed, wrong signature, an access token sent instead, or admin inactive/deleted), 422 `validation_error`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Invalid token type\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Missing refresh_token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Exchange a refresh token for a new token pair. Errors: 401 `invalid_token` (expired, malformed, wrong signature, an access token sent instead, or admin inactive/deleted), 422 `validation_error`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\",\n          \"refresh_token\"\n        ],\n        \"msg\": \"Field required\",\n        \"type\": \"missing\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', body.access_token);",
+                  "    pm.collectionVariables.set('refreshToken', body.refresh_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Current admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "The admin the access token belongs to. Errors: 401 `invalid_token`, 403 `forbidden` (admin deactivated)."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
+                },
+                "description": "The admin the access token belongs to. Errors: 401 `invalid_token`, 403 `forbidden` (admin deactivated)."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"id\": \"2d9e7b1a-6c3f-4a8e-b5d0-1f2e3a4b5c6d\",\n  \"email\": \"admin@example.com\",\n  \"is_active\": true,\n  \"created_at\": \"2026-11-27T10:15:30.123456Z\"\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
+                },
+                "description": "The admin the access token belongs to. Errors: 401 `invalid_token`, 403 `forbidden` (admin deactivated).",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
+                },
+                "description": "The admin the access token belongs to. Errors: 401 `invalid_token`, 403 `forbidden` (admin deactivated)."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
+                },
+                "description": "The admin the access token belongs to. Errors: 401 `invalid_token`, 403 `forbidden` (admin deactivated)."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Services (public)",
+      "description": "Public read endpoints used by the map. No auth. Per-IP rate limited.",
+      "auth": {
+        "type": "noauth"
+      },
+      "item": [
+        {
+          "name": "List services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/services?category=hospital&bbox=77.1,28.5,77.3,28.7&page=1&page_size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "services"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "hospital",
+                  "description": "hospital | atm | shop | other (case-insensitive, plural ok). Optional."
+                },
+                {
+                  "key": "bbox",
+                  "value": "77.1,28.5,77.3,28.7",
+                  "description": "minLng,minLat,maxLng,maxLat — map viewport, edges included. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ">= 1, default 1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20",
+                  "description": "1-200, default 20"
+                }
+              ]
+            },
+            "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services?category=hospital&bbox=77.1,28.5,77.3,28.7&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "hospital | atm | shop | other (case-insensitive, plural ok). Optional."
+                    },
+                    {
+                      "key": "bbox",
+                      "value": "77.1,28.5,77.3,28.7",
+                      "description": "minLng,minLat,maxLng,maxLat — map viewport, edges included. Optional."
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1, default 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200, default 20"
+                    }
+                  ]
+                },
+                "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-Cache",
+                  "value": "MISS"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n      \"name\": \"City Hospital\",\n      \"category\": \"hospital\",\n      \"latitude\": 28.6139,\n      \"longitude\": 77.209,\n      \"rating\": \"4.5\",\n      \"metadata\": {\n        \"phone\": \"+91-11-2345-6789\",\n        \"open_24h\": true\n      },\n      \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n      \"updated_at\": \"2026-11-27T10:15:30.123456Z\"\n    },\n    {\n      \"id\": \"1b2c3d4e-5f60-4718-8a9b-0c1d2e3f4a5b\",\n      \"name\": \"Corner ATM\",\n      \"category\": \"atm\",\n      \"latitude\": 28.6151,\n      \"longitude\": 77.2101,\n      \"rating\": \"4.0\",\n      \"metadata\": {\n        \"open_24h\": true\n      },\n      \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n      \"updated_at\": \"2026-11-27T10:15:30.123456Z\"\n    }\n  ],\n  \"page\": 1,\n  \"page_size\": 20,\n  \"total\": 2\n}"
+            },
+            {
+              "name": "200 Empty page",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services?page=99",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "99"
+                    }
+                  ]
+                },
+                "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-Cache",
+                  "value": "HIT"
+                }
+              ],
+              "body": "{\n  \"items\": [],\n  \"page\": 99,\n  \"page_size\": 20,\n  \"total\": 2\n}"
+            },
+            {
+              "name": "422 Invalid bbox",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services?bbox=77.3,28.5,77.1,28.7",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "bbox",
+                      "value": "77.3,28.5,77.1,28.7"
+                    }
+                  ]
+                },
+                "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"query\",\n          \"bbox\"\n        ],\n        \"msg\": \"Value error, min_lng must be <= max_lng (antimeridian-crossing boxes unsupported)\",\n        \"type\": \"value_error\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Unknown category",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services?category=bank",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "category",
+                      "value": "bank"
+                    }
+                  ]
+                },
+                "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"query\",\n          \"category\"\n        ],\n        \"msg\": \"Value error, unknown category 'bank'; expected one of: hospital, atm, shop, other\",\n        \"type\": \"value_error\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services?category=hospital&bbox=77.1,28.5,77.3,28.7&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "hospital | atm | shop | other (case-insensitive, plural ok). Optional."
+                    },
+                    {
+                      "key": "bbox",
+                      "value": "77.1,28.5,77.3,28.7",
+                      "description": "minLng,minLat,maxLng,maxLat — map viewport, edges included. Optional."
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1, default 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200, default 20"
+                    }
+                  ]
+                },
+                "description": "Paginated list, optionally filtered by category and map viewport. Cached in Redis; `X-Cache: HIT|MISS` tells which. Antimeridian-crossing boxes are not supported.\n\nErrors: 422 `validation_error` (bad bbox, unknown category, page < 1, page_size > 200), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "Retry-After",
+                  "value": "42"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "60"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "0"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"too_many_requests\",\n    \"message\": \"Rate limit exceeded\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Nearby services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/services/nearby?lat=28.6139&lng=77.2090&radius_km=5&category=hospital&limit=20&offset=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "services",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "28.6139",
+                  "description": "-90..90, required"
+                },
+                {
+                  "key": "lng",
+                  "value": "77.2090",
+                  "description": "-180..180, required"
+                },
+                {
+                  "key": "radius_km",
+                  "value": "5",
+                  "description": "0 < r <= 50, default 5"
+                },
+                {
+                  "key": "category",
+                  "value": "hospital",
+                  "description": "Optional"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "1-200, default 20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": ">= 0, default 0"
+                }
+              ]
+            },
+            "description": "Services within `radius_km` of (`lat`, `lng`), nearest first, each with `distance_km`. Has its own, stricter per-IP rate limit on top of the default one. `X-Cache: HIT|MISS`.\n\nErrors: 422 `validation_error`, 429 `too_many_requests`.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/nearby?lat=28.6139&lng=77.2090&radius_km=5&category=hospital&limit=20&offset=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "nearby"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "28.6139",
+                      "description": "-90..90, required"
+                    },
+                    {
+                      "key": "lng",
+                      "value": "77.2090",
+                      "description": "-180..180, required"
+                    },
+                    {
+                      "key": "radius_km",
+                      "value": "5",
+                      "description": "0 < r <= 50, default 5"
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20",
+                      "description": "1-200, default 20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0",
+                      "description": ">= 0, default 0"
+                    }
+                  ]
+                },
+                "description": "Services within `radius_km` of (`lat`, `lng`), nearest first, each with `distance_km`. Has its own, stricter per-IP rate limit on top of the default one. `X-Cache: HIT|MISS`.\n\nErrors: 422 `validation_error`, 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-Cache",
+                  "value": "MISS"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n      \"name\": \"City Hospital\",\n      \"category\": \"hospital\",\n      \"latitude\": 28.6129,\n      \"longitude\": 77.2295,\n      \"rating\": \"4.5\",\n      \"metadata\": {\n        \"phone\": \"+91-11-2345-6789\",\n        \"open_24h\": true\n      },\n      \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n      \"updated_at\": \"2026-11-27T10:15:30.123456Z\",\n      \"distance_km\": 2.01\n    }\n  ],\n  \"total\": 1,\n  \"query\": {\n    \"lat\": 28.6139,\n    \"lng\": 77.209,\n    \"radius_km\": 5.0,\n    \"category\": \"hospital\",\n    \"limit\": 20,\n    \"offset\": 0\n  }\n}"
+            },
+            {
+              "name": "422 Radius too large",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/nearby?lat=28.6139&lng=77.2090&radius_km=100",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "nearby"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "28.6139"
+                    },
+                    {
+                      "key": "lng",
+                      "value": "77.2090"
+                    },
+                    {
+                      "key": "radius_km",
+                      "value": "100"
+                    }
+                  ]
+                },
+                "description": "Services within `radius_km` of (`lat`, `lng`), nearest first, each with `distance_km`. Has its own, stricter per-IP rate limit on top of the default one. `X-Cache: HIT|MISS`.\n\nErrors: 422 `validation_error`, 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"query\",\n          \"radius_km\"\n        ],\n        \"msg\": \"Input should be less than or equal to 50\",\n        \"type\": \"less_than_equal\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Missing lat/lng",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/nearby",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "nearby"
+                  ]
+                },
+                "description": "Services within `radius_km` of (`lat`, `lng`), nearest first, each with `distance_km`. Has its own, stricter per-IP rate limit on top of the default one. `X-Cache: HIT|MISS`.\n\nErrors: 422 `validation_error`, 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"query\",\n          \"lat\"\n        ],\n        \"msg\": \"Field required\",\n        \"type\": \"missing\"\n      },\n      {\n        \"loc\": [\n          \"query\",\n          \"lng\"\n        ],\n        \"msg\": \"Field required\",\n        \"type\": \"missing\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/nearby?lat=28.6139&lng=77.2090&radius_km=5&category=hospital&limit=20&offset=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "nearby"
+                  ],
+                  "query": [
+                    {
+                      "key": "lat",
+                      "value": "28.6139",
+                      "description": "-90..90, required"
+                    },
+                    {
+                      "key": "lng",
+                      "value": "77.2090",
+                      "description": "-180..180, required"
+                    },
+                    {
+                      "key": "radius_km",
+                      "value": "5",
+                      "description": "0 < r <= 50, default 5"
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20",
+                      "description": "1-200, default 20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0",
+                      "description": ">= 0, default 0"
+                    }
+                  ]
+                },
+                "description": "Services within `radius_km` of (`lat`, `lng`), nearest first, each with `distance_km`. Has its own, stricter per-IP rate limit on top of the default one. `X-Cache: HIT|MISS`.\n\nErrors: 422 `validation_error`, 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "Retry-After",
+                  "value": "42"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "60"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "0"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"too_many_requests\",\n    \"message\": \"Rate limit exceeded\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "services",
+                "{{serviceId}}"
+              ]
+            },
+            "description": "One service by id. Cached; `X-Cache: HIT|MISS`.\n\nErrors: 404 `not_found`, 422 `validation_error` (id is not a UUID), 429 `too_many_requests`.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "One service by id. Cached; `X-Cache: HIT|MISS`.\n\nErrors: 404 `not_found`, 422 `validation_error` (id is not a UUID), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-Cache",
+                  "value": "HIT"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": \"4.5\",\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  },\n  \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n  \"updated_at\": \"2026-11-27T10:15:30.123456Z\"\n}"
+            },
+            {
+              "name": "404 Not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "One service by id. Cached; `X-Cache: HIT|MISS`.\n\nErrors: 404 `not_found`, 422 `validation_error` (id is not a UUID), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"not_found\",\n    \"message\": \"Service 8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b not found\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Invalid id",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/services/not-a-uuid",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "services",
+                    "not-a-uuid"
+                  ]
+                },
+                "description": "One service by id. Cached; `X-Cache: HIT|MISS`.\n\nErrors: 404 `not_found`, 422 `validation_error` (id is not a UUID), 429 `too_many_requests`.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"path\",\n          \"service_id\"\n        ],\n        \"msg\": \"Input should be a valid UUID, invalid character: found `n` at 0\",\n        \"type\": \"uuid_parsing\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin services",
+      "description": "Service management. Every route requires a valid access token for an active admin (run Auth → Login first). Write routes have an extra per-IP admin write rate limit.",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{accessToken}}",
+            "type": "string"
+          }
+        ]
+      },
+      "item": [
+        {
+          "name": "List services (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services?search=hospital&category=hospital&page=1&page_size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "hospital",
+                  "description": "Case-insensitive substring match on name, max 200 chars. Optional."
+                },
+                {
+                  "key": "category",
+                  "value": "hospital",
+                  "description": "Optional"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ">= 1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20",
+                  "description": "1-200"
+                }
+              ]
+            },
+            "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services?search=hospital&category=hospital&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "hospital",
+                      "description": "Case-insensitive substring match on name, max 200 chars. Optional."
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200"
+                    }
+                  ]
+                },
+                "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n      \"name\": \"City Hospital\",\n      \"category\": \"hospital\",\n      \"latitude\": 28.6139,\n      \"longitude\": 77.209,\n      \"rating\": \"4.5\",\n      \"metadata\": {\n        \"phone\": \"+91-11-2345-6789\",\n        \"open_24h\": true\n      },\n      \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n      \"updated_at\": \"2026-11-27T10:15:30.123456Z\"\n    }\n  ],\n  \"page\": 1,\n  \"page_size\": 20,\n  \"total\": 1\n}"
+            },
+            {
+              "name": "422 page_size too large",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services?page_size=500",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_size",
+                      "value": "500"
+                    }
+                  ]
+                },
+                "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"query\",\n          \"page_size\"\n        ],\n        \"msg\": \"Input should be less than or equal to 200\",\n        \"type\": \"less_than_equal\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services?search=hospital&category=hospital&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "hospital",
+                      "description": "Case-insensitive substring match on name, max 200 chars. Optional."
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200"
+                    }
+                  ]
+                },
+                "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services?search=hospital&category=hospital&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "hospital",
+                      "description": "Case-insensitive substring match on name, max 200 chars. Optional."
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200"
+                    }
+                  ]
+                },
+                "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services?search=hospital&category=hospital&page=1&page_size=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "hospital",
+                      "description": "Case-insensitive substring match on name, max 200 chars. Optional."
+                    },
+                    {
+                      "key": "category",
+                      "value": "hospital",
+                      "description": "Optional"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ">= 1"
+                    },
+                    {
+                      "key": "page_size",
+                      "value": "20",
+                      "description": "1-200"
+                    }
+                  ]
+                },
+                "description": "Paginated admin list (not cached). Errors: 401, 403, 422, 429."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": \"4.5\",\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  },\n  \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n  \"updated_at\": \"2026-11-27T10:15:30.123456Z\"\n}"
+            },
+            {
+              "name": "409 Duplicate nearby",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"conflict\",\n    \"message\": \"A service named 'City Hospital' already exists within 10 m\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Invalid fields",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"  \",\n  \"category\": \"bank\",\n  \"latitude\": 95,\n  \"longitude\": 77.209,\n  \"rating\": 4.55,\n  \"color\": \"red\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\",\n          \"name\"\n        ],\n        \"msg\": \"Value error, name must be 1-200 characters after trimming\",\n        \"type\": \"value_error\"\n      },\n      {\n        \"loc\": [\n          \"body\",\n          \"category\"\n        ],\n        \"msg\": \"Value error, unknown category 'bank'; expected one of: hospital, atm, shop, other\",\n        \"type\": \"value_error\"\n      },\n      {\n        \"loc\": [\n          \"body\",\n          \"latitude\"\n        ],\n        \"msg\": \"Input should be less than or equal to 90\",\n        \"type\": \"less_than_equal\"\n      },\n      {\n        \"loc\": [\n          \"body\",\n          \"rating\"\n        ],\n        \"msg\": \"Value error, rating allows at most one decimal place\",\n        \"type\": \"value_error\"\n      },\n      {\n        \"loc\": [\n          \"body\",\n          \"color\"\n        ],\n        \"msg\": \"Extra inputs are not permitted\",\n        \"type\": \"extra_forbidden\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "429 Write rate limit",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "Retry-After",
+                  "value": "42"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "60"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "0"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"too_many_requests\",\n    \"message\": \"Rate limit exceeded\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit).",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": 4.5,\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Create a service. `name` 1-200 chars (trimmed), `category` hospital|atm|shop|other, `rating` 0-5 with at most one decimal (optional), `metadata` JSON object <= 10 KB (optional). Unknown fields are rejected. The test script stores the new id in `serviceId`.\n\nErrors: 401, 403, 409 `conflict` (same name within 10 m), 422 `validation_error`, 429 `too_many_requests` (admin write limit)."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('serviceId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bulk upload services",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services",
+                "bulk"
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "partial",
+                  "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "samples/services.csv",
+                  "description": ".csv or .json, max 5 MB / 10,000 rows"
+                }
+              ]
+            },
+            "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+          },
+          "response": [
+            {
+              "name": "200 All rows inserted",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"total\": 3,\n  \"inserted\": 3,\n  \"failed\": 0,\n  \"errors\": []\n}"
+            },
+            {
+              "name": "200 Partial: some rows failed",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"total\": 3,\n  \"inserted\": 1,\n  \"failed\": 2,\n  \"errors\": [\n    {\n      \"row\": 2,\n      \"field\": \"category\",\n      \"message\": \"Value error, unknown category 'bank'; expected one of: hospital, atm, shop, other\"\n    },\n    {\n      \"row\": 3,\n      \"field\": null,\n      \"message\": \"duplicate of row 1\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "200 Strict: nothing inserted",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=strict",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "strict"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"total\": 3,\n  \"inserted\": 0,\n  \"failed\": 1,\n  \"errors\": [\n    {\n      \"row\": 2,\n      \"field\": \"metadata\",\n      \"message\": \"invalid JSON\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "413 File too large",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Payload Too Large",
+              "code": 413,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"payload_too_large\",\n    \"message\": \"file must be at most 5 MB\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "415 Wrong file type",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"unsupported_media_type\",\n    \"message\": \"file must be .csv or .json\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Missing columns",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_file\",\n    \"message\": \"missing required columns: latitude, longitude\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 No file",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": []
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\",\n          \"file\"\n        ],\n        \"msg\": \"Field required\",\n        \"type\": \"missing\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk?mode=partial",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk"
+                  ],
+                  "query": [
+                    {
+                      "key": "mode",
+                      "value": "partial",
+                      "description": "partial (default): insert valid rows, report bad ones | strict: all or nothing"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "samples/services.csv",
+                      "description": ".csv or .json, max 5 MB / 10,000 rows"
+                    }
+                  ]
+                },
+                "description": "Multipart upload of a .csv (columns: name,category,latitude,longitude[,rating,metadata]) or .json (array of objects with the same keys). Extra columns are ignored. Rows are numbered from 1, excluding the CSV header. Rows repeating an earlier row in the file (same name and coordinates) are errors; existing services are not checked for duplicates. A sample file is in `docs/postman/samples/` — set Postman's working directory to `docs/postman` or re-select the file.\n\nErrors: 401, 403, 413 `payload_too_large`, 415 `unsupported_media_type`, 422 `invalid_file` (empty, not UTF-8, malformed, missing columns) or `validation_error` (no file / bad mode), 429."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Download bulk upload template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/bulk/template",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services",
+                "bulk",
+                "template"
+              ]
+            },
+            "description": "CSV template with the expected columns and one example row. Errors: 401, 403."
+          },
+          "response": [
+            {
+              "name": "200 CSV template",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk/template",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk",
+                    "template"
+                  ]
+                },
+                "description": "CSV template with the expected columns and one example row. Errors: 401, 403."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/csv"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=\"services_template.csv\""
+                }
+              ],
+              "body": "name,category,latitude,longitude,rating,metadata\nCorner ATM,atm,19.9975,73.7898,4.5,\"{\"\"open_24h\"\": true}\"\n"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk/template",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk",
+                    "template"
+                  ]
+                },
+                "description": "CSV template with the expected columns and one example row. Errors: 401, 403.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk/template",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk",
+                    "template"
+                  ]
+                },
+                "description": "CSV template with the expected columns and one example row. Errors: 401, 403."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/bulk/template",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "bulk",
+                    "template"
+                  ]
+                },
+                "description": "CSV template with the expected columns and one example row. Errors: 401, 403."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update service",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services",
+                "{{serviceId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": "{\n  \"id\": \"8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b\",\n  \"name\": \"City Hospital (Main Wing)\",\n  \"category\": \"hospital\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.209,\n  \"rating\": \"4.7\",\n  \"metadata\": {\n    \"phone\": \"+91-11-2345-6789\",\n    \"open_24h\": true\n  },\n  \"created_at\": \"2026-11-27T10:15:30.123456Z\",\n  \"updated_at\": \"2026-11-27T11:02:44.501223Z\"\n}"
+            },
+            {
+              "name": "404 Not found",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"not_found\",\n    \"message\": \"Service 8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b not found\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "409 Duplicate nearby",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Corner ATM\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"conflict\",\n    \"message\": \"A service named 'Corner ATM' already exists within 10 m\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 latitude without longitude",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"latitude\": 28.62\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\"\n        ],\n        \"msg\": \"Value error, latitude and longitude must be sent together\",\n        \"type\": \"value_error\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "422 Null name",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": null\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"validation_error\",\n    \"message\": \"Request validation failed\",\n    \"details\": [\n      {\n        \"loc\": [\n          \"body\"\n        ],\n        \"msg\": \"Value error, name cannot be null\",\n        \"type\": \"value_error\"\n      }\n    ],\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"City Hospital (Main Wing)\",\n  \"rating\": 4.7\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Partial update: only fields sent change. `latitude` and `longitude` must be sent together. `rating` and `metadata` may be set to null; `name`, `category`, `latitude`, `longitude` may not.\n\nErrors: 401, 403, 404 `not_found`, 409 `conflict`, 422 `validation_error`, 429."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete service",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "services",
+                "{{serviceId}}"
+              ]
+            },
+            "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429."
+          },
+          "response": [
+            {
+              "name": "204 Deleted",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429."
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                },
+                {
+                  "key": "X-RateLimit-Limit",
+                  "value": "120"
+                },
+                {
+                  "key": "X-RateLimit-Remaining",
+                  "value": "119"
+                },
+                {
+                  "key": "X-RateLimit-Reset",
+                  "value": "1795774560"
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "404 Already deleted",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"not_found\",\n    \"message\": \"Service 8a1f6c2e-3b4d-4e5f-9a6b-7c8d9e0f1a2b not found\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing bearer token",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Not authenticated\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "401 Expired access token",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"invalid_token\",\n    \"message\": \"Token has expired\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            },
+            {
+              "name": "403 Admin inactive",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
+                },
+                "description": "Delete a service (204, empty body). Repeating the delete returns 404.\n\nErrors: 401, 403, 404 `not_found`, 422 (id not a UUID), 429."
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "X-Request-ID",
+                  "value": "4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"forbidden\",\n    \"message\": \"Admin account is inactive\",\n    \"details\": null,\n    \"request_id\": \"4f1c2b7e9a0d4c3e8b6a5d2f1e0c9b8a\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

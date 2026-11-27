@@ -1,14 +1,19 @@
 "use client";
 
-import { skipToken, useInfiniteQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { fetchNearby, serviceKeys } from "@/features/services/api";
-import { CATEGORY_STYLES } from "@/features/services/categories";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
+import {
+  fetchNearbyMarkers,
+  NEARBY_PAGE_SIZE,
+  serviceKeys,
+} from "@/features/services/api";
+import { CATEGORY_STYLES, parseCategory } from "@/features/services/categories";
 import { CategoryChips } from "@/features/services/components/CategoryChips";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { ApiError } from "@/lib/api/client";
+import { config } from "@/lib/config";
 import { formatDistance } from "@/lib/geo";
 import { useMapStore } from "@/stores/map-store";
 import type { LatLng } from "@/types/api";
@@ -18,6 +23,11 @@ const NearbyMap = dynamic(() => import("./NearbyMap"), {
   ssr: false,
   loading: () => <div className="h-full w-full animate-pulse bg-gray-100" />,
 });
+
+const CITY_CENTERS = {
+  Mumbai: { lat: 19.076, lng: 72.8777 },
+  Nashik: config.defaultCenter,
+};
 
 const MIN_RADIUS_KM = 1;
 const MAX_RADIUS_KM = 50;
@@ -70,21 +80,41 @@ function RateLimitNotice({
   );
 }
 
-/** /nearby: pick a centre (my location or a map click) and a radius; lists services inside it. */
+/** Nearby search: pick a centre (my location or a map click) and a radius; lists services inside it. */
 export function NearbyView() {
   const searchParams = useSearchParams();
-  const [center, setCenter] = useState(() =>
-    parseCenter(searchParams.get("lat"), searchParams.get("lng")),
-  );
-  const [radiusKm, setRadiusKm] = useState(() =>
-    parseRadius(searchParams.get("radius")),
-  );
+  // A shared URL takes precedence. A bare Explore link resumes this tab's search.
+  const [initial] = useState(() => {
+    const saved = useMapStore.getState();
+    const shared = ["lat", "lng", "radius", "category"].some((key) =>
+      searchParams.has(key),
+    );
+    return shared
+      ? {
+          center:
+            parseCenter(searchParams.get("lat"), searchParams.get("lng")) ??
+            CITY_CENTERS.Nashik,
+          allDistances: searchParams.get("radius") === "all",
+          radius: parseRadius(searchParams.get("radius")),
+          category: parseCategory(searchParams.get("category")),
+        }
+      : {
+          center: saved.searchCenter ?? CITY_CENTERS.Nashik,
+          allDistances: saved.allDistances,
+          radius: saved.radiusKm,
+          category: saved.selectedCategory,
+        };
+  });
+  const [center, setCenter] = useState(initial.center);
+  const [allDistances, setAllDistances] = useState(initial.allDistances);
+  const [radiusKm, setRadiusKm] = useState(initial.radius);
+  const [picking, setPicking] = useState(false);
   const [locating, setLocating] = useState(false);
+  const mapFrame = useRef<HTMLDivElement>(null);
   const locationRequest = useRef(0);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ id: string } | null>(null);
-  const controls = useRef<HTMLDivElement>(null);
-  const category = useMapStore((s) => s.selectedCategory);
+  const [category, setCategory] = useState(initial.category);
   const setUserLocation = useMapStore((s) => s.setUserLocation);
   // Dragging the slider fires one request once it settles; React Query aborts stale ones.
   const debouncedRadius = useDebouncedValue(radiusKm, 300);
@@ -92,85 +122,128 @@ export function NearbyView() {
   // Keep the URL shareable without a navigation per slider tick.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("radius", String(debouncedRadius));
+    params.set("radius", allDistances ? "all" : String(radiusKm));
+    if (category) params.set("category", category);
+    else params.delete("category");
+    useMapStore.setState({
+      searchCenter: center,
+      allDistances,
+      radiusKm,
+      selectedCategory: category,
+    });
     if (center) {
       params.set("lat", center.lat.toFixed(5));
       params.set("lng", center.lng.toFixed(5));
     }
     window.history.replaceState(null, "", `?${params}`);
-  }, [center, debouncedRadius]);
+  }, [center, radiusKm, category, allDistances]);
 
-  const params = center
-    ? { center, radiusKm: debouncedRadius, category }
-    : null;
-  const {
-    data,
-    error,
-    errorUpdatedAt,
-    isError,
-    isFetching,
-    isFetchNextPageError,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: serviceKeys.nearby(params),
-    queryFn: params
-      ? ({ pageParam, signal }) => fetchNearby(params, pageParam, signal)
-      : skipToken,
-    initialPageParam: 0,
-    getNextPageParam: (last, pages) => {
-      const loaded = pages.reduce((n, page) => n + page.items.length, 0);
-      return loaded < last.total ? loaded : undefined;
-    },
-  });
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
-  const total = data?.pages[0]?.total;
-  const retry = () => (isFetchNextPageError ? fetchNextPage() : refetch());
+  const searchRadius = allDistances ? ("all" as const) : debouncedRadius;
+  const params = center ? { center, radiusKm: searchRadius, category } : null;
+  const { data, error, errorUpdatedAt, isError, isFetching, refetch } =
+    useQuery({
+      queryKey: serviceKeys.markers(params),
+      queryFn: params
+        ? ({ signal }) => fetchNearbyMarkers(params, signal)
+        : skipToken,
+    });
+  const items = data?.items ?? [];
+  const total = data?.items.length;
+  const search = JSON.stringify(params);
+  const expandedList = useMapStore((state) => state.expandedList);
+  const listLimit =
+    expandedList?.search === search ? expandedList.limit : NEARBY_PAGE_SIZE;
   const retryAfter =
     error instanceof ApiError && error.status === 429
       ? ((error.details as { retryAfter: number | null }).retryAfter ?? 0)
       : null;
 
   function pick(next: LatLng) {
+    setAllDistances(false);
     locationRequest.current += 1;
     setLocating(false);
-    setCenter(next);
+    setPicking(false);
+    setCenter({
+      lat: Number(next.lat.toFixed(5)),
+      lng: Number(next.lng.toFixed(5)),
+    });
     setLocationError(null);
   }
 
+  useEffect(() => {
+    if (!locating) return;
+    const request = locationRequest.current;
+    const deadline = window.setTimeout(() => {
+      if (request !== locationRequest.current) return;
+      locationRequest.current++;
+      setLocating(false);
+      setLocationError(
+        "Location timed out. Try again or choose a point on the map.",
+      );
+    }, 35000);
+    return () => {
+      clearTimeout(deadline);
+      locationRequest.current++;
+    };
+  }, [locating]);
+
   function locateMe() {
-    if (!("geolocation" in navigator)) {
-      setLocationError("Your location is unavailable.");
+    if (!navigator.geolocation) {
+      setLocationError(
+        "Location is unavailable in this browser. Use HTTPS or choose a point on the map.",
+      );
       return;
     }
+    setPicking(false);
     setLocating(true);
     setLocationError(null);
     const request = ++locationRequest.current;
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        if (request !== locationRequest.current) return;
-        const location = { lat: coords.latitude, lng: coords.longitude };
-        setUserLocation(location);
-        pick(location);
-      },
-      (error) => {
-        if (request !== locationRequest.current) return;
-        setLocating(false);
-        setLocationError(
-          error.code === error.PERMISSION_DENIED
-            ? "Location access was denied."
-            : "Couldn't get your location.",
-        );
-      },
-      { timeout: 10_000, maximumAge: 5 * 60_000 },
-    );
+    function attempt(precise: boolean) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          if (request !== locationRequest.current) return;
+          const location = { lat: coords.latitude, lng: coords.longitude };
+          setUserLocation(location);
+          pick(location);
+        },
+        (error) => {
+          if (request !== locationRequest.current) return;
+          if (error.code !== 1 && !precise) {
+            attempt(true);
+            return;
+          }
+          setLocating(false);
+          setLocationError(
+            error.code === 1
+              ? "Location access was denied. Allow location for this site or choose a point on the map."
+              : error.code === 3
+                ? "Location timed out. Try again or choose a point on the map."
+                : "Your device could not determine its location. Check device location services or choose a point on the map.",
+          );
+        },
+        {
+          enableHighAccuracy: precise,
+          timeout: precise ? 20000 : 10000,
+          maximumAge: precise ? 0 : 300000,
+        },
+      );
+    }
+    attempt(false);
   }
 
-  let status = "Use your location or click the map to set the centre.";
-  if (center && total === 0) {
-    status = `No services within ${debouncedRadius} km. Try increasing the radius.`;
+  let status = "";
+  if (allDistances && total !== undefined) {
+    status = total
+      ? `${total} services, nearest first`
+      : "No matching services.";
+  } else if (center && total === 0) {
+    const suggestion =
+      debouncedRadius < MAX_RADIUS_KM
+        ? "Try increasing the radius."
+        : category
+          ? "Try another category or search location."
+          : "Try another search location.";
+    status = `No services within ${debouncedRadius} km. ${suggestion}`;
   } else if (center && total !== undefined) {
     status = `${total} services within ${debouncedRadius} km, nearest first`;
   } else if (center) {
@@ -178,65 +251,153 @@ export function NearbyView() {
   }
 
   return (
-    <div className="relative h-full w-full">
-      <NearbyMap
-        center={center}
-        radiusKm={radiusKm}
-        fitRadiusKm={debouncedRadius}
-        services={items}
-        onPick={pick}
-        focus={focus}
-        controls={controls}
-      />
-      {/* Inset so the panel never covers the top-left zoom controls. */}
+    <div className="search-layout">
       <div
-        ref={controls}
-        className="pointer-events-none absolute inset-x-14 top-3 z-[1000] flex flex-col items-center gap-2"
+        ref={mapFrame}
+        className="map-frame"
+        style={
+          {
+            "--cluster-fill": category
+              ? CATEGORY_STYLES[category].color
+              : "var(--fieldguide-lime)",
+            "--cluster-ink":
+              !category || category === "atm" ? "#10251c" : "white",
+          } as CSSProperties
+        }
       >
-        <div className="pointer-events-auto">
-          <CategoryChips />
-        </div>
-        <div className="pointer-events-auto w-full max-w-md space-y-2 rounded-md bg-white/95 p-3 text-sm shadow">
+        <NearbyMap
+          category={category}
+          center={center}
+          allDistances={allDistances}
+          radiusKm={radiusKm}
+          fitRadiusKm={debouncedRadius}
+          services={items}
+          onPick={picking ? pick : undefined}
+          focus={focus}
+        />
+      </div>
+      <section className="search-panel">
+        <h1>Find nearby services</h1>
+        <p className="mt-1 text-sm text-slate-600">
+          {picking
+            ? "Click the map to set your search location."
+            : "Use your location or choose a search location on the map."}
+        </p>
+        <div className="mt-5 space-y-4 text-sm">
+          <div className="rounded-lg bg-teal-50 px-3 py-2.5">
+            <p className="text-xs text-teal-950">
+              Service coverage is currently limited to Mumbai and Nashik.
+            </p>
+            <div
+              className="mt-2 flex gap-2"
+              role="group"
+              aria-label="Search by city"
+            >
+              {Object.entries(CITY_CENTERS).map(([city, point]) => (
+                <button
+                  key={city}
+                  aria-pressed={
+                    center?.lat === point.lat && center?.lng === point.lng
+                  }
+                  type="button"
+                  onClick={() => pick(point)}
+                  className="rounded-md border border-teal-200 bg-white px-3 py-1.5 font-medium text-teal-900 hover:bg-teal-100 aria-pressed:bg-teal-800 aria-pressed:text-white"
+                >
+                  {city}
+                </button>
+              ))}
+            </div>
+          </div>
           <button
             type="button"
             onClick={locateMe}
             disabled={locating}
-            className="rounded bg-blue-600 px-3 py-1 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-lg bg-teal-800 px-4 py-2.5 font-medium text-white hover:bg-teal-900 disabled:opacity-50"
           >
             {locating ? "Locating…" : "Use my location"}
           </button>
-          <label className="flex items-center gap-3">
-            <span className="w-28 shrink-0">Radius: {radiusKm} km</span>
+          <button
+            type="button"
+            aria-pressed={picking}
+            className="w-full rounded-lg border border-teal-800 px-4 py-2 font-medium text-teal-800"
+            onClick={() => {
+              locationRequest.current++;
+              setLocating(false);
+              setLocationError(null);
+              setPicking(!picking);
+              if (!picking)
+                mapFrame.current?.scrollIntoView({ block: "nearest" });
+            }}
+          >
+            {picking ? "Cancel map selection" : "Choose location on map"}
+          </button>
+          <label className="flex items-center gap-2">
             <input
-              type="range"
-              min={MIN_RADIUS_KM}
-              max={MAX_RADIUS_KM}
-              step={1}
-              value={radiusKm}
-              onChange={(e) => setRadiusKm(Number(e.target.value))}
-              className="w-full"
+              type="checkbox"
+              checked={!allDistances}
+              onChange={(event) => setAllDistances(!event.target.checked)}
             />
+            Limit search by radius
           </label>
+          {!allDistances && (
+            <label className="flex items-center gap-3">
+              <span className="w-28 shrink-0">Radius: {radiusKm} km</span>
+              <input
+                type="range"
+                min={MIN_RADIUS_KM}
+                max={MAX_RADIUS_KM}
+                step={1}
+                value={radiusKm}
+                onChange={(e) => setRadiusKm(Number(e.target.value))}
+                className="w-full"
+              />
+            </label>
+          )}
+          <CategoryChips selected={category} onSelect={setCategory} />
           {locationError && (
             <p role="alert" className="text-amber-800">
-              {locationError} Click on the map to choose a centre instead.
+              {locationError}
             </p>
           )}
           <p role="status" className="text-gray-600">
             {status}
           </p>
           {items.length > 0 && (
-            <ul className="max-h-[40vh] divide-y overflow-y-auto">
-              {items.map((service) => {
+            <ul className="divide-y divide-slate-200">
+              {items.slice(0, listLimit).map((service) => {
                 const style = CATEGORY_STYLES[service.category];
                 return (
                   <li key={service.id}>
                     <button
                       type="button"
-                      onClick={() => setFocus({ id: service.id })}
+                      onClick={() => {
+                        setFocus({ id: service.id });
+                        mapFrame.current?.scrollIntoView({ block: "nearest" });
+                      }}
                       className="flex w-full items-center justify-between gap-3 px-1 py-2 text-left hover:bg-gray-50"
                     >
-                      <span className="min-w-0">
+                      <span
+                        className="grid size-8 shrink-0 place-items-center rounded-full"
+                        style={{
+                          color: style.color,
+                          backgroundColor: style.color + "12",
+                        }}
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                        >
+                          <path d={style.iconPath} />
+                        </svg>
+                      </span>
+                      <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">
                           {service.name}
                         </span>
@@ -254,15 +415,21 @@ export function NearbyView() {
                   </li>
                 );
               })}
-              {hasNextPage && !isFetchNextPageError && (
+              {listLimit < items.length && (
                 <li className="py-2 text-center">
                   <button
                     type="button"
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
+                    onClick={() =>
+                      useMapStore.setState({
+                        expandedList: {
+                          search,
+                          limit: listLimit + NEARBY_PAGE_SIZE,
+                        },
+                      })
+                    }
                     className="font-medium text-blue-700 hover:underline disabled:opacity-50"
                   >
-                    {isFetchingNextPage ? "Loading…" : "Load more"}
+                    Load more
                   </button>
                 </li>
               )}
@@ -273,14 +440,14 @@ export function NearbyView() {
               <RateLimitNotice
                 key={errorUpdatedAt}
                 seconds={retryAfter}
-                onRetry={retry}
+                onRetry={() => refetch()}
               />
             ) : (
               <p role="alert" className="flex items-center gap-2 text-red-700">
                 Couldn&apos;t load services.
                 <button
                   type="button"
-                  onClick={retry}
+                  onClick={() => refetch()}
                   disabled={isFetching}
                   className="font-medium underline disabled:opacity-50"
                 >
@@ -289,7 +456,7 @@ export function NearbyView() {
               </p>
             ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

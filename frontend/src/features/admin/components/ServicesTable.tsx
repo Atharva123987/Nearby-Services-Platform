@@ -161,7 +161,7 @@ export function ServicesTable() {
                 <td className="px-4 py-2 text-right whitespace-nowrap">
                   <Link
                     href={`/admin/services/${service.id}/edit`}
-                    className="text-blue-600 hover:underline"
+                    className="text-teal-800 hover:underline"
                   >
                     Edit
                   </Link>
