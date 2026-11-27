@@ -136,6 +136,10 @@ def test_map_markers_include_the_whole_radius_independent_of_list_pagination() -
         assert (await client.get(f"{URL}/markers", params=query)).headers["X-Cache"] == "HIT"
         smaller = await client.get(f"{URL}/markers", params={**query, "radius_km": 1})
         assert 0 < len(smaller.json()["items"]) < 20
+        await seed(repo, ("Distant", 5, 0))
+        overview = await client.get(f"{URL}/markers", params={**query, "radius_km": "all"})
+        assert len(overview.json()["items"]) == 33
+        assert overview.json()["items"][-1]["name"] == "Distant"
         other = await client.get(f"{URL}/markers", params={**query, "category": "shop"})
         assert other.json()["items"] == []
 

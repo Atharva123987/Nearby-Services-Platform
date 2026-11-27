@@ -11,16 +11,20 @@ import {
   Circle,
   CircleMarker,
   MapContainer,
+  Pane,
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import { CATEGORY_STYLES } from "@/features/services/categories";
 import { NEARBY_PAGE_SIZE } from "@/features/services/api";
 import { config } from "@/lib/config";
 import { useMapStore } from "@/stores/map-store";
-import type { LatLng, NearbyMarker } from "@/types/api";
+import type { LatLng, NearbyMarker, ServiceCategory } from "@/types/api";
 import { longitudeInView, ServiceMarker } from "./ServiceMarker";
 
 interface NearbyMapProps {
+  category: ServiceCategory | null;
+  allDistances: boolean;
   center: LatLng | null;
   radiusKm: number;
   /** Debounced radius, so the map only re-zooms once the slider settles. */
@@ -42,19 +46,33 @@ function ClickToPick({ onPick }: { onPick: (center: LatLng) => void }) {
 }
 
 function SearchViewport({
+  overview,
   center,
   radiusKm,
 }: {
+  overview: NearbyMarker[] | null;
   center: LatLng | null;
   radiusKm: number;
 }) {
   const map = useMap();
   useEffect(() => {
-    const search = JSON.stringify([center, radiusKm]);
+    const search = JSON.stringify([
+      center,
+      overview ? "all" : radiusKm,
+      overview?.length,
+    ]);
     const saved = useMapStore.getState().viewport;
     if (saved?.search === search)
       map.setView(saved.center, saved.zoom, { animate: false });
-    else if (center)
+    else if (overview?.length && center) {
+      const bounds = L.latLngBounds([center]);
+      for (const service of overview)
+        bounds.extend([
+          service.latitude,
+          longitudeInView(service.longitude, center.lng),
+        ]);
+      map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15, animate: false });
+    } else if (center)
       map.fitBounds(L.latLng(center).toBounds(radiusKm * 2000), {
         animate: false,
       });
@@ -69,11 +87,13 @@ function SearchViewport({
     return () => {
       map.off("moveend", remember);
     };
-  }, [map, center, radiusKm]);
+  }, [map, center, radiusKm, overview]);
   return null;
 }
 
 export default function NearbyMap({
+  category,
+  allDistances,
   center,
   radiusKm,
   fitRadiusKm,
@@ -110,38 +130,54 @@ export default function NearbyMap({
     >
       <BaseMapTiles />
       {onPick && <ClickToPick onPick={onPick} />}
-      <SearchViewport center={center} radiusKm={fitRadiusKm} />
+      <SearchViewport
+        overview={allDistances ? services : null}
+        center={center}
+        radiusKm={fitRadiusKm}
+      />
       {center && (
         <>
-          <Circle
-            center={center}
-            radius={radiusKm * 1000}
-            interactive={false}
-            pathOptions={{ color: "#0f766e", fillOpacity: 0.08 }}
-          />
-          <CircleMarker
-            center={center}
-            radius={7}
-            interactive={false}
-            pathOptions={{
-              color: "#fff",
-              fillColor: "#0f766e",
-              fillOpacity: 1,
-            }}
-          />
+          {!allDistances && (
+            <Circle
+              center={center}
+              radius={radiusKm * 1000}
+              interactive={false}
+              pathOptions={{ color: "#0f766e", fillOpacity: 0.08 }}
+            />
+          )}
+          <Pane
+            name="search-location"
+            style={{ zIndex: 625, pointerEvents: "none" }}
+          >
+            <CircleMarker
+              center={center}
+              radius={9}
+              interactive={false}
+              pathOptions={{
+                color: "#fff",
+                weight: 3,
+                fillColor: "#0f766e",
+                fillOpacity: 1,
+              }}
+            />
+          </Pane>
         </>
       )}
       <MarkerClusterGroup
+        key={category ?? "all"}
         ref={clusters}
         maxClusterRadius={(zoom) => (zoom <= 12 ? 20 : 42)}
         showCoverageOnHover={false}
         iconCreateFunction={(cluster) => {
           const count = cluster.getChildCount();
+          const icon = category
+            ? `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="${CATEGORY_STYLES[category].iconPath}"/></svg>`
+            : "";
           return L.divIcon({
             className: "service-cluster",
-            html: `<span aria-label="${count} services">${count > NEARBY_PAGE_SIZE ? `${NEARBY_PAGE_SIZE}+` : count}</span>`,
-            iconSize: [29, 24],
-            iconAnchor: [14, 27],
+            html: `<span aria-label="${count} services">${icon}${count > NEARBY_PAGE_SIZE ? `${NEARBY_PAGE_SIZE}+` : count}</span>`,
+            iconSize: [category ? 40 : 29, 24],
+            iconAnchor: [category ? 20 : 14, 27],
           });
         }}
       >
@@ -153,7 +189,6 @@ export default function NearbyMap({
               service.longitude,
               center?.lng ?? start.lng,
             )}
-            userLocation={userLocation}
             onRef={registerMarker}
           />
         ))}

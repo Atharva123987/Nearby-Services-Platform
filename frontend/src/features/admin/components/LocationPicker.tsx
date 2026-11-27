@@ -3,19 +3,16 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { BaseMapTiles } from "@/components/ui/BaseMapTiles";
 import { MapContainer, Marker, useMapEvents } from "react-leaflet";
 import { config } from "@/lib/config";
 import type { LatLng } from "@/types/api";
 
-// Bundlers rewrite Leaflet's default icon paths; point them at the real assets.
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon.src,
-  iconRetinaUrl: markerIcon2x.src,
-  shadowUrl: markerShadow.src,
+const locationIcon = L.divIcon({
+  className: "service-pin",
+  html: '<span style="background:#0f766e"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="3" fill="white"/></svg></span>',
+  iconSize: [28, 28],
+  iconAnchor: [14, 33],
 });
 
 const round6 = (n: number) => Math.round(n * 1e6) / 1e6;
@@ -38,6 +35,7 @@ export default function LocationPicker({
 }) {
   return (
     <MapContainer
+      scrollWheelZoom={false}
       maxZoom={20}
       center={value ?? config.defaultCenter}
       zoom={value ? 15 : config.defaultZoom}
@@ -45,7 +43,9 @@ export default function LocationPicker({
     >
       <BaseMapTiles />
       <ClickToPick onPick={onPick} />
-      {value && <Marker position={value} />}
+      {value && (
+        <Marker position={value} icon={locationIcon} title="Service location" />
+      )}
     </MapContainer>
   );
 }

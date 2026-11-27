@@ -10,7 +10,7 @@ from app.schemas.service import (
     PAGE_SIZE_MAX,
     BBox,
     CategoryParam,
-    NearbyArea,
+    MarkerArea,
     NearbyMarkers,
     NearbyPage,
     NearbyQuery,
@@ -70,7 +70,7 @@ async def nearby_services(
 
 @router.get("/nearby/markers", dependencies=[Depends(nearby_rate_limit)])
 async def nearby_markers(
-    service: ServiceServiceDep, area: Annotated[NearbyArea, Query()], response: Response
+    service: ServiceServiceDep, area: Annotated[MarkerArea, Query()], response: Response
 ) -> NearbyMarkers:
     """All matching pins, nearest first, without detail metadata or timestamps."""
     markers, hit = await service.nearby_markers(area)

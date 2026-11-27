@@ -3,6 +3,7 @@ import type { LatLng, ServiceCategory } from "@/types/api";
 
 interface MapState {
   searchCenter: LatLng | null;
+  allDistances: boolean;
   radiusKm: number;
   expandedList: { search: string; limit: number } | null;
   viewport: { search: string; center: LatLng; zoom: number } | null;
@@ -15,6 +16,7 @@ export const useMapStore = create<MapState>()((set) => ({
   selectedCategory: null,
   searchCenter: null,
   radiusKm: 5,
+  allDistances: true,
   viewport: null,
   expandedList: null,
   userLocation: null,

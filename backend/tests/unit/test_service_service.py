@@ -10,7 +10,7 @@ from app.core.errors import ConflictError, NotFoundError
 from app.models.service import ServiceCategory
 from app.schemas.service import (
     BBox,
-    NearbyArea,
+    MarkerArea,
     NearbyMarker,
     NearbyQuery,
     ServiceCreate,
@@ -50,7 +50,7 @@ class FakeRepo:
     async def get(self, service_id: uuid.UUID, *, for_update: bool = False) -> ServiceRead | None:
         return self.items.get(service_id)
 
-    async def nearby_markers(self, area: NearbyArea) -> list[NearbyMarker]:
+    async def nearby_markers(self, area: MarkerArea) -> list[NearbyMarker]:
         raise NotImplementedError
 
     async def nearby(

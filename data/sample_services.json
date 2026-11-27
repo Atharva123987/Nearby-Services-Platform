@@ -197,7 +197,7 @@
   },
   {
     "name": "College Road किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 20.015449,
     "longitude": 73.764012,
     "rating": null,
@@ -413,7 +413,7 @@
   },
   {
     "name": "Gangapur Road मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 20.005712,
     "longitude": 73.759055,
     "rating": null,
@@ -637,7 +637,7 @@
   },
   {
     "name": "Panchavati आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 20.022463,
     "longitude": 73.806906,
     "rating": null,
@@ -861,7 +861,7 @@
   },
   {
     "name": "Nashik Road किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.960088,
     "longitude": 73.831462,
     "rating": null,
@@ -1093,7 +1093,7 @@
   },
   {
     "name": "CIDCO मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.986481,
     "longitude": 73.785558,
     "rating": null,
@@ -1325,7 +1325,7 @@
   },
   {
     "name": "Satpur आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.986465,
     "longitude": 73.730946,
     "rating": null,
@@ -1545,7 +1545,7 @@
   },
   {
     "name": "Indira Nagar किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.97903,
     "longitude": 73.770233,
     "rating": null,
@@ -1769,7 +1769,7 @@
   },
   {
     "name": "Dwarka मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.996001,
     "longitude": 73.796868,
     "rating": null,
@@ -1993,7 +1993,7 @@
   },
   {
     "name": "Pathardi Phata आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.939562,
     "longitude": 73.778033,
     "rating": null,
@@ -2229,7 +2229,7 @@
   },
   {
     "name": "Ambad किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.961582,
     "longitude": 73.74702,
     "rating": null,
@@ -2453,7 +2453,7 @@
   },
   {
     "name": "Mhasrul मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 20.040878,
     "longitude": 73.798915,
     "rating": null,
@@ -2669,7 +2669,7 @@
   },
   {
     "name": "Makhmalabad आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 20.036672,
     "longitude": 73.765318,
     "rating": null,
@@ -2889,7 +2889,7 @@
   },
   {
     "name": "Andheri किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.114416,
     "longitude": 72.843156,
     "rating": null,
@@ -3101,7 +3101,7 @@
   },
   {
     "name": "Bandra मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.05327,
     "longitude": 72.821015,
     "rating": null,
@@ -3325,7 +3325,7 @@
   },
   {
     "name": "Dadar आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.02225,
     "longitude": 72.848433,
     "rating": null,
@@ -3557,7 +3557,7 @@
   },
   {
     "name": "Colaba किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 18.905466,
     "longitude": 72.802826,
     "rating": null,
@@ -3777,7 +3777,7 @@
   },
   {
     "name": "Powai मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.124828,
     "longitude": 72.91145,
     "rating": null,
@@ -3997,7 +3997,7 @@
   },
   {
     "name": "Borivali आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.224423,
     "longitude": 72.86899,
     "rating": null,
@@ -4229,7 +4229,7 @@
   },
   {
     "name": "Kurla किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.078915,
     "longitude": 72.884458,
     "rating": null,
@@ -4453,7 +4453,7 @@
   },
   {
     "name": "Ghatkopar मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.081529,
     "longitude": 72.899634,
     "rating": null,
@@ -4681,7 +4681,7 @@
   },
   {
     "name": "Malad आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.197932,
     "longitude": 72.845528,
     "rating": null,
@@ -4909,7 +4909,7 @@
   },
   {
     "name": "Chembur किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.052688,
     "longitude": 72.89129,
     "rating": null,
@@ -5137,7 +5137,7 @@
   },
   {
     "name": "Worli मेडिकल स्टोअर",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.010905,
     "longitude": 72.812212,
     "rating": null,
@@ -5365,7 +5365,7 @@
   },
   {
     "name": "Goregaon आरोग्य दवाखाना",
-    "category": "atm",
+    "category": "hospital",
     "latitude": 19.160476,
     "longitude": 72.860318,
     "rating": null,
@@ -5585,7 +5585,7 @@
   },
   {
     "name": "Vile Parle किराणा दुकान",
-    "category": "atm",
+    "category": "shop",
     "latitude": 19.105054,
     "longitude": 72.849105,
     "rating": null,

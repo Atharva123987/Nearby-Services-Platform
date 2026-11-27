@@ -5,8 +5,8 @@ import Link from "next/link";
 import { memo, useMemo } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { CATEGORY_STYLES, formatRating } from "@/features/services/categories";
-import { distanceKm, formatDistance } from "@/lib/geo";
-import type { LatLng, NearbyMarker, ServiceCategory } from "@/types/api";
+import { formatDistance } from "@/lib/geo";
+import type { NearbyMarker, ServiceCategory } from "@/types/api";
 
 const categoryIcons = Object.fromEntries(
   Object.entries(CATEGORY_STYLES).map(([category, { color, iconPath }]) => [
@@ -25,15 +25,8 @@ export function longitudeInView(longitude: number, center: number): number {
   return longitude + 360 * Math.round((center - longitude) / 360);
 }
 
-function ServicePopup({
-  service,
-  userLocation,
-}: {
-  service: NearbyMarker;
-  userLocation: LatLng | null;
-}) {
+function ServicePopup({ service }: { service: NearbyMarker }) {
   const style = CATEGORY_STYLES[service.category];
-  const position = { lat: service.latitude, lng: service.longitude };
   return (
     <div className="space-y-1">
       <p className="!m-0 text-sm font-semibold">{service.name}</p>
@@ -41,11 +34,9 @@ function ServicePopup({
         {style.label}
       </p>
       <p className="!m-0 text-xs">{formatRating(service.rating)}</p>
-      {userLocation && (
-        <p className="!m-0 text-xs">
-          {formatDistance(distanceKm(userLocation, position))} away
-        </p>
-      )}
+      <p className="!m-0 text-xs">
+        {formatDistance(service.distance_km)} from search location
+      </p>
       <Link href={`/services/${service.id}`} className="text-xs">
         View details
       </Link>
@@ -56,12 +47,10 @@ function ServicePopup({
 export const ServiceMarker = memo(function ServiceMarker({
   service,
   longitude,
-  userLocation,
   onRef,
 }: {
   service: NearbyMarker;
   longitude: number;
-  userLocation: LatLng | null;
   /** Lets a parent open this marker's popup (e.g. from a results list). */
   onRef?: (id: string, marker: L.Marker | null) => void;
 }) {
@@ -82,7 +71,7 @@ export const ServiceMarker = memo(function ServiceMarker({
       alt={`${service.name} (${CATEGORY_STYLES[service.category].label})`}
     >
       <Popup>
-        <ServicePopup service={service} userLocation={userLocation} />
+        <ServicePopup service={service} />
       </Popup>
     </Marker>
   );

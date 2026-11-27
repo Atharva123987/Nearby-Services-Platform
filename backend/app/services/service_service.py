@@ -18,7 +18,7 @@ from app.schemas.service import (
     BBox,
     BulkRowError,
     BulkUploadResult,
-    NearbyArea,
+    MarkerArea,
     NearbyMarker,
     NearbyMarkers,
     NearbyPage,
@@ -44,7 +44,7 @@ class ServiceRepositoryProtocol(Protocol):
     async def get(
         self, service_id: uuid.UUID, *, for_update: bool = False
     ) -> ServiceRead | None: ...
-    async def nearby_markers(self, area: NearbyArea) -> list[NearbyMarker]: ...
+    async def nearby_markers(self, area: MarkerArea) -> list[NearbyMarker]: ...
     async def nearby(
         self,
         *,
@@ -200,7 +200,7 @@ class ServiceService:
             key, lambda: self._nearby_from_db(query), model=NearbyPage, ttl=ttl
         )
 
-    async def nearby_markers(self, area: NearbyArea) -> tuple[NearbyMarkers, bool]:
+    async def nearby_markers(self, area: MarkerArea) -> tuple[NearbyMarkers, bool]:
         ttl = self._settings.cache_ttl_search_seconds if self._settings else 0
         prefix = await self._prefix() if ttl else None
         key = (

@@ -41,8 +41,14 @@ function parseMetadata(text: string): Record<string, unknown> | null {
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(200),
   category: z.enum(CATEGORIES),
-  latitude: z.number("Enter a number").min(-90).max(90),
-  longitude: z.number("Enter a number").min(-180).max(180),
+  latitude: z
+    .number("Enter a number")
+    .min(-90, "Latitude must be between -90 and 90")
+    .max(90, "Latitude must be between -90 and 90"),
+  longitude: z
+    .number("Enter a number")
+    .min(-180, "Longitude must be between -180 and 180")
+    .max(180, "Longitude must be between -180 and 180"),
   rating: z
     .string()
     .trim()
@@ -93,7 +99,7 @@ export function ServiceForm({ service }: { service?: Service }) {
   });
   const [lat, lng] = useWatch({ control, name: ["latitude", "longitude"] });
   const point =
-    Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+    Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? { lat, lng } : null;
 
   const onSubmit = handleSubmit(async ({ rating, metadata, ...rest }) => {
     const body: ServiceInput = {
@@ -147,12 +153,30 @@ export function ServiceForm({ service }: { service?: Service }) {
       onSubmit={onSubmit}
       className="flex max-w-2xl flex-col gap-4 text-sm"
     >
-      <Field label="Name" error={errors.name?.message}>
-        <input className={inputClass} {...register("name")} />
+      <Field id="service-name" label="Name" error={errors.name?.message}>
+        <input
+          className={inputClass}
+          id="service-name"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "service-name-error" : undefined}
+          {...register("name")}
+        />
       </Field>
 
-      <Field label="Category" error={errors.category?.message}>
-        <select className={inputClass} {...register("category")}>
+      <Field
+        id="service-category"
+        label="Category"
+        error={errors.category?.message}
+      >
+        <select
+          className={inputClass}
+          id="service-category"
+          aria-invalid={!!errors.category}
+          aria-describedby={
+            errors.category ? "service-category-error" : undefined
+          }
+          {...register("category")}
+        >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {CATEGORY_STYLES[c].label}
@@ -171,39 +195,73 @@ export function ServiceForm({ service }: { service?: Service }) {
           }}
         />
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Latitude" error={errors.latitude?.message}>
+          <Field
+            id="service-latitude"
+            label="Latitude"
+            error={errors.latitude?.message}
+          >
             <input
               type="number"
               step="any"
               className={inputClass}
+              id="service-latitude"
+              aria-invalid={!!errors.latitude}
+              aria-describedby={
+                errors.latitude ? "service-latitude-error" : undefined
+              }
               {...register("latitude", { valueAsNumber: true })}
             />
           </Field>
-          <Field label="Longitude" error={errors.longitude?.message}>
+          <Field
+            id="service-longitude"
+            label="Longitude"
+            error={errors.longitude?.message}
+          >
             <input
               type="number"
               step="any"
               className={inputClass}
+              id="service-longitude"
+              aria-invalid={!!errors.longitude}
+              aria-describedby={
+                errors.longitude ? "service-longitude-error" : undefined
+              }
               {...register("longitude", { valueAsNumber: true })}
             />
           </Field>
         </div>
       </div>
 
-      <Field label="Rating (optional)" error={errors.rating?.message}>
+      <Field
+        id="service-rating"
+        label="Rating (optional)"
+        error={errors.rating?.message}
+      >
         <input
           inputMode="decimal"
           className={`${inputClass} w-32`}
+          id="service-rating"
+          aria-invalid={!!errors.rating}
+          aria-describedby={errors.rating ? "service-rating-error" : undefined}
           {...register("rating")}
         />
       </Field>
 
-      <Field label="Metadata (optional JSON)" error={errors.metadata?.message}>
+      <Field
+        id="service-metadata"
+        label="Metadata (optional JSON)"
+        error={errors.metadata?.message}
+      >
         <textarea
           rows={5}
           spellCheck={false}
           placeholder='{"open_24h": true}'
           className={`${inputClass} font-mono`}
+          id="service-metadata"
+          aria-invalid={!!errors.metadata}
+          aria-describedby={
+            errors.metadata ? "service-metadata-error" : undefined
+          }
           {...register("metadata")}
         />
       </Field>
@@ -238,19 +296,25 @@ export function ServiceForm({ service }: { service?: Service }) {
 }
 
 function Field({
+  id,
   label,
   error,
   children,
 }: {
+  id: string;
   label: string;
   error?: string;
   children: ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1">
-      {label}
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id}>{label}</label>
       {children}
-      {error && <span className="text-red-600">{error}</span>}
-    </label>
+      {error && (
+        <span id={`${id}-error`} className="text-red-600">
+          {error}
+        </span>
+      )}
+    </div>
   );
 }

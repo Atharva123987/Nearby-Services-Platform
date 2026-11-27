@@ -8,7 +8,7 @@ import type {
 
 export interface NearbyParams {
   center: LatLng;
-  radiusKm: number;
+  radiusKm: number | "all";
   category: ServiceCategory | null;
 }
 

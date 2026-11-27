@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.service import Service, ServiceCategory
 from app.schemas.service import (
     BBox,
-    NearbyArea,
+    MarkerArea,
     NearbyMarker,
     ServiceCreate,
     ServiceRead,
@@ -130,22 +130,22 @@ class ServiceRepository:
         rows = (await self._session.execute(stmt)).all()
         return [(_to_read(row), row.distance_m) for row in rows], total
 
-    async def nearby_markers(self, area: NearbyArea) -> list[NearbyMarker]:
+    async def nearby_markers(self, area: MarkerArea) -> list[NearbyMarker]:
         origin = make_point(lat=area.lat, lng=area.lng)
         distance = func.ST_Distance(Service.location, origin)
-        stmt = (
-            select(
-                Service.id,
-                Service.name,
-                Service.category,
-                Service.rating,
-                _lat.label("latitude"),
-                _lng.label("longitude"),
-                (func.round(distance / 10.0) / 100.0).label("distance_km"),
-            )
-            .where(*_radius_filters(origin, area.radius_km * 1000, area.category))
-            .order_by(distance, Service.id)
-        )
+        stmt = select(
+            Service.id,
+            Service.name,
+            Service.category,
+            Service.rating,
+            _lat.label("latitude"),
+            _lng.label("longitude"),
+            (func.round(distance / 10.0) / 100.0).label("distance_km"),
+        ).order_by(distance, Service.id)
+        if area.radius_km != "all":
+            stmt = stmt.where(*_radius_filters(origin, area.radius_km * 1000, area.category))
+        elif area.category is not None:
+            stmt = stmt.where(Service.category == area.category)
         return [
             NearbyMarker.model_validate(row)
             for row in (await self._session.execute(stmt)).mappings()

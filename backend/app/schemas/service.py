@@ -6,7 +6,7 @@ import json
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_validator, model_validator
 
@@ -74,6 +74,15 @@ class NearbyArea(BaseModel):
     lat: Latitude
     lng: Longitude
     radius_km: float = Field(default=5, gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)
+    category: CategoryParam | None = None
+
+
+class MarkerArea(BaseModel):
+    lat: Latitude
+    lng: Longitude
+    radius_km: (
+        Annotated[float, Field(gt=0, le=RADIUS_KM_MAX, allow_inf_nan=False)] | Literal["all"]
+    ) = 5
     category: CategoryParam | None = None
 
 

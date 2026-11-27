@@ -3,7 +3,7 @@
 import { skipToken, useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import {
   fetchNearbyMarkers,
   NEARBY_PAGE_SIZE,
@@ -91,17 +91,22 @@ export function NearbyView() {
     );
     return shared
       ? {
-          center: parseCenter(searchParams.get("lat"), searchParams.get("lng")),
+          center:
+            parseCenter(searchParams.get("lat"), searchParams.get("lng")) ??
+            CITY_CENTERS.Nashik,
+          allDistances: searchParams.get("radius") === "all",
           radius: parseRadius(searchParams.get("radius")),
           category: parseCategory(searchParams.get("category")),
         }
       : {
-          center: saved.searchCenter,
+          center: saved.searchCenter ?? CITY_CENTERS.Nashik,
+          allDistances: saved.allDistances,
           radius: saved.radiusKm,
           category: saved.selectedCategory,
         };
   });
   const [center, setCenter] = useState(initial.center);
+  const [allDistances, setAllDistances] = useState(initial.allDistances);
   const [radiusKm, setRadiusKm] = useState(initial.radius);
   const [picking, setPicking] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -117,11 +122,12 @@ export function NearbyView() {
   // Keep the URL shareable without a navigation per slider tick.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("radius", String(radiusKm));
+    params.set("radius", allDistances ? "all" : String(radiusKm));
     if (category) params.set("category", category);
     else params.delete("category");
     useMapStore.setState({
       searchCenter: center,
+      allDistances,
       radiusKm,
       selectedCategory: category,
     });
@@ -130,11 +136,10 @@ export function NearbyView() {
       params.set("lng", center.lng.toFixed(5));
     }
     window.history.replaceState(null, "", `?${params}`);
-  }, [center, radiusKm, category]);
+  }, [center, radiusKm, category, allDistances]);
 
-  const params = center
-    ? { center, radiusKm: debouncedRadius, category }
-    : null;
+  const searchRadius = allDistances ? ("all" as const) : debouncedRadius;
+  const params = center ? { center, radiusKm: searchRadius, category } : null;
   const { data, error, errorUpdatedAt, isError, isFetching, refetch } =
     useQuery({
       queryKey: serviceKeys.markers(params),
@@ -154,6 +159,7 @@ export function NearbyView() {
       : null;
 
   function pick(next: LatLng) {
+    setAllDistances(false);
     locationRequest.current += 1;
     setLocating(false);
     setPicking(false);
@@ -226,8 +232,18 @@ export function NearbyView() {
   }
 
   let status = "";
-  if (center && total === 0) {
-    status = `No services within ${debouncedRadius} km. Try increasing the radius.`;
+  if (allDistances && total !== undefined) {
+    status = total
+      ? `${total} services, nearest first`
+      : "No matching services.";
+  } else if (center && total === 0) {
+    const suggestion =
+      debouncedRadius < MAX_RADIUS_KM
+        ? "Try increasing the radius."
+        : category
+          ? "Try another category or search location."
+          : "Try another search location.";
+    status = `No services within ${debouncedRadius} km. ${suggestion}`;
   } else if (center && total !== undefined) {
     status = `${total} services within ${debouncedRadius} km, nearest first`;
   } else if (center) {
@@ -236,9 +252,23 @@ export function NearbyView() {
 
   return (
     <div className="search-layout">
-      <div ref={mapFrame} className="map-frame">
+      <div
+        ref={mapFrame}
+        className="map-frame"
+        style={
+          {
+            "--cluster-fill": category
+              ? CATEGORY_STYLES[category].color
+              : "var(--fieldguide-lime)",
+            "--cluster-ink":
+              !category || category === "atm" ? "#10251c" : "white",
+          } as CSSProperties
+        }
+      >
         <NearbyMap
+          category={category}
           center={center}
+          allDistances={allDistances}
           radiusKm={radiusKm}
           fitRadiusKm={debouncedRadius}
           services={items}
@@ -266,9 +296,12 @@ export function NearbyView() {
               {Object.entries(CITY_CENTERS).map(([city, point]) => (
                 <button
                   key={city}
+                  aria-pressed={
+                    center?.lat === point.lat && center?.lng === point.lng
+                  }
                   type="button"
                   onClick={() => pick(point)}
-                  className="rounded-md border border-teal-200 bg-white px-3 py-1.5 font-medium text-teal-900 hover:bg-teal-100"
+                  className="rounded-md border border-teal-200 bg-white px-3 py-1.5 font-medium text-teal-900 hover:bg-teal-100 aria-pressed:bg-teal-800 aria-pressed:text-white"
                 >
                   {city}
                 </button>
@@ -298,18 +331,28 @@ export function NearbyView() {
           >
             {picking ? "Cancel map selection" : "Choose location on map"}
           </button>
-          <label className="flex items-center gap-3">
-            <span className="w-28 shrink-0">Radius: {radiusKm} km</span>
+          <label className="flex items-center gap-2">
             <input
-              type="range"
-              min={MIN_RADIUS_KM}
-              max={MAX_RADIUS_KM}
-              step={1}
-              value={radiusKm}
-              onChange={(e) => setRadiusKm(Number(e.target.value))}
-              className="w-full"
+              type="checkbox"
+              checked={!allDistances}
+              onChange={(event) => setAllDistances(!event.target.checked)}
             />
+            Limit search by radius
           </label>
+          {!allDistances && (
+            <label className="flex items-center gap-3">
+              <span className="w-28 shrink-0">Radius: {radiusKm} km</span>
+              <input
+                type="range"
+                min={MIN_RADIUS_KM}
+                max={MAX_RADIUS_KM}
+                step={1}
+                value={radiusKm}
+                onChange={(e) => setRadiusKm(Number(e.target.value))}
+                className="w-full"
+              />
+            </label>
+          )}
           <CategoryChips selected={category} onSelect={setCategory} />
           {locationError && (
             <p role="alert" className="text-amber-800">

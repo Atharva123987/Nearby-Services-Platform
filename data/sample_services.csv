@@ -16,7 +16,7 @@ College Road Axis Bank ATM,atm,19.997422,73.762107,,"{""city"": ""Nashik"", ""ar
 College Road Kirana Store,shop,20.00886,73.766367,4.6,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": false}"
 College Road Public Library,other,19.998997,73.75377,3.2,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": false}"
 College Road Dental Clinic,hospital,20.01613,73.774033,4.1,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": true}"
-College Road किराणा दुकान,atm,20.015449,73.764012,,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": true}"
+College Road किराणा दुकान,shop,20.015449,73.764012,,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": true}"
 "College Road Shah & Sons, General Store",shop,19.999419,73.766473,4.0,"{""city"": ""Nashik"", ""area"": ""College Road"", ""open_24h"": false}"
 College Road Bus Depot,other,20.003086,73.758264,3.8,
 Gangapur Road General Hospital,hospital,20.001131,73.745632,4.5,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": true}"
@@ -36,7 +36,7 @@ Gangapur Road Axis Bank ATM,atm,20.004828,73.750481,,"{""city"": ""Nashik"", ""a
 Gangapur Road Kirana Store,shop,20.015597,73.753514,2.8,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": false}"
 Gangapur Road Public Library,other,20.008114,73.757119,3.1,
 Gangapur Road Dental Clinic,hospital,20.015146,73.748495,4.6,
-Gangapur Road मेडिकल स्टोअर,atm,20.005712,73.759055,,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": true}"
+Gangapur Road मेडिकल स्टोअर,shop,20.005712,73.759055,,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": true}"
 "Gangapur Road Shah & Sons, General Store",shop,20.003175,73.765452,3.7,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": false}"
 Gangapur Road Bus Depot,other,20.01938,73.74757,,"{""city"": ""Nashik"", ""area"": ""Gangapur Road"", ""open_24h"": false}"
 Panchavati General Hospital,hospital,20.008666,73.794209,4.2,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": true}"
@@ -56,7 +56,7 @@ Panchavati Axis Bank ATM,atm,20.019867,73.788909,,"{""city"": ""Nashik"", ""area
 Panchavati Kirana Store,shop,20.013365,73.793061,3.8,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": false}"
 Panchavati Public Library,other,20.003402,73.800189,3.5,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": false}"
 Panchavati Dental Clinic,hospital,20.0057,73.790588,2.7,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": true}"
-Panchavati आरोग्य दवाखाना,atm,20.022463,73.806906,,
+Panchavati आरोग्य दवाखाना,hospital,20.022463,73.806906,,
 "Panchavati Shah & Sons, General Store",shop,20.003616,73.789365,4.7,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": false}"
 Panchavati Bus Depot,other,20.007369,73.786786,4.3,"{""city"": ""Nashik"", ""area"": ""Panchavati"", ""open_24h"": false}"
 Nashik Road General Hospital,hospital,19.964694,73.841695,,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": true}"
@@ -76,7 +76,7 @@ Nashik Road Axis Bank ATM,atm,19.962154,73.826595,,"{""city"": ""Nashik"", ""are
 Nashik Road Kirana Store,shop,19.948972,73.84834,4.7,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": false}"
 Nashik Road Public Library,other,19.947403,73.844897,,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": false}"
 Nashik Road Dental Clinic,hospital,19.961606,73.831338,3.7,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": true}"
-Nashik Road किराणा दुकान,atm,19.960088,73.831462,,
+Nashik Road किराणा दुकान,shop,19.960088,73.831462,,
 "Nashik Road Shah & Sons, General Store",shop,19.945635,73.833878,4.9,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": false}"
 Nashik Road Bus Depot,other,19.956396,73.835592,3.8,"{""city"": ""Nashik"", ""area"": ""Nashik Road"", ""open_24h"": false}"
 CIDCO General Hospital,hospital,19.970768,73.80629,4.9,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": true}"
@@ -96,7 +96,7 @@ CIDCO Axis Bank ATM,atm,19.986027,73.799147,,"{""city"": ""Nashik"", ""area"": "
 CIDCO Kirana Store,shop,19.972779,73.783586,3.7,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": false}"
 CIDCO Public Library,other,19.969748,73.792947,3.0,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": false}"
 CIDCO Dental Clinic,hospital,19.979865,73.788856,2.5,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": true}"
-CIDCO मेडिकल स्टोअर,atm,19.986481,73.785558,,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": true}"
+CIDCO मेडिकल स्टोअर,shop,19.986481,73.785558,,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": true}"
 "CIDCO Shah & Sons, General Store",shop,19.972221,73.805991,2.6,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": false}"
 CIDCO Bus Depot,other,19.98836,73.793955,4.2,"{""city"": ""Nashik"", ""area"": ""CIDCO"", ""open_24h"": false}"
 Satpur General Hospital,hospital,20.000291,73.740801,4.0,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": true}"
@@ -116,7 +116,7 @@ Satpur Axis Bank ATM,atm,20.000934,73.718647,,"{""city"": ""Nashik"", ""area"": 
 Satpur Kirana Store,shop,19.999545,73.71865,2.8,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": false}"
 Satpur Public Library,other,19.987207,73.727098,3.3,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": false}"
 Satpur Dental Clinic,hospital,19.995099,73.736048,3.1,
-Satpur आरोग्य दवाखाना,atm,19.986465,73.730946,,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": true}"
+Satpur आरोग्य दवाखाना,hospital,19.986465,73.730946,,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": true}"
 "Satpur Shah & Sons, General Store",shop,19.994399,73.733603,4.1,"{""city"": ""Nashik"", ""area"": ""Satpur"", ""open_24h"": false}"
 Satpur Bus Depot,other,20.008791,73.722785,,
 Indira Nagar General Hospital,hospital,19.963029,73.784067,3.0,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": true}"
@@ -136,7 +136,7 @@ Indira Nagar Axis Bank ATM,atm,19.960689,73.788423,,
 Indira Nagar Kirana Store,shop,19.965091,73.787148,4.7,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": false}"
 Indira Nagar Public Library,other,19.96663,73.768244,2.7,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": false}"
 Indira Nagar Dental Clinic,hospital,19.971726,73.786196,4.1,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": true}"
-Indira Nagar किराणा दुकान,atm,19.97903,73.770233,,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": true}"
+Indira Nagar किराणा दुकान,shop,19.97903,73.770233,,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": true}"
 "Indira Nagar Shah & Sons, General Store",shop,19.976603,73.775349,3.7,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": false}"
 Indira Nagar Bus Depot,other,19.970212,73.785902,4.3,"{""city"": ""Nashik"", ""area"": ""Indira Nagar"", ""open_24h"": false}"
 Dwarka General Hospital,hospital,19.987034,73.783896,2.8,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": true}"
@@ -156,7 +156,7 @@ Dwarka Axis Bank ATM,atm,19.985987,73.786065,,"{""city"": ""Nashik"", ""area"": 
 Dwarka Kirana Store,shop,19.984769,73.785172,,
 Dwarka Public Library,other,19.991812,73.795251,3.1,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": false}"
 Dwarka Dental Clinic,hospital,19.997872,73.791897,4.8,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": true}"
-Dwarka मेडिकल स्टोअर,atm,19.996001,73.796868,,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": true}"
+Dwarka मेडिकल स्टोअर,shop,19.996001,73.796868,,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": true}"
 "Dwarka Shah & Sons, General Store",shop,19.991203,73.794069,4.8,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": false}"
 Dwarka Bus Depot,other,19.982714,73.784982,4.4,"{""city"": ""Nashik"", ""area"": ""Dwarka"", ""open_24h"": false}"
 Pathardi Phata General Hospital,hospital,19.939927,73.760984,4.2,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": true}"
@@ -176,7 +176,7 @@ Pathardi Phata Axis Bank ATM,atm,19.943515,73.774758,,
 Pathardi Phata Kirana Store,shop,19.956356,73.772613,2.9,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": false}"
 Pathardi Phata Public Library,other,19.946254,73.760237,4.8,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": false}"
 Pathardi Phata Dental Clinic,hospital,19.935819,73.777971,4.3,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": true}"
-Pathardi Phata आरोग्य दवाखाना,atm,19.939562,73.778033,,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": true}"
+Pathardi Phata आरोग्य दवाखाना,hospital,19.939562,73.778033,,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": true}"
 "Pathardi Phata Shah & Sons, General Store",shop,19.93885,73.77123,4.8,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": false}"
 Pathardi Phata Bus Depot,other,19.954104,73.778737,4.5,"{""city"": ""Nashik"", ""area"": ""Pathardi Phata"", ""open_24h"": false}"
 Ambad General Hospital,hospital,19.970422,73.740186,3.2,"{""city"": ""Nashik"", ""area"": ""Ambad"", ""open_24h"": true}"
@@ -196,7 +196,7 @@ Ambad Axis Bank ATM,atm,19.970102,73.751938,,"{""city"": ""Nashik"", ""area"": "
 Ambad Kirana Store,shop,19.958415,73.730363,4.7,"{""city"": ""Nashik"", ""area"": ""Ambad"", ""open_24h"": false}"
 Ambad Public Library,other,19.964656,73.749682,,"{""city"": ""Nashik"", ""area"": ""Ambad"", ""open_24h"": false}"
 Ambad Dental Clinic,hospital,19.955041,73.736996,,"{""city"": ""Nashik"", ""area"": ""Ambad"", ""open_24h"": true}"
-Ambad किराणा दुकान,atm,19.961582,73.74702,,
+Ambad किराणा दुकान,shop,19.961582,73.74702,,
 "Ambad Shah & Sons, General Store",shop,19.949895,73.7489,3.1,"{""city"": ""Nashik"", ""area"": ""Ambad"", ""open_24h"": false}"
 Ambad Bus Depot,other,19.951435,73.739068,3.1,
 Mhasrul General Hospital,hospital,20.047311,73.809629,2.9,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": true}"
@@ -216,7 +216,7 @@ Mhasrul Axis Bank ATM,atm,20.047793,73.799564,,"{""city"": ""Nashik"", ""area"":
 Mhasrul Kirana Store,shop,20.045917,73.796129,,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": false}"
 Mhasrul Public Library,other,20.031378,73.811196,4.3,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": false}"
 Mhasrul Dental Clinic,hospital,20.051214,73.80731,4.5,
-Mhasrul मेडिकल स्टोअर,atm,20.040878,73.798915,,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": true}"
+Mhasrul मेडिकल स्टोअर,shop,20.040878,73.798915,,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": true}"
 "Mhasrul Shah & Sons, General Store",shop,20.044136,73.802029,4.9,
 Mhasrul Bus Depot,other,20.033612,73.788601,3.9,"{""city"": ""Nashik"", ""area"": ""Mhasrul"", ""open_24h"": false}"
 Makhmalabad General Hospital,hospital,20.023313,73.754517,4.8,"{""city"": ""Nashik"", ""area"": ""Makhmalabad"", ""open_24h"": true}"
@@ -236,7 +236,7 @@ Makhmalabad Axis Bank ATM,atm,20.018068,73.773602,,
 Makhmalabad Kirana Store,shop,20.02112,73.759016,4.2,
 Makhmalabad Public Library,other,20.018357,73.77196,3.3,
 Makhmalabad Dental Clinic,hospital,20.019258,73.770801,4.4,"{""city"": ""Nashik"", ""area"": ""Makhmalabad"", ""open_24h"": true}"
-Makhmalabad आरोग्य दवाखाना,atm,20.036672,73.765318,,
+Makhmalabad आरोग्य दवाखाना,hospital,20.036672,73.765318,,
 "Makhmalabad Shah & Sons, General Store",shop,20.030092,73.77569,,"{""city"": ""Nashik"", ""area"": ""Makhmalabad"", ""open_24h"": false}"
 Makhmalabad Bus Depot,other,20.038808,73.765515,4.9,
 Andheri General Hospital,hospital,19.118496,72.844639,3.7,"{""city"": ""Mumbai"", ""area"": ""Andheri"", ""open_24h"": true}"
@@ -256,7 +256,7 @@ Andheri Axis Bank ATM,atm,19.112382,72.837597,,"{""city"": ""Mumbai"", ""area"":
 Andheri Kirana Store,shop,19.115821,72.853303,4.5,"{""city"": ""Mumbai"", ""area"": ""Andheri"", ""open_24h"": false}"
 Andheri Public Library,other,19.130389,72.854642,4.1,
 Andheri Dental Clinic,hospital,19.129298,72.854907,3.0,"{""city"": ""Mumbai"", ""area"": ""Andheri"", ""open_24h"": true}"
-Andheri किराणा दुकान,atm,19.114416,72.843156,,
+Andheri किराणा दुकान,shop,19.114416,72.843156,,
 "Andheri Shah & Sons, General Store",shop,19.127877,72.848592,2.9,"{""city"": ""Mumbai"", ""area"": ""Andheri"", ""open_24h"": false}"
 Andheri Bus Depot,other,19.107736,72.852907,3.5,"{""city"": ""Mumbai"", ""area"": ""Andheri"", ""open_24h"": false}"
 Bandra General Hospital,hospital,19.056481,72.834818,3.9,
@@ -276,7 +276,7 @@ Bandra Axis Bank ATM,atm,19.067868,72.82334,,"{""city"": ""Mumbai"", ""area"": "
 Bandra Kirana Store,shop,19.060175,72.826998,3.3,"{""city"": ""Mumbai"", ""area"": ""Bandra"", ""open_24h"": false}"
 Bandra Public Library,other,19.051635,72.829752,,"{""city"": ""Mumbai"", ""area"": ""Bandra"", ""open_24h"": false}"
 Bandra Dental Clinic,hospital,19.069342,72.825885,4.5,"{""city"": ""Mumbai"", ""area"": ""Bandra"", ""open_24h"": true}"
-Bandra मेडिकल स्टोअर,atm,19.05327,72.821015,,
+Bandra मेडिकल स्टोअर,shop,19.05327,72.821015,,
 "Bandra Shah & Sons, General Store",shop,19.062058,72.835745,2.9,"{""city"": ""Mumbai"", ""area"": ""Bandra"", ""open_24h"": false}"
 Bandra Bus Depot,other,19.059459,72.835607,3.6,"{""city"": ""Mumbai"", ""area"": ""Bandra"", ""open_24h"": false}"
 Dadar General Hospital,hospital,19.019348,72.851047,4.7,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": true}"
@@ -296,7 +296,7 @@ Dadar Axis Bank ATM,atm,19.027552,72.856759,,"{""city"": ""Mumbai"", ""area"": "
 Dadar Kirana Store,shop,19.019786,72.839194,4.9,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": false}"
 Dadar Public Library,other,19.015207,72.850081,3.3,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": false}"
 Dadar Dental Clinic,hospital,19.0248,72.855316,4.6,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": true}"
-Dadar आरोग्य दवाखाना,atm,19.02225,72.848433,,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": true}"
+Dadar आरोग्य दवाखाना,hospital,19.02225,72.848433,,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": true}"
 "Dadar Shah & Sons, General Store",shop,19.015962,72.844484,3.0,"{""city"": ""Mumbai"", ""area"": ""Dadar"", ""open_24h"": false}"
 Dadar Bus Depot,other,19.028544,72.847471,2.8,
 Colaba General Hospital,hospital,18.914966,72.805127,4.6,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": true}"
@@ -316,7 +316,7 @@ Colaba Axis Bank ATM,atm,18.895978,72.814748,,"{""city"": ""Mumbai"", ""area"": 
 Colaba Kirana Store,shop,18.918569,72.811698,,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": false}"
 Colaba Public Library,other,18.91484,72.818299,2.8,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": false}"
 Colaba Dental Clinic,hospital,18.914614,72.819406,,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": true}"
-Colaba किराणा दुकान,atm,18.905466,72.802826,,
+Colaba किराणा दुकान,shop,18.905466,72.802826,,
 "Colaba Shah & Sons, General Store",shop,18.900842,72.822739,4.3,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": false}"
 Colaba Bus Depot,other,18.897368,72.809614,2.6,"{""city"": ""Mumbai"", ""area"": ""Colaba"", ""open_24h"": false}"
 Powai General Hospital,hospital,19.124654,72.904971,,"{""city"": ""Mumbai"", ""area"": ""Powai"", ""open_24h"": true}"
@@ -336,7 +336,7 @@ Powai Axis Bank ATM,atm,19.11168,72.912079,,
 Powai Kirana Store,shop,19.114167,72.91274,3.3,
 Powai Public Library,other,19.114432,72.915348,4.7,"{""city"": ""Mumbai"", ""area"": ""Powai"", ""open_24h"": false}"
 Powai Dental Clinic,hospital,19.128969,72.905909,4.8,"{""city"": ""Mumbai"", ""area"": ""Powai"", ""open_24h"": true}"
-Powai मेडिकल स्टोअर,atm,19.124828,72.91145,,
+Powai मेडिकल स्टोअर,shop,19.124828,72.91145,,
 "Powai Shah & Sons, General Store",shop,19.120059,72.913736,3.3,
 Powai Bus Depot,other,19.121462,72.901356,3.6,"{""city"": ""Mumbai"", ""area"": ""Powai"", ""open_24h"": false}"
 Borivali General Hospital,hospital,19.225437,72.846017,3.4,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": true}"
@@ -356,7 +356,7 @@ Borivali Axis Bank ATM,atm,19.238392,72.865433,,"{""city"": ""Mumbai"", ""area""
 Borivali Kirana Store,shop,19.239256,72.860305,3.8,
 Borivali Public Library,other,19.221824,72.848333,2.6,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": false}"
 Borivali Dental Clinic,hospital,19.225854,72.864288,4.0,
-Borivali आरोग्य दवाखाना,atm,19.224423,72.86899,,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": true}"
+Borivali आरोग्य दवाखाना,hospital,19.224423,72.86899,,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": true}"
 "Borivali Shah & Sons, General Store",shop,19.229617,72.86346,2.7,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": false}"
 Borivali Bus Depot,other,19.232416,72.855799,3.4,"{""city"": ""Mumbai"", ""area"": ""Borivali"", ""open_24h"": false}"
 Kurla General Hospital,hospital,19.079326,72.887855,4.9,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": true}"
@@ -376,7 +376,7 @@ Kurla Axis Bank ATM,atm,19.084009,72.875638,,"{""city"": ""Mumbai"", ""area"": "
 Kurla Kirana Store,shop,19.07408,72.880159,3.2,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": false}"
 Kurla Public Library,other,19.062923,72.879465,4.0,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": false}"
 Kurla Dental Clinic,hospital,19.081367,72.876333,3.9,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": true}"
-Kurla किराणा दुकान,atm,19.078915,72.884458,,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": true}"
+Kurla किराणा दुकान,shop,19.078915,72.884458,,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": true}"
 "Kurla Shah & Sons, General Store",shop,19.07257,72.879905,,"{""city"": ""Mumbai"", ""area"": ""Kurla"", ""open_24h"": false}"
 Kurla Bus Depot,other,19.072731,72.8957,3.4,
 Ghatkopar General Hospital,hospital,19.085877,72.917176,3.7,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": true}"
@@ -396,7 +396,7 @@ Ghatkopar Axis Bank ATM,atm,19.07464,72.90739,,"{""city"": ""Mumbai"", ""area"":
 Ghatkopar Kirana Store,shop,19.09279,72.914628,4.3,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": false}"
 Ghatkopar Public Library,other,19.078092,72.911097,4.6,
 Ghatkopar Dental Clinic,hospital,19.090337,72.896758,2.8,
-Ghatkopar मेडिकल स्टोअर,atm,19.081529,72.899634,,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": true}"
+Ghatkopar मेडिकल स्टोअर,shop,19.081529,72.899634,,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": true}"
 "Ghatkopar Shah & Sons, General Store",shop,19.083849,72.914599,4.7,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": false}"
 Ghatkopar Bus Depot,other,19.075495,72.899314,3.3,"{""city"": ""Mumbai"", ""area"": ""Ghatkopar"", ""open_24h"": false}"
 Malad General Hospital,hospital,19.186611,72.84353,4.8,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": true}"
@@ -416,7 +416,7 @@ Malad Axis Bank ATM,atm,19.196441,72.857082,,"{""city"": ""Mumbai"", ""area"": "
 Malad Kirana Store,shop,19.178787,72.859134,4.1,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": false}"
 Malad Public Library,other,19.176147,72.849779,4.3,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": false}"
 Malad Dental Clinic,hospital,19.195918,72.840202,2.9,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": true}"
-Malad आरोग्य दवाखाना,atm,19.197932,72.845528,,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": true}"
+Malad आरोग्य दवाखाना,hospital,19.197932,72.845528,,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": true}"
 "Malad Shah & Sons, General Store",shop,19.196479,72.859091,4.7,
 Malad Bus Depot,other,19.187631,72.838575,3.2,"{""city"": ""Mumbai"", ""area"": ""Malad"", ""open_24h"": false}"
 Chembur General Hospital,hospital,19.053239,72.900354,4.6,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": true}"
@@ -436,7 +436,7 @@ Chembur Axis Bank ATM,atm,19.0531,72.904438,,"{""city"": ""Mumbai"", ""area"": "
 Chembur Kirana Store,shop,19.046139,72.906614,2.7,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": false}"
 Chembur Public Library,other,19.05709,72.890374,2.7,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": false}"
 Chembur Dental Clinic,hospital,19.052332,72.902245,,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": true}"
-Chembur किराणा दुकान,atm,19.052688,72.89129,,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": true}"
+Chembur किराणा दुकान,shop,19.052688,72.89129,,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": true}"
 "Chembur Shah & Sons, General Store",shop,19.054196,72.890683,4.5,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": false}"
 Chembur Bus Depot,other,19.052518,72.899463,,"{""city"": ""Mumbai"", ""area"": ""Chembur"", ""open_24h"": false}"
 Worli General Hospital,hospital,19.024966,72.822359,4.5,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": true}"
@@ -456,7 +456,7 @@ Worli Axis Bank ATM,atm,19.023373,72.814654,,"{""city"": ""Mumbai"", ""area"": "
 Worli Kirana Store,shop,19.010814,72.82573,,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": false}"
 Worli Public Library,other,19.012542,72.824579,3.3,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": false}"
 Worli Dental Clinic,hospital,19.021741,72.812696,2.9,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": true}"
-Worli मेडिकल स्टोअर,atm,19.010905,72.812212,,
+Worli मेडिकल स्टोअर,shop,19.010905,72.812212,,
 "Worli Shah & Sons, General Store",shop,19.028364,72.826113,4.1,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": false}"
 Worli Bus Depot,other,19.017495,72.828335,4.2,"{""city"": ""Mumbai"", ""area"": ""Worli"", ""open_24h"": false}"
 Goregaon General Hospital,hospital,19.16195,72.850592,,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": true}"
@@ -476,7 +476,7 @@ Goregaon Axis Bank ATM,atm,19.176244,72.849497,,"{""city"": ""Mumbai"", ""area""
 Goregaon Kirana Store,shop,19.167801,72.845911,,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": false}"
 Goregaon Public Library,other,19.176734,72.854499,2.9,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": false}"
 Goregaon Dental Clinic,hospital,19.163416,72.860601,4.1,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": true}"
-Goregaon आरोग्य दवाखाना,atm,19.160476,72.860318,,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": true}"
+Goregaon आरोग्य दवाखाना,hospital,19.160476,72.860318,,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": true}"
 "Goregaon Shah & Sons, General Store",shop,19.169701,72.852374,4.5,
 Goregaon Bus Depot,other,19.171588,72.85232,3.9,"{""city"": ""Mumbai"", ""area"": ""Goregaon"", ""open_24h"": false}"
 Vile Parle General Hospital,hospital,19.08841,72.832812,4.9,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": true}"
@@ -496,6 +496,6 @@ Vile Parle Axis Bank ATM,atm,19.107591,72.834289,,"{""city"": ""Mumbai"", ""area
 Vile Parle Kirana Store,shop,19.088021,72.837074,4.7,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": false}"
 Vile Parle Public Library,other,19.088117,72.833784,4.7,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": false}"
 Vile Parle Dental Clinic,hospital,19.08779,72.85429,4.9,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": true}"
-Vile Parle किराणा दुकान,atm,19.105054,72.849105,,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": true}"
+Vile Parle किराणा दुकान,shop,19.105054,72.849105,,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": true}"
 "Vile Parle Shah & Sons, General Store",shop,19.088846,72.835899,4.6,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": false}"
 Vile Parle Bus Depot,other,19.108517,72.839962,2.8,"{""city"": ""Mumbai"", ""area"": ""Vile Parle"", ""open_24h"": false}"
