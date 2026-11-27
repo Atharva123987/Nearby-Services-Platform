@@ -208,8 +208,8 @@ export function NearbyView() {
         },
         (error) => {
           if (request !== locationRequest.current) return;
-          if (error.code !== 1 && !precise) {
-            attempt(true);
+          if (error.code !== 1 && precise) {
+            attempt(false);
             return;
           }
           setLocating(false);
@@ -228,7 +228,7 @@ export function NearbyView() {
         },
       );
     }
-    attempt(false);
+    attempt(true);
   }
 
   let status = "";
